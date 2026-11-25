@@ -58,14 +58,14 @@
             <!-- TRANG 1: ĐĂNG NHẬP -->
             <div id="page-login" class="space-y-4">
                 <div class="p-3 rounded-xl bg-sky-50 dark:bg-sky-950/30 border border-sky-200 dark:border-sky-800 text-xs text-sky-800 dark:text-sky-300 font-medium">
-                    <strong>*Lưu Ý :</strong> Nhập đúng Tên GVCN Hoặc SĐT đã đăng kí cùng mật khẩu để đăng nhập.
+                    <strong>*Lưu Ý :</strong> Nhập đúng Tên GVCN Hoặc SĐT đã đăng kí cùng mật khẩu để đăng nhập (hoặc tài khoản Admin để quản trị hệ thống).
                 </div>
                 <form onsubmit="handleLoginSubmit(event)" class="space-y-4">
                     <div>
                         <label class="block text-xs font-semibold mb-1 text-slate-700 dark:text-slate-300">
-                            Tên GVCN hoặc SĐT <span class="text-rose-500">*</span>
+                            Tên GVCN, SĐT hoặc Tài khoản Admin <span class="text-rose-500">*</span>
                         </label>
-                        <input type="text" id="login-identifier" required placeholder="Nhập Tên GVCN hoặc Số điện thoại..."
+                        <input type="text" id="login-identifier" required placeholder="Nhập Tên GVCN, Số điện thoại hoặc admin..."
                             class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500">
                     </div>
                     <div>
@@ -168,6 +168,91 @@
             </div>
         </div>
     </div>
+
+    <!-- GIAO DIỆN QUẢN TRỊ VIÊN (ADMIN) -->
+    <div id="admin-panel" class="hidden flex-grow flex flex-col">
+        <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 shadow-sm no-print">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center text-white font-bold shadow">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-sm font-extrabold uppercase text-slate-900 dark:text-white">QUẢN TRỊ HỆ THỐNG (ADMIN)</h2>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400">Quản lý tài khoản GVCN & reset thông tin đăng ký</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button onclick="adminResetAllAccounts()" class="px-3.5 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 text-xs font-bold transition">
+                        <i class="fa-solid fa-rotate-left mr-1"></i> Reset Toàn Bộ
+                    </button>
+                    <button onclick="toggleDarkMode()" title="Đổi giao diện" class="p-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+                        <i class="fa-solid fa-moon" id="admin-icon-moon"></i>
+                        <i class="fa-solid fa-sun hidden text-amber-400" id="admin-icon-sun"></i>
+                    </button>
+                    <button onclick="logoutAccount()" title="Đăng xuất Admin" class="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition">
+                        <i class="fa-solid fa-right-from-bracket mr-1"></i> Đăng xuất
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+            <div class="p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800 text-xs text-indigo-900 dark:text-indigo-200 leading-relaxed">
+                <strong>Hướng dẫn Reset & Đăng ký lại:</strong> Khi bạn bấm <strong>"Reset / Xóa"</strong> trên một tài khoản GVCN, hệ thống sẽ xóa tài khoản đó khỏi danh sách đăng ký và xóa toàn bộ kho dữ liệu lớp tương ứng. Sau đó, các thông tin như <strong>SĐT, Tên GVCN, Lớp và Đơn vị/Trường</strong> của tài khoản đó có thể được dùng để đăng ký lại từ đầu.
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <p class="text-xs font-semibold text-slate-400 uppercase">Tài khoản GVCN đã đăng ký</p>
+                    <h4 class="text-2xl font-extrabold mt-1 text-indigo-600" id="admin-stat-accounts">0 / 100</h4>
+                    <p class="text-xs text-slate-500 mt-1">Tối đa 100 tài khoản</p>
+                </div>
+                <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <p class="text-xs font-semibold text-slate-400 uppercase">Tổng học sinh toàn hệ thống</p>
+                    <h4 class="text-2xl font-extrabold mt-1 text-emerald-600" id="admin-stat-students">0</h4>
+                    <p class="text-xs text-slate-500 mt-1">Cộng dồn từ các lớp đã nhập</p>
+                </div>
+                <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <p class="text-xs font-semibold text-slate-400 uppercase">Đơn vị / Trường</p>
+                    <h4 class="text-2xl font-extrabold mt-1 text-sky-600" id="admin-stat-units">0</h4>
+                    <p class="text-xs text-slate-500 mt-1">Số đơn vị có tài khoản hoạt động</p>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col sm:flex-row gap-3 justify-between items-center">
+                <div class="relative w-full sm:w-80">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                    <input type="text" id="admin-search-input" oninput="renderAdminDashboard()" placeholder="Tìm theo Tên GVCN, SĐT, Lớp hoặc Trường..."
+                        class="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <button onclick="renderAdminDashboard()" class="px-3.5 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl text-xs font-semibold transition">
+                    <i class="fa-solid fa-arrows-rotate mr-1"></i> Làm mới danh sách
+                </button>
+            </div>
+
+            <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-700 text-[11px] font-bold text-slate-500 uppercase">
+                                <th class="py-3 px-4 text-center w-12">STT</th>
+                                <th class="py-3 px-4">Tên GVCN</th>
+                                <th class="py-3 px-4">SĐT</th>
+                                <th class="py-3 px-4">Lớp</th>
+                                <th class="py-3 px-4">Đơn vị / Trường</th>
+                                <th class="py-3 px-4">Địa phương</th>
+                                <th class="py-3 px-4 text-center">Sĩ số</th>
+                                <th class="py-3 px-4 text-center">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-accounts-tbody" class="divide-y divide-slate-200 dark:divide-slate-700 text-xs"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
     <!-- GIAO DIỆN CHÍNH KHI ĐÃ ĐĂNG NHẬP -->
     <div id="main-app" class="hidden flex flex-col flex-grow">
         <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 shadow-sm no-print">
@@ -578,6 +663,7 @@
             </section>
         </main>
     </div>
+
     <!-- MODAL THÊM / SỬA HỌC SINH -->
     <div id="student-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-md border border-slate-200 dark:border-slate-700 overflow-hidden">
@@ -702,11 +788,17 @@
         <i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i>
         <span id="toast-text">Đã lưu</span>
     </div>
+
     <script>
         const MAX_ACCOUNTS = 100;
         const REGISTRY_KEY = 'gvcn_system_accounts_registry_v1';
+        const ADMIN_ACCOUNT = {
+            username: 'admin',
+            password: 'Admin@123'
+        };
         const MONTHS = ['Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12', 'Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5'];
         let currentAccount = null;
+        let isAdminMode = false;
         let classData = {
             meta: {
                 ward: '',
@@ -825,6 +917,7 @@
                 attendance: {},
                 honors: {}
             };
+            isAdminMode = false;
             currentAccount = newAccount;
             saveAccountVault();
             enterMainApp();
@@ -837,6 +930,19 @@
             const identifier = document.getElementById('login-identifier').value.trim().toLowerCase();
             const normIdPhone = normalizePhone(identifier);
             const password = document.getElementById('login-password').value;
+
+            if (identifier === ADMIN_ACCOUNT.username.toLowerCase() && password === ADMIN_ACCOUNT.password) {
+                isAdminMode = true;
+                currentAccount = null;
+                document.getElementById('auth-screen').classList.add('hidden');
+                document.getElementById('main-app').classList.add('hidden');
+                document.getElementById('admin-panel').classList.remove('hidden');
+                document.getElementById('admin-search-input').value = '';
+                renderAdminDashboard();
+                showToast('Đăng nhập quyền Admin thành công!');
+                return;
+            }
+
             const registry = getAccountsRegistry();
             const matched = registry.find(acc => {
                 const nameMatch = (acc.teacherName || '').toLowerCase().trim() === identifier;
@@ -848,6 +954,7 @@
                 errBox.classList.remove('hidden');
                 return;
             }
+            isAdminMode = false;
             currentAccount = matched;
             loadAccountVault();
             enterMainApp();
@@ -902,6 +1009,7 @@
         }
         function enterMainApp() {
             document.getElementById('auth-screen').classList.add('hidden');
+            document.getElementById('admin-panel').classList.add('hidden');
             document.getElementById('main-app').classList.remove('hidden');
             document.getElementById('attendance-date-input').value = new Date().toISOString().split('T')[0];
             syncClassMetadataInputs();
@@ -909,11 +1017,119 @@
         }
         function logoutAccount() {
             currentAccount = null;
+            isAdminMode = false;
             document.getElementById('main-app').classList.add('hidden');
+            document.getElementById('admin-panel').classList.add('hidden');
             document.getElementById('auth-screen').classList.remove('hidden');
             document.getElementById('login-password').value = '';
             switchAuthPage('login');
         }
+
+        // =========================================================================
+        // QUẢN TRỊ VIÊN (ADMIN): XEM, ĐỔI MẬT KHẨU & RESET TÀI KHOẢN ĐỂ ĐĂNG KÝ LẠI
+        // =========================================================================
+        function getStudentCountFromVault(accountId) {
+            try {
+                const raw = localStorage.getItem(accountId);
+                if (!raw) return 0;
+                const parsed = JSON.parse(raw);
+                return Array.isArray(parsed.students) ? parsed.students.length : 0;
+            } catch {
+                return 0;
+            }
+        }
+        function renderAdminDashboard() {
+            const registry = getAccountsRegistry();
+            const q = (document.getElementById('admin-search-input')?.value || '').toLowerCase().trim();
+            const totalStudents = registry.reduce((sum, acc) => sum + getStudentCountFromVault(acc.id), 0);
+            const uniqueUnits = new Set(registry.map(acc => (acc.unit || '').trim()).filter(Boolean)).size;
+
+            document.getElementById('admin-stat-accounts').textContent = `${registry.length} / ${MAX_ACCOUNTS}`;
+            document.getElementById('admin-stat-students').textContent = totalStudents;
+            document.getElementById('admin-stat-units').textContent = uniqueUnits;
+
+            const filtered = registry.filter(acc => {
+                if (!q) return true;
+                return (
+                    (acc.teacherName || '').toLowerCase().includes(q) ||
+                    (acc.phone || '').toLowerCase().includes(q) ||
+                    (acc.className || '').toLowerCase().includes(q) ||
+                    (acc.unit || '').toLowerCase().includes(q) ||
+                    (acc.ward || '').toLowerCase().includes(q) ||
+                    (acc.province || '').toLowerCase().includes(q)
+                );
+            });
+
+            const tbody = document.getElementById('admin-accounts-tbody');
+            if (!filtered.length) {
+                tbody.innerHTML = `<tr><td colspan="8" class="py-8 text-center text-slate-400">${registry.length ? 'Không tìm thấy tài khoản phù hợp.' : 'Chưa có tài khoản GVCN nào được đăng ký.'}</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map((acc, idx) => {
+                const stCount = getStudentCountFromVault(acc.id);
+                const loc = [acc.ward, acc.province].filter(Boolean).join(', ');
+                return `
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40">
+                        <td class="py-2.5 px-4 text-center text-slate-400">${idx + 1}</td>
+                        <td class="py-2.5 px-4 font-bold">${esc(acc.teacherName)}</td>
+                        <td class="py-2.5 px-4 font-mono">${esc(acc.phone)}</td>
+                        <td class="py-2.5 px-4 font-semibold text-sky-600">${esc(acc.className)}</td>
+                        <td class="py-2.5 px-4 font-medium">${esc(acc.unit)}</td>
+                        <td class="py-2.5 px-4 text-slate-500">${esc(loc || '---')}</td>
+                        <td class="py-2.5 px-4 text-center font-bold">${stCount}</td>
+                        <td class="py-2.5 px-4 text-center space-x-1.5 whitespace-nowrap">
+                            <button onclick="adminResetPassword('${acc.id}')" class="px-2.5 py-1 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-800 font-semibold transition">Đổi MK</button>
+                            <button onclick="adminResetAccountForReregister('${acc.id}')" class="px-2.5 py-1 rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-700 font-semibold transition">Reset / Xóa</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        function adminResetPassword(accountId) {
+            const registry = getAccountsRegistry();
+            const acc = registry.find(a => a.id === accountId);
+            if (!acc) return;
+            const nextPass = prompt(`Nhập mật khẩu mới cho GVCN "${acc.teacherName}" (SĐT: ${acc.phone}, tối thiểu 4 ký tự):`);
+            if (nextPass === null) return;
+            if (nextPass.trim().length < 4) {
+                alert('Mật khẩu cần tối thiểu 4 ký tự!');
+                return;
+            }
+            acc.password = nextPass.trim();
+            saveAccountsRegistry(registry);
+            showToast(`Đã cập nhật mật khẩu cho ${acc.teacherName}`);
+        }
+        function adminResetAccountForReregister(accountId) {
+            const registry = getAccountsRegistry();
+            const acc = registry.find(a => a.id === accountId);
+            if (!acc) return;
+            const msg = `Reset & xóa tài khoản của GVCN "${acc.teacherName}"?\n\nCác thông tin sau sẽ được giải phóng để đăng ký lại:\n- SĐT: ${acc.phone}\n- Tên GVCN: ${acc.teacherName}\n- Lớp: ${acc.className}\n- Đơn vị: ${acc.unit}\n\nToàn bộ dữ liệu lớp thuộc tài khoản này cũng sẽ bị xóa vĩnh viễn.`;
+            if (!confirm(msg)) return;
+
+            const updated = registry.filter(a => a.id !== accountId);
+            saveAccountsRegistry(updated);
+            localStorage.removeItem(accountId);
+            renderAdminDashboard();
+            showToast(`Đã reset thông tin của ${acc.teacherName}. Có thể đăng ký lại!`);
+        }
+        function adminResetAllAccounts() {
+            const registry = getAccountsRegistry();
+            if (!registry.length) {
+                alert('Hiện chưa có tài khoản GVCN nào để reset.');
+                return;
+            }
+            const confirmText = prompt(`CẢNH BÁO: Thao tác này sẽ xóa toàn bộ ${registry.length} tài khoản GVCN và mọi dữ liệu lớp đã nhập để đăng ký lại từ đầu.\n\nNhập chữ RESET để xác nhận:`);
+            if (confirmText !== 'RESET') {
+                if (confirmText !== null) alert('Bạn chưa nhập đúng chữ RESET. Đã hủy thao tác.');
+                return;
+            }
+            registry.forEach(acc => localStorage.removeItem(acc.id));
+            saveAccountsRegistry([]);
+            renderAdminDashboard();
+            showToast('Đã reset toàn bộ hệ thống tài khoản!');
+        }
+
         function initSelectors() {
             const weekSel = document.getElementById('ranking-week-select');
             weekSel.innerHTML = Array.from({ length: 35 }, (_, i) => `<option value="Tuần ${i + 1}">Tuần ${i + 1}</option>`).join('');
@@ -1439,7 +1655,6 @@
         function closeYearEndSummaryModal() {
             document.getElementById('yearend-modal').classList.add('hidden');
         }
-
         // =========================================================================
         // XUẤT FILE TIẾNG VIỆT CHUẨN IN ẤN: EXCEL (.XLSX), WORD (.DOC), PDF
         // =========================================================================
@@ -1456,8 +1671,6 @@
             const d = new Date();
             return `Ngày ${String(d.getDate()).padStart(2, '0')} tháng ${String(d.getMonth() + 1).padStart(2, '0')} năm ${d.getFullYear()}`;
         }
-
-        // 1. XUẤT FILE EXCEL (.XLSX) ĐA TRANG TÍNH TIẾNG VIỆT
         function exportExcelVN() {
             if (typeof XLSX === 'undefined') {
                 alert('Đang tải thư viện xuất Excel, vui lòng thử lại sau vài giây!');
@@ -1465,14 +1678,11 @@
             }
             const m = classData.meta;
             const wb = XLSX.utils.book_new();
-
-            // Sheet 1: Tổng quan lớp
             const total = classData.students.length;
             const male = classData.students.filter(s => s.gender === 'Nam').length;
             const female = classData.students.filter(s => s.gender === 'Nữ').length;
             const gpas = classData.students.map(s => parseFloat(s.gpa)).filter(n => !isNaN(n) && n > 0);
             const avgGpa = gpas.length ? Number((gpas.reduce((a, b) => a + b, 0) / gpas.length).toFixed(2)) : 0;
-
             const overviewRows = [
                 ['HỒ SƠ QUẢN LÝ LỚP HỌC CHỦ NHIỆM'],
                 ['Đơn vị / Trường', m.unit || ''],
@@ -1493,8 +1703,6 @@
             const wsOverview = XLSX.utils.aoa_to_sheet(overviewRows);
             wsOverview['!cols'] = [{ wch: 34 }, { wch: 38 }];
             XLSX.utils.book_append_sheet(wb, wsOverview, 'Tong_Quan_Lop');
-
-            // Sheet 2: Danh sách học sinh
             const studentHeader = ['STT', 'Họ và tên học sinh', 'Giới tính', 'Ngày sinh', 'Dân tộc', 'Tổ', 'Điểm trung bình', 'Xếp loại học lực'];
             const studentRows = classData.students.map((s, i) => [
                 i + 1,
@@ -1515,8 +1723,6 @@
             ]);
             wsStudents['!cols'] = [{ wch: 6 }, { wch: 28 }, { wch: 12 }, { wch: 15 }, { wch: 14 }, { wch: 12 }, { wch: 18 }, { wch: 20 }];
             XLSX.utils.book_append_sheet(wb, wsStudents, 'Danh_Sach_Hoc_Sinh');
-
-            // Sheet 3: Vinh danh học sinh tiêu biểu
             const honorHeader = ['Tháng', 'Họ và tên học sinh', 'Tổ', 'Danh hiệu khen thưởng', 'Thành tích nổi bật / Ghi chú', 'Ngày ghi nhận'];
             const honorRows = MONTHS.filter(mo => classData.honors[mo]).map(mo => {
                 const h = classData.honors[mo];
@@ -1532,8 +1738,6 @@
             ]);
             wsHonor['!cols'] = [{ wch: 14 }, { wch: 26 }, { wch: 12 }, { wch: 30 }, { wch: 42 }, { wch: 16 }];
             XLSX.utils.book_append_sheet(wb, wsHonor, 'Vinh_Danh_Cuoi_Nam');
-
-            // Sheet 4: Hạnh kiểm theo tháng
             const conductHeader = ['STT', 'Họ và tên học sinh', 'Tổ'];
             MONTHS.forEach(mo => {
                 conductHeader.push(`${mo} (Điểm)`, `${mo} (Xếp loại)`);
@@ -1553,8 +1757,6 @@
                 ...(conductRows.length ? conductRows : [['', 'Chưa có dữ liệu học sinh']])
             ]);
             XLSX.utils.book_append_sheet(wb, wsConduct, 'Hanh_Kiem_Thang');
-
-            // Sheet 5: Thi đua các tổ theo tuần
             const groups = getGroupNames();
             const recordedWeeks = Object.keys(classData.weeklyPoints || {});
             const rankingHeader = ['Tuần học', ...groups];
@@ -1569,8 +1771,6 @@
                 ...(rankingRows.length ? rankingRows : [['Chưa nhập điểm tuần', ...groups.map(() => '')]])
             ]);
             XLSX.utils.book_append_sheet(wb, wsRanking, 'Thi_Dua_Cac_To');
-
-            // Sheet 6: Điểm danh chuyên cần
             const attDates = Object.keys(classData.attendance || {}).sort();
             const attHeader = ['STT', 'Họ và tên học sinh', 'Tổ', ...attDates];
             const attRows = classData.students.map((s, i) => [
@@ -1586,13 +1786,10 @@
                 ...(attRows.length ? attRows : [['', 'Chưa có dữ liệu học sinh']])
             ]);
             XLSX.utils.book_append_sheet(wb, wsAtt, 'Diem_Danh_Chuyen_Can');
-
             const fileName = `HoSo_Lop_${sanitizeFileName(m.className)}_${sanitizeFileName(m.unit)}.xlsx`;
             XLSX.writeFile(wb, fileName);
             showToast('Đã xuất file Excel (.XLSX) tiếng Việt đầy đủ!');
         }
-
-        // TẠO NỘI DUNG VĂN BẢN HÀNH CHÍNH TIẾNG VIỆT DÙNG CHUNG CHO WORD & PDF
         function buildVietnameseReportHTML() {
             const m = classData.meta;
             const total = classData.students.length;
@@ -1602,7 +1799,6 @@
             const avgGpa = gpas.length ? (gpas.reduce((a, b) => a + b, 0) / gpas.length).toFixed(2) : 'Chưa có';
             const curMonth = document.getElementById('conduct-month-select').value || 'Tháng 9';
             const curWeek = document.getElementById('ranking-week-select').value || 'Tuần 1';
-
             const studentRowsHTML = classData.students.length
                 ? classData.students.map((s, i) => `
                     <tr>
@@ -1617,7 +1813,6 @@
                     </tr>
                 `).join('')
                 : `<tr><td colspan="8" style="text-align:center;font-style:italic;color:#666;">Chưa có danh sách học sinh.</td></tr>`;
-
             const honoredMonths = MONTHS.filter(mo => classData.honors[mo]);
             const honorRowsHTML = honoredMonths.length
                 ? honoredMonths.map((mo, i) => {
@@ -1635,7 +1830,6 @@
                     `;
                 }).join('')
                 : `<tr><td colspan="6" style="text-align:center;font-style:italic;color:#666;">Chưa có học sinh được vinh danh trong năm học.</td></tr>`;
-
             const groups = getGroupNames();
             const wData = classData.weeklyPoints[curWeek] || {};
             const rankingSorted = groups.map(g => ({
@@ -1643,7 +1837,6 @@
                 points: wData[g] !== undefined ? Number(wData[g]) : 100,
                 count: classData.students.filter(s => s.group === g).length
             })).sort((a, b) => b.points - a.points);
-
             const rankingRowsHTML = rankingSorted.map((item, idx) => `
                 <tr>
                     <td style="text-align:center;"><strong>Hạng ${idx + 1}</strong></td>
@@ -1652,7 +1845,6 @@
                     <td style="text-align:center;"><strong>${item.points} điểm</strong></td>
                 </tr>
             `).join('');
-
             const mConduct = classData.conducts[curMonth] || {};
             const conductRowsHTML = classData.students.length
                 ? classData.students.map((s, i) => {
@@ -1668,7 +1860,6 @@
                     `;
                 }).join('')
                 : `<tr><td colspan="5" style="text-align:center;font-style:italic;color:#666;">Chưa có dữ liệu hạnh kiểm.</td></tr>`;
-
             return `
                 <div style="font-family:'Times New Roman', Times, serif; color:#000; font-size:13pt; line-height:1.45;">
                     <table style="width:100%; border:none; margin-bottom:12px;">
@@ -1684,14 +1875,12 @@
                             </td>
                         </tr>
                     </table>
-
                     <h2 style="text-align:center; font-size:16pt; font-weight:bold; margin:14px 0 4px 0; text-transform:uppercase;">
                         HỒ SƠ TỔNG HỢP CÔNG TÁC CHỦ NHIỆM LỚP ${esc(m.className || '')}
                     </h2>
                     <p style="text-align:center; margin:0 0 14px 0; font-style:italic;">
                         Giáo viên chủ nhiệm: <strong>${esc(m.teacherName || '---')}</strong>
                     </p>
-
                     <h3 style="font-size:13.5pt; font-weight:bold; margin:14px 0 6px 0;">I. THỐNG KÊ TỔNG QUAN LỚP HỌC</h3>
                     <table border="1" cellspacing="0" cellpadding="6" style="width:100%; border-collapse:collapse; font-size:12pt;">
                         <tr>
@@ -1703,7 +1892,6 @@
                             <td><strong>Điểm trung bình cả lớp:</strong> ${avgGpa}</td>
                         </tr>
                     </table>
-
                     <h3 style="font-size:13.5pt; font-weight:bold; margin:16px 0 6px 0;">II. DANH SÁCH HỌC SINH LỚP ${esc(m.className || '')}</h3>
                     <table border="1" cellspacing="0" cellpadding="5" style="width:100%; border-collapse:collapse; font-size:11.5pt;">
                         <thead>
@@ -1720,7 +1908,6 @@
                         </thead>
                         <tbody>${studentRowsHTML}</tbody>
                     </table>
-
                     <h3 style="font-size:13.5pt; font-weight:bold; margin:16px 0 6px 0;">III. BẢNG XẾP HẠNG THI ĐUA CÁC TỔ (${esc(curWeek.toUpperCase())})</h3>
                     <table border="1" cellspacing="0" cellpadding="5" style="width:100%; border-collapse:collapse; font-size:11.5pt;">
                         <thead>
@@ -1733,7 +1920,6 @@
                         </thead>
                         <tbody>${rankingRowsHTML}</tbody>
                     </table>
-
                     <h3 style="font-size:13.5pt; font-weight:bold; margin:16px 0 6px 0;">IV. KẾT QUẢ RÈN LUYỆN & HẠNH KIỂM (${esc(curMonth.toUpperCase())})</h3>
                     <table border="1" cellspacing="0" cellpadding="5" style="width:100%; border-collapse:collapse; font-size:11.5pt;">
                         <thead>
@@ -1747,7 +1933,6 @@
                         </thead>
                         <tbody>${conductRowsHTML}</tbody>
                     </table>
-
                     <h3 style="font-size:13.5pt; font-weight:bold; margin:16px 0 6px 0;">V. TỔNG KẾT VINH DANH HỌC SINH TIÊU BIỂU TRONG NĂM</h3>
                     <table border="1" cellspacing="0" cellpadding="5" style="width:100%; border-collapse:collapse; font-size:11.5pt;">
                         <thead>
@@ -1762,7 +1947,6 @@
                         </thead>
                         <tbody>${honorRowsHTML}</tbody>
                     </table>
-
                     <table style="width:100%; border:none; margin-top:24px;">
                         <tr>
                             <td style="border:none; width:50%;"></td>
@@ -1777,8 +1961,6 @@
                 </div>
             `;
         }
-
-        // 2. XUẤT FILE WORD (.DOC) TIẾNG VIỆT CHUẨN MỞ TRÊN MICROSOFT WORD
         function exportWordVN() {
             const m = classData.meta;
             const bodyHTML = buildVietnameseReportHTML();
@@ -1807,8 +1989,6 @@
             URL.revokeObjectURL(url);
             showToast('Đã xuất file Word (.DOC) tiếng Việt chuẩn in ấn!');
         }
-
-        // 3. XUẤT FILE PDF / IN TRỰC TIẾP KHỔ A4 TIẾNG VIỆT
         function exportPDFVN() {
             const m = classData.meta;
             const bodyHTML = buildVietnameseReportHTML();
@@ -1851,7 +2031,6 @@
             printWin.document.close();
             showToast('Đang mở bản in / lưu file PDF tiếng Việt!');
         }
-
         function toggleDarkMode() {
             const dark = document.documentElement.classList.toggle('dark');
             localStorage.setItem('gvcn_theme_mode', dark ? 'dark' : 'light');
@@ -1863,8 +2042,14 @@
             updateThemeIcon(dark);
         }
         function updateThemeIcon(dark) {
-            document.getElementById('icon-moon').classList.toggle('hidden', dark);
-            document.getElementById('icon-sun').classList.toggle('hidden', !dark);
+            ['icon-moon', 'admin-icon-moon'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.toggle('hidden', dark);
+            });
+            ['icon-sun', 'admin-icon-sun'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.toggle('hidden', !dark);
+            });
         }
         function esc(str) {
             return String(str ?? '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
