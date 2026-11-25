@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hệ Thống Quản Lí Lớp Học Dành Cho GVCN</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -172,15 +173,15 @@
         <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 shadow-sm no-print">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between h-16 gap-2">
-                    <div class="flex items-center space-x-3 min-w-0">
+                    <div class="flex items-center space-x-3 shrink-0">
                         <div id="header-class-badge" class="w-10 h-10 shrink-0 rounded-xl bg-gradient-to-tr from-sky-600 to-indigo-600 flex items-center justify-center text-white font-bold text-xs shadow">
                             LỚP
                         </div>
-                        <div class="min-w-0">
-                            <h2 id="header-school-title" class="text-xs sm:text-sm font-extrabold uppercase truncate text-slate-900 dark:text-white">
+                        <div>
+                            <h2 id="header-school-title" class="text-xs sm:text-sm font-extrabold uppercase whitespace-nowrap text-slate-900 dark:text-white">
                                 ĐƠN VỊ
                             </h2>
-                            <p id="header-meta-sub" class="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                            <p id="header-meta-sub" class="text-[11px] text-slate-500 dark:text-slate-400 whitespace-nowrap">
                                 GVCN: ---
                             </p>
                         </div>
@@ -333,13 +334,13 @@
                                 <i class="fa-solid fa-file-import text-emerald-600"></i>
                                 <span>Nhập Danh Sách Học Sinh Hàng Loạt (File / Văn bản)</span>
                             </h4>
-                            <p class="text-xs text-slate-500">Hỗ trợ file .csv, .json, .txt hoặc dán trực tiếp từng dòng: <code>Họ tên, Giới tính, Ngày sinh, Dân tộc, Tổ, ĐTB, Học lực</code></p>
+                            <p class="text-xs text-slate-500">Hỗ trợ file .csv, .txt hoặc dán trực tiếp từng dòng: <code>Họ tên, Giới tính, Ngày sinh, Dân tộc, Tổ, ĐTB, Học lực</code></p>
                         </div>
                         <button type="button" onclick="openStudentModal()" class="px-3.5 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs font-semibold transition">
                             <i class="fa-solid fa-user-plus mr-1"></i> Nhập tay 1 học sinh
                         </button>
                     </div>
-                    <input type="file" id="bulk-file-input" accept=".csv,.json,.txt" onchange="readBulkFile(event)"
+                    <input type="file" id="bulk-file-input" accept=".csv,.txt" onchange="readBulkFile(event)"
                         class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 dark:file:bg-slate-700 dark:file:text-slate-200">
                     <textarea id="bulk-text-input" rows="5" placeholder="Ví dụ:&#10;Nguyễn Văn An, Nam, 15/08/2011, Kinh, Tổ 1, 8.6, Giỏi&#10;Trần Thị Bình, Nữ, 22/03/2011, Khmer, Tổ 2, 7.8, Khá"
                         class="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-mono focus:outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
@@ -516,34 +517,61 @@
                     </div>
                 </div>
             </section>
-            <!-- TAB 8: XUẤT FILE -->
+            <!-- TAB 8: XUẤT FILE (EXCEL, WORD, PDF TIẾNG VIỆT CHUẨN ĐỂ IN ẤN) -->
             <section id="view-export" class="hidden space-y-6">
                 <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-5">
                     <div>
                         <h3 class="text-lg font-bold flex items-center space-x-2">
                             <i class="fa-solid fa-file-export text-emerald-600"></i>
-                            <span>Xuất File Dữ Liệu Tài Khoản Hiện Tại</span>
+                            <span>Xuất Hồ Sơ & Báo Cáo Lớp Học (Tiếng Việt Chuẩn In Ấn)</span>
                         </h3>
-                        <p class="text-xs text-slate-500">Chỉ xuất dữ liệu thuộc tài khoản GVCN đang đăng nhập, không lẫn dữ liệu của tài khoản khác.</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Toàn bộ dữ liệu được biên soạn và trình bày sẵn bằng tiếng Việt rõ ràng để thầy/cô mở trên Excel, Word hoặc lưu PDF in ra ngay.</p>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="p-5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 space-y-3">
-                            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center"><i class="fa-solid fa-file-csv text-lg"></i></div>
-                            <h4 class="font-bold text-sm">Danh sách học sinh (.CSV)</h4>
-                            <p class="text-xs text-slate-500">Mở trực tiếp bằng Microsoft Excel để lưu trữ, báo cáo hoặc in ấn.</p>
-                            <button onclick="exportStudentsCSV()" class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition">Tải file .CSV</button>
+                        <!-- EXCEL -->
+                        <div class="p-5 rounded-2xl border border-emerald-200 dark:border-emerald-800/60 bg-emerald-50/40 dark:bg-slate-900/60 flex flex-col justify-between space-y-4">
+                            <div class="space-y-2.5">
+                                <div class="w-11 h-11 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-sm">
+                                    <i class="fa-solid fa-file-excel text-xl"></i>
+                                </div>
+                                <h4 class="font-bold text-sm text-slate-900 dark:text-white">Xuất File Excel (.XLSX)</h4>
+                                <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                                    Tổng hợp đầy đủ các bảng tiếng Việt có dấu: <strong>Tổng quan lớp, Danh sách học sinh, Hạnh kiểm tháng, Thi đua tổ, Vinh danh cuối năm & Điểm danh</strong>.
+                                </p>
+                            </div>
+                            <button onclick="exportExcelVN()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-sm transition">
+                                <i class="fa-solid fa-download mr-1.5"></i> Tải File Excel (.XLSX)
+                            </button>
                         </div>
-                        <div class="p-5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 space-y-3">
-                            <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center"><i class="fa-solid fa-crown text-lg"></i></div>
-                            <h4 class="font-bold text-sm">Tổng kết vinh danh cuối năm (.CSV)</h4>
-                            <p class="text-xs text-slate-500">Xuất toàn bộ lịch sử vinh danh các tháng đã lưu giữ trong năm học.</p>
-                            <button onclick="exportHonorCSV()" class="w-full py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold transition">Tải tổng kết vinh danh</button>
+                        <!-- WORD -->
+                        <div class="p-5 rounded-2xl border border-sky-200 dark:border-sky-800/60 bg-sky-50/40 dark:bg-slate-900/60 flex flex-col justify-between space-y-4">
+                            <div class="space-y-2.5">
+                                <div class="w-11 h-11 rounded-xl bg-sky-600 text-white flex items-center justify-center shadow-sm">
+                                    <i class="fa-solid fa-file-word text-xl"></i>
+                                </div>
+                                <h4 class="font-bold text-sm text-slate-900 dark:text-white">Xuất File Word (.DOC)</h4>
+                                <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                                    Trình bày sẵn mẫu văn bản hành chính tiếng Việt gồm tiêu đề Trường – Lớp – GVCN, bảng biểu kẻ khung rõ nét và mục ký tên để mở Word chỉnh sửa hoặc in ngay.
+                                </p>
+                            </div>
+                            <button onclick="exportWordVN()" class="w-full py-2.5 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs font-bold shadow-sm transition">
+                                <i class="fa-solid fa-download mr-1.5"></i> Tải File Word (.DOC)
+                            </button>
                         </div>
-                        <div class="p-5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 space-y-3">
-                            <div class="w-10 h-10 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center"><i class="fa-solid fa-file-code text-lg"></i></div>
-                            <h4 class="font-bold text-sm">Sao lưu toàn bộ lớp (.JSON)</h4>
-                            <p class="text-xs text-slate-500">Lưu toàn bộ cấu hình lớp, học sinh, thi đua, hạnh kiểm, điểm danh và vinh danh.</p>
-                            <button onclick="exportFullJSON()" class="w-full py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs font-bold transition">Tải file sao lưu .JSON</button>
+                        <!-- PDF -->
+                        <div class="p-5 rounded-2xl border border-rose-200 dark:border-rose-800/60 bg-rose-50/40 dark:bg-slate-900/60 flex flex-col justify-between space-y-4">
+                            <div class="space-y-2.5">
+                                <div class="w-11 h-11 rounded-xl bg-rose-600 text-white flex items-center justify-center shadow-sm">
+                                    <i class="fa-solid fa-file-pdf text-xl"></i>
+                                </div>
+                                <h4 class="font-bold text-sm text-slate-900 dark:text-white">Xuất File PDF / In Trực Tiếp</h4>
+                                <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                                    Tạo bản báo cáo khổ A4 tiếng Việt hoàn chỉnh, căn lề chuẩn, xem trước trực quan và lưu thành file <strong>PDF</strong> hoặc in trực tiếp ra máy in.
+                                </p>
+                            </div>
+                            <button onclick="exportPDFVN()" class="w-full py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold shadow-sm transition">
+                                <i class="fa-solid fa-print mr-1.5"></i> Xuất File PDF / In Ngay
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -664,7 +692,7 @@
             </div>
             <div id="yearend-body" class="p-6 overflow-y-auto space-y-4 text-xs"></div>
             <div class="px-6 py-3 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-2">
-                <button onclick="exportHonorCSV()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl">Xuất CSV Tổng Kết</button>
+                <button onclick="exportExcelVN()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl">Xuất Excel Tổng Kết</button>
                 <button onclick="closeYearEndSummaryModal()" class="px-4 py-2 border border-slate-300 rounded-xl font-semibold">Đóng</button>
             </div>
         </div>
@@ -965,7 +993,7 @@
             const m = classData.meta;
             document.getElementById('header-class-badge').textContent = m.className || 'LỚP';
             document.getElementById('header-school-title').textContent = `${m.unit || 'ĐƠN VỊ'} • LỚP ${m.className || ''}`;
-            document.getElementById('header-meta-sub').textContent = `GVCN: ${m.teacherName} • ${m.ward}, ${m.province}`;
+            document.getElementById('header-meta-sub').textContent = `GVCN: ${m.teacherName}`;
             document.getElementById('nav-student-count').textContent = `Danh sách (${classData.students.length})`;
             document.getElementById('dash-title').textContent = `Tổng Quan Lớp ${m.className || ''} — ${m.unit || ''}`;
             document.getElementById('dash-subtitle').textContent = `GVCN: ${m.teacherName} (${m.ward}, ${m.province})`;
@@ -1411,53 +1439,419 @@
         function closeYearEndSummaryModal() {
             document.getElementById('yearend-modal').classList.add('hidden');
         }
-        // XUẤT FILE
+
+        // =========================================================================
+        // XUẤT FILE TIẾNG VIỆT CHUẨN IN ẤN: EXCEL (.XLSX), WORD (.DOC), PDF
+        // =========================================================================
         function openExportModal() {
             switchTab('export');
         }
-        function downloadFile(filename, content, mimeType) {
-            const blob = new Blob([content], { type: mimeType });
+        function sanitizeFileName(str) {
+            return String(str || 'Lop_GVCN')
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                .replace(/đ/g, 'd').replace(/Đ/g, 'D')
+                .replace(/[^a-zA-Z0-9_-]+/g, '_');
+        }
+        function getFormattedDateVN() {
+            const d = new Date();
+            return `Ngày ${String(d.getDate()).padStart(2, '0')} tháng ${String(d.getMonth() + 1).padStart(2, '0')} năm ${d.getFullYear()}`;
+        }
+
+        // 1. XUẤT FILE EXCEL (.XLSX) ĐA TRANG TÍNH TIẾNG VIỆT
+        function exportExcelVN() {
+            if (typeof XLSX === 'undefined') {
+                alert('Đang tải thư viện xuất Excel, vui lòng thử lại sau vài giây!');
+                return;
+            }
+            const m = classData.meta;
+            const wb = XLSX.utils.book_new();
+
+            // Sheet 1: Tổng quan lớp
+            const total = classData.students.length;
+            const male = classData.students.filter(s => s.gender === 'Nam').length;
+            const female = classData.students.filter(s => s.gender === 'Nữ').length;
+            const gpas = classData.students.map(s => parseFloat(s.gpa)).filter(n => !isNaN(n) && n > 0);
+            const avgGpa = gpas.length ? Number((gpas.reduce((a, b) => a + b, 0) / gpas.length).toFixed(2)) : 0;
+
+            const overviewRows = [
+                ['HỒ SƠ QUẢN LÝ LỚP HỌC CHỦ NHIỆM'],
+                ['Đơn vị / Trường', m.unit || ''],
+                ['Lớp chủ nhiệm', m.className || ''],
+                ['Giáo viên chủ nhiệm', m.teacherName || ''],
+                ['Địa phương', `${m.ward || ''}, ${m.province || ''}`],
+                ['Ngày xuất báo cáo', getFormattedDateVN()],
+                [],
+                ['THỐNG KÊ CHUNG', 'SỐ LIỆU'],
+                ['Sĩ số hiện tại', total],
+                ['Sĩ số mục tiêu', m.targetStudentCount || 0],
+                ['Số học sinh Nam', male],
+                ['Số học sinh Nữ', female],
+                ['Số tổ trong lớp', getGroupNames().length],
+                ['Điểm trung bình học tập cả lớp', avgGpa],
+                ['Số tháng đã lưu vinh danh', Object.keys(classData.honors || {}).length]
+            ];
+            const wsOverview = XLSX.utils.aoa_to_sheet(overviewRows);
+            wsOverview['!cols'] = [{ wch: 34 }, { wch: 38 }];
+            XLSX.utils.book_append_sheet(wb, wsOverview, 'Tong_Quan_Lop');
+
+            // Sheet 2: Danh sách học sinh
+            const studentHeader = ['STT', 'Họ và tên học sinh', 'Giới tính', 'Ngày sinh', 'Dân tộc', 'Tổ', 'Điểm trung bình', 'Xếp loại học lực'];
+            const studentRows = classData.students.map((s, i) => [
+                i + 1,
+                s.name || '',
+                s.gender || '',
+                s.dob || '',
+                s.ethnicity || 'Kinh',
+                s.group || '',
+                s.gpa > 0 ? s.gpa : '',
+                s.academic || 'Chưa xếp loại'
+            ]);
+            const wsStudents = XLSX.utils.aoa_to_sheet([
+                [`DANH SÁCH HỌC SINH LỚP ${m.className || ''} - ${m.unit || ''}`],
+                [`Giáo viên chủ nhiệm: ${m.teacherName || ''}`],
+                [],
+                studentHeader,
+                ...(studentRows.length ? studentRows : [['', 'Chưa có dữ liệu học sinh', '', '', '', '', '', '']])
+            ]);
+            wsStudents['!cols'] = [{ wch: 6 }, { wch: 28 }, { wch: 12 }, { wch: 15 }, { wch: 14 }, { wch: 12 }, { wch: 18 }, { wch: 20 }];
+            XLSX.utils.book_append_sheet(wb, wsStudents, 'Danh_Sach_Hoc_Sinh');
+
+            // Sheet 3: Vinh danh học sinh tiêu biểu
+            const honorHeader = ['Tháng', 'Họ và tên học sinh', 'Tổ', 'Danh hiệu khen thưởng', 'Thành tích nổi bật / Ghi chú', 'Ngày ghi nhận'];
+            const honorRows = MONTHS.filter(mo => classData.honors[mo]).map(mo => {
+                const h = classData.honors[mo];
+                const st = classData.students.find(s => s.id === h.studentId);
+                return [mo, st ? st.name : '', st ? st.group : '', h.title || '', h.desc || '', h.updatedAt || ''];
+            });
+            const wsHonor = XLSX.utils.aoa_to_sheet([
+                [`SỔ VINH DANH & TỔNG KẾT KHEN THƯỞNG CUỐI NĂM - LỚP ${m.className || ''}`],
+                [`Giáo viên chủ nhiệm: ${m.teacherName || ''}`],
+                [],
+                honorHeader,
+                ...(honorRows.length ? honorRows : [['', 'Chưa có dữ liệu vinh danh', '', '', '', '']])
+            ]);
+            wsHonor['!cols'] = [{ wch: 14 }, { wch: 26 }, { wch: 12 }, { wch: 30 }, { wch: 42 }, { wch: 16 }];
+            XLSX.utils.book_append_sheet(wb, wsHonor, 'Vinh_Danh_Cuoi_Nam');
+
+            // Sheet 4: Hạnh kiểm theo tháng
+            const conductHeader = ['STT', 'Họ và tên học sinh', 'Tổ'];
+            MONTHS.forEach(mo => {
+                conductHeader.push(`${mo} (Điểm)`, `${mo} (Xếp loại)`);
+            });
+            const conductRows = classData.students.map((s, i) => {
+                const row = [i + 1, s.name || '', s.group || ''];
+                MONTHS.forEach(mo => {
+                    const c = (classData.conducts[mo] && classData.conducts[mo][s.id]) || { score: 100, rating: 'Tốt' };
+                    row.push(c.score, c.rating);
+                });
+                return row;
+            });
+            const wsConduct = XLSX.utils.aoa_to_sheet([
+                [`BẢNG THEO DÕI ĐIỂM RÈN LUYỆN & HẠNH KIỂM LỚP ${m.className || ''}`],
+                [],
+                conductHeader,
+                ...(conductRows.length ? conductRows : [['', 'Chưa có dữ liệu học sinh']])
+            ]);
+            XLSX.utils.book_append_sheet(wb, wsConduct, 'Hanh_Kiem_Thang');
+
+            // Sheet 5: Thi đua các tổ theo tuần
+            const groups = getGroupNames();
+            const recordedWeeks = Object.keys(classData.weeklyPoints || {});
+            const rankingHeader = ['Tuần học', ...groups];
+            const rankingRows = recordedWeeks.map(w => [
+                w,
+                ...groups.map(g => (classData.weeklyPoints[w][g] !== undefined ? classData.weeklyPoints[w][g] : 100))
+            ]);
+            const wsRanking = XLSX.utils.aoa_to_sheet([
+                [`BẢNG TỔNG HỢP ĐIỂM THI ĐUA CÁC TỔ - LỚP ${m.className || ''}`],
+                [],
+                rankingHeader,
+                ...(rankingRows.length ? rankingRows : [['Chưa nhập điểm tuần', ...groups.map(() => '')]])
+            ]);
+            XLSX.utils.book_append_sheet(wb, wsRanking, 'Thi_Dua_Cac_To');
+
+            // Sheet 6: Điểm danh chuyên cần
+            const attDates = Object.keys(classData.attendance || {}).sort();
+            const attHeader = ['STT', 'Họ và tên học sinh', 'Tổ', ...attDates];
+            const attRows = classData.students.map((s, i) => [
+                i + 1,
+                s.name || '',
+                s.group || '',
+                ...attDates.map(d => (classData.attendance[d] && classData.attendance[d][s.id]) || 'Có mặt')
+            ]);
+            const wsAtt = XLSX.utils.aoa_to_sheet([
+                [`BẢNG THEO DÕI ĐIỂM DANH CHUYÊN CẦN LỚP ${m.className || ''}`],
+                [],
+                attHeader,
+                ...(attRows.length ? attRows : [['', 'Chưa có dữ liệu học sinh']])
+            ]);
+            XLSX.utils.book_append_sheet(wb, wsAtt, 'Diem_Danh_Chuyen_Can');
+
+            const fileName = `HoSo_Lop_${sanitizeFileName(m.className)}_${sanitizeFileName(m.unit)}.xlsx`;
+            XLSX.writeFile(wb, fileName);
+            showToast('Đã xuất file Excel (.XLSX) tiếng Việt đầy đủ!');
+        }
+
+        // TẠO NỘI DUNG VĂN BẢN HÀNH CHÍNH TIẾNG VIỆT DÙNG CHUNG CHO WORD & PDF
+        function buildVietnameseReportHTML() {
+            const m = classData.meta;
+            const total = classData.students.length;
+            const male = classData.students.filter(s => s.gender === 'Nam').length;
+            const female = classData.students.filter(s => s.gender === 'Nữ').length;
+            const gpas = classData.students.map(s => parseFloat(s.gpa)).filter(n => !isNaN(n) && n > 0);
+            const avgGpa = gpas.length ? (gpas.reduce((a, b) => a + b, 0) / gpas.length).toFixed(2) : 'Chưa có';
+            const curMonth = document.getElementById('conduct-month-select').value || 'Tháng 9';
+            const curWeek = document.getElementById('ranking-week-select').value || 'Tuần 1';
+
+            const studentRowsHTML = classData.students.length
+                ? classData.students.map((s, i) => `
+                    <tr>
+                        <td style="text-align:center;">${i + 1}</td>
+                        <td><strong>${esc(s.name)}</strong></td>
+                        <td style="text-align:center;">${esc(s.gender)}</td>
+                        <td style="text-align:center;">${esc(s.dob || '---')}</td>
+                        <td style="text-align:center;">${esc(s.ethnicity || 'Kinh')}</td>
+                        <td style="text-align:center;">${esc(s.group)}</td>
+                        <td style="text-align:center;">${s.gpa > 0 ? s.gpa : '---'}</td>
+                        <td style="text-align:center;">${esc(s.academic || 'Chưa xếp loại')}</td>
+                    </tr>
+                `).join('')
+                : `<tr><td colspan="8" style="text-align:center;font-style:italic;color:#666;">Chưa có danh sách học sinh.</td></tr>`;
+
+            const honoredMonths = MONTHS.filter(mo => classData.honors[mo]);
+            const honorRowsHTML = honoredMonths.length
+                ? honoredMonths.map((mo, i) => {
+                    const h = classData.honors[mo];
+                    const st = classData.students.find(s => s.id === h.studentId);
+                    return `
+                        <tr>
+                            <td style="text-align:center;">${i + 1}</td>
+                            <td style="text-align:center;"><strong>${esc(mo)}</strong></td>
+                            <td><strong>${st ? esc(st.name) : '---'}</strong></td>
+                            <td style="text-align:center;">${st ? esc(st.group) : '---'}</td>
+                            <td>${esc(h.title)}</td>
+                            <td>${esc(h.desc)}</td>
+                        </tr>
+                    `;
+                }).join('')
+                : `<tr><td colspan="6" style="text-align:center;font-style:italic;color:#666;">Chưa có học sinh được vinh danh trong năm học.</td></tr>`;
+
+            const groups = getGroupNames();
+            const wData = classData.weeklyPoints[curWeek] || {};
+            const rankingSorted = groups.map(g => ({
+                group: g,
+                points: wData[g] !== undefined ? Number(wData[g]) : 100,
+                count: classData.students.filter(s => s.group === g).length
+            })).sort((a, b) => b.points - a.points);
+
+            const rankingRowsHTML = rankingSorted.map((item, idx) => `
+                <tr>
+                    <td style="text-align:center;"><strong>Hạng ${idx + 1}</strong></td>
+                    <td style="text-align:center;">${esc(item.group)}</td>
+                    <td style="text-align:center;">${item.count} học sinh</td>
+                    <td style="text-align:center;"><strong>${item.points} điểm</strong></td>
+                </tr>
+            `).join('');
+
+            const mConduct = classData.conducts[curMonth] || {};
+            const conductRowsHTML = classData.students.length
+                ? classData.students.map((s, i) => {
+                    const c = mConduct[s.id] || { score: 100, rating: 'Tốt' };
+                    return `
+                        <tr>
+                            <td style="text-align:center;">${i + 1}</td>
+                            <td>${esc(s.name)}</td>
+                            <td style="text-align:center;">${esc(s.group)}</td>
+                            <td style="text-align:center;">${c.score}</td>
+                            <td style="text-align:center;"><strong>${esc(c.rating)}</strong></td>
+                        </tr>
+                    `;
+                }).join('')
+                : `<tr><td colspan="5" style="text-align:center;font-style:italic;color:#666;">Chưa có dữ liệu hạnh kiểm.</td></tr>`;
+
+            return `
+                <div style="font-family:'Times New Roman', Times, serif; color:#000; font-size:13pt; line-height:1.45;">
+                    <table style="width:100%; border:none; margin-bottom:12px;">
+                        <tr>
+                            <td style="border:none; text-align:center; width:48%; vertical-align:top;">
+                                <div style="font-weight:bold; text-transform:uppercase;">${esc(m.unit || 'TRƯỜNG THPT')}</div>
+                                <div style="font-weight:bold;">LỚP: ${esc(m.className || '---')}</div>
+                                <div style="font-size:11pt;">(${esc(m.ward || '')}${m.province ? ', ' + esc(m.province) : ''})</div>
+                            </td>
+                            <td style="border:none; text-align:center; width:52%; vertical-align:top;">
+                                <div style="font-weight:bold;">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</div>
+                                <div style="font-weight:bold; text-decoration:underline;">Độc lập - Tự do - Hạnh phúc</div>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <h2 style="text-align:center; font-size:16pt; font-weight:bold; margin:14px 0 4px 0; text-transform:uppercase;">
+                        HỒ SƠ TỔNG HỢP CÔNG TÁC CHỦ NHIỆM LỚP ${esc(m.className || '')}
+                    </h2>
+                    <p style="text-align:center; margin:0 0 14px 0; font-style:italic;">
+                        Giáo viên chủ nhiệm: <strong>${esc(m.teacherName || '---')}</strong>
+                    </p>
+
+                    <h3 style="font-size:13.5pt; font-weight:bold; margin:14px 0 6px 0;">I. THỐNG KÊ TỔNG QUAN LỚP HỌC</h3>
+                    <table border="1" cellspacing="0" cellpadding="6" style="width:100%; border-collapse:collapse; font-size:12pt;">
+                        <tr>
+                            <td style="width:50%;"><strong>Sĩ số hiện tại:</strong> ${total} / ${m.targetStudentCount || 0} học sinh</td>
+                            <td style="width:50%;"><strong>Phân chia tổ:</strong> ${groups.length} tổ</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Nam / Nữ:</strong> ${male} Nam — ${female} Nữ</td>
+                            <td><strong>Điểm trung bình cả lớp:</strong> ${avgGpa}</td>
+                        </tr>
+                    </table>
+
+                    <h3 style="font-size:13.5pt; font-weight:bold; margin:16px 0 6px 0;">II. DANH SÁCH HỌC SINH LỚP ${esc(m.className || '')}</h3>
+                    <table border="1" cellspacing="0" cellpadding="5" style="width:100%; border-collapse:collapse; font-size:11.5pt;">
+                        <thead>
+                            <tr style="background-color:#e2e8f0; font-weight:bold; text-align:center;">
+                                <th style="width:42px;">STT</th>
+                                <th>Họ và tên học sinh</th>
+                                <th style="width:72px;">Giới tính</th>
+                                <th style="width:95px;">Ngày sinh</th>
+                                <th style="width:75px;">Dân tộc</th>
+                                <th style="width:65px;">Tổ</th>
+                                <th style="width:60px;">ĐTB</th>
+                                <th style="width:105px;">Học lực</th>
+                            </tr>
+                        </thead>
+                        <tbody>${studentRowsHTML}</tbody>
+                    </table>
+
+                    <h3 style="font-size:13.5pt; font-weight:bold; margin:16px 0 6px 0;">III. BẢNG XẾP HẠNG THI ĐUA CÁC TỔ (${esc(curWeek.toUpperCase())})</h3>
+                    <table border="1" cellspacing="0" cellpadding="5" style="width:100%; border-collapse:collapse; font-size:11.5pt;">
+                        <thead>
+                            <tr style="background-color:#e2e8f0; font-weight:bold; text-align:center;">
+                                <th style="width:110px;">Xếp hạng</th>
+                                <th>Tên tổ</th>
+                                <th>Sĩ số tổ</th>
+                                <th>Tổng điểm thi đua</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rankingRowsHTML}</tbody>
+                    </table>
+
+                    <h3 style="font-size:13.5pt; font-weight:bold; margin:16px 0 6px 0;">IV. KẾT QUẢ RÈN LUYỆN & HẠNH KIỂM (${esc(curMonth.toUpperCase())})</h3>
+                    <table border="1" cellspacing="0" cellpadding="5" style="width:100%; border-collapse:collapse; font-size:11.5pt;">
+                        <thead>
+                            <tr style="background-color:#e2e8f0; font-weight:bold; text-align:center;">
+                                <th style="width:45px;">STT</th>
+                                <th>Họ và tên học sinh</th>
+                                <th style="width:80px;">Tổ</th>
+                                <th style="width:120px;">Điểm rèn luyện</th>
+                                <th style="width:130px;">Xếp loại hạnh kiểm</th>
+                            </tr>
+                        </thead>
+                        <tbody>${conductRowsHTML}</tbody>
+                    </table>
+
+                    <h3 style="font-size:13.5pt; font-weight:bold; margin:16px 0 6px 0;">V. TỔNG KẾT VINH DANH HỌC SINH TIÊU BIỂU TRONG NĂM</h3>
+                    <table border="1" cellspacing="0" cellpadding="5" style="width:100%; border-collapse:collapse; font-size:11.5pt;">
+                        <thead>
+                            <tr style="background-color:#e2e8f0; font-weight:bold; text-align:center;">
+                                <th style="width:45px;">STT</th>
+                                <th style="width:90px;">Tháng</th>
+                                <th>Họ và tên học sinh</th>
+                                <th style="width:70px;">Tổ</th>
+                                <th>Danh hiệu</th>
+                                <th>Thành tích / Ghi chú</th>
+                            </tr>
+                        </thead>
+                        <tbody>${honorRowsHTML}</tbody>
+                    </table>
+
+                    <table style="width:100%; border:none; margin-top:24px;">
+                        <tr>
+                            <td style="border:none; width:50%;"></td>
+                            <td style="border:none; width:50%; text-align:center;">
+                                <div style="font-style:italic;">${esc(m.province || 'Vĩnh Long')}, ${getFormattedDateVN()}</div>
+                                <div style="font-weight:bold; margin-top:4px;">GIÁO VIÊN CHỦ NHIỆM</div>
+                                <div style="font-style:italic; font-size:11pt;">(Ký và ghi rõ họ tên)</div>
+                                <div style="font-weight:bold; margin-top:55px;">${esc(m.teacherName || '')}</div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            `;
+        }
+
+        // 2. XUẤT FILE WORD (.DOC) TIẾNG VIỆT CHUẨN MỞ TRÊN MICROSOFT WORD
+        function exportWordVN() {
+            const m = classData.meta;
+            const bodyHTML = buildVietnameseReportHTML();
+            const wordDocument = `
+                <html xmlns:o="urn:schemas-microsoft-com:office:office"
+                      xmlns:w="urn:schemas-microsoft-com:office:word"
+                      xmlns="http://www.w3.org/TR/REC-html40">
+                <head>
+                    <meta charset="utf-8">
+                    <title>Hồ Sơ Lớp ${esc(m.className || '')}</title>
+                    <style>
+                        @page { size: A4 portrait; margin: 1.8cm 1.5cm 1.8cm 2cm; }
+                        body { font-family: 'Times New Roman', Times, serif; }
+                        table { border-collapse: collapse; }
+                    </style>
+                </head>
+                <body>${bodyHTML}</body>
+                </html>
+            `;
+            const blob = new Blob(['\ufeff', wordDocument], { type: 'application/msword;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = filename;
+            a.download = `HoSo_Lop_${sanitizeFileName(m.className)}_${sanitizeFileName(m.unit)}.doc`;
             a.click();
             URL.revokeObjectURL(url);
+            showToast('Đã xuất file Word (.DOC) tiếng Việt chuẩn in ấn!');
         }
-        function exportStudentsCSV() {
-            const header = ['STT', 'Họ và tên', 'Giới tính', 'Ngày sinh', 'Dân tộc', 'Tổ', 'ĐTB', 'Học lực'];
-            const rows = classData.students.map((s, i) => [
-                i + 1, s.name, s.gender, s.dob, s.ethnicity, s.group, s.gpa, s.academic
-            ]);
-            const csv = '\uFEFF' + [header, ...rows].map(r => r.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(',')).join('\n');
-            downloadFile(`DanhSach_Lop_${classData.meta.className || 'GVCN'}.csv`, csv, 'text/csv;charset=utf-8;');
-            showToast('Đã xuất file danh sách học sinh (.CSV)');
+
+        // 3. XUẤT FILE PDF / IN TRỰC TIẾP KHỔ A4 TIẾNG VIỆT
+        function exportPDFVN() {
+            const m = classData.meta;
+            const bodyHTML = buildVietnameseReportHTML();
+            const printWin = window.open('', '_blank', 'width=960,height=800');
+            if (!printWin) {
+                alert('Trình duyệt đang chặn cửa sổ bật lên (Pop-up). Vui lòng cho phép mở cửa sổ để lưu file PDF hoặc in!');
+                return;
+            }
+            printWin.document.write(`
+                <!DOCTYPE html>
+                <html lang="vi">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Hồ Sơ Lớp ${esc(m.className || '')} - ${esc(m.unit || '')}</title>
+                    <style>
+                        @page { size: A4 portrait; margin: 15mm 14mm 15mm 18mm; }
+                        body { margin: 0; padding: 16px; background: #fff; color: #000; font-family: 'Times New Roman', Times, serif; }
+                        table { page-break-inside: auto; }
+                        tr { page-break-inside: avoid; page-break-after: auto; }
+                        @media print {
+                            body { padding: 0; }
+                            .no-print-bar { display: none !important; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="no-print-bar" style="background:#f1f5f9; border:1px solid #cbd5e1; padding:10px 14px; border-radius:8px; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; font-family:sans-serif; font-size:13px;">
+                        <span><strong>Mẹo lưu PDF:</strong> Trong hộp thoại in hiện ra, chọn mục đích là <strong>"Lưu dưới dạng PDF" (Save as PDF)</strong>.</span>
+                        <button onclick="window.print()" style="background:#e11d48; color:#fff; border:none; padding:8px 14px; border-radius:6px; font-weight:bold; cursor:pointer;">Lưu PDF / In Ngay</button>
+                    </div>
+                    ${bodyHTML}
+                    <script>
+                        window.onload = function() {
+                            setTimeout(function() { window.print(); }, 350);
+                        };
+                    <\/script>
+                </body>
+                </html>
+            `);
+            printWin.document.close();
+            showToast('Đang mở bản in / lưu file PDF tiếng Việt!');
         }
-        function exportHonorCSV() {
-            const header = ['Tháng', 'Họ và tên', 'Tổ', 'Danh hiệu', 'Thành tích / Ghi chú', 'Ngày lưu'];
-            const rows = MONTHS.filter(m => classData.honors[m]).map(m => {
-                const h = classData.honors[m];
-                const st = classData.students.find(s => s.id === h.studentId);
-                return [m, st ? st.name : '', st ? st.group : '', h.title, h.desc, h.updatedAt || ''];
-            });
-            const csv = '\uFEFF' + [header, ...rows].map(r => r.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(',')).join('\n');
-            downloadFile(`TongKet_VinhDanh_Lop_${classData.meta.className || 'GVCN'}.csv`, csv, 'text/csv;charset=utf-8;');
-            showToast('Đã xuất file tổng kết vinh danh (.CSV)');
-        }
-        function exportFullJSON() {
-            const payload = JSON.stringify({
-                account: {
-                    ward: currentAccount.ward,
-                    province: currentAccount.province,
-                    unit: currentAccount.unit,
-                    className: currentAccount.className,
-                    teacherName: currentAccount.teacherName
-                },
-                data: classData
-            }, null, 2);
-            downloadFile(`SaoLuu_Lop_${classData.meta.className || 'GVCN'}.json`, payload, 'application/json');
-            showToast('Đã xuất file sao lưu toàn bộ lớp (.JSON)');
-        }
+
         function toggleDarkMode() {
             const dark = document.documentElement.classList.toggle('dark');
             localStorage.setItem('gvcn_theme_mode', dark ? 'dark' : 'light');
@@ -1484,5 +1878,4 @@
     </script>
 </body>
 </html>
-
 
