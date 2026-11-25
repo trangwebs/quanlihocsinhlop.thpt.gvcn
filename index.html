@@ -41,7 +41,7 @@
                     HỆ THỐNG QUẢN LÝ LỚP HỌC GVCN
                 </h1>
                 <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">
-                    Bản Quyền Nguyễn Ngân Chương
+                    Bản Quyền Nguyễn Ngân Chương • Giới hạn 999 tài khoản GVCN
                 </p>
             </div>
             <!-- 2 NÚT CHUYỂN TRANG RIÊNG BIỆT -->
@@ -94,7 +94,7 @@
             <!-- TRANG 2: TẠO TÀI KHOẢN GVCN -->
             <div id="page-register" class="hidden space-y-4">
                 <div class="p-3 rounded-xl bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800 text-xs text-indigo-800 dark:text-indigo-300 font-medium">
-                    <strong>*Lưu Ý :</strong> Điền đầy đủ thông tin hành chính và thiết lập mật khẩu an toàn.
+                    <strong>*Lưu Ý :</strong> Hệ thống hỗ trợ tối đa <strong>999</strong> tài khoản GVCN. Điền đầy đủ thông tin hành chính và thiết lập mật khẩu an toàn.
                 </div>
                 <form onsubmit="handleRegisterSubmit(event)" class="space-y-3.5">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -172,18 +172,28 @@
     <!-- GIAO DIỆN QUẢN TRỊ VIÊN (ADMIN) -->
     <div id="admin-panel" class="hidden flex-grow flex flex-col">
         <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 shadow-sm no-print">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-16 py-2 flex flex-wrap items-center justify-between gap-2">
                 <div class="flex items-center space-x-3">
                     <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center text-white font-bold shadow">
                         <i class="fa-solid fa-user-shield"></i>
                     </div>
                     <div>
-                        <h2 class="text-sm font-extrabold uppercase text-slate-900 dark:text-white">QUẢN TRỊ HỆ THỐNG (ADMIN)</h2>
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400">Quản lý tài khoản GVCN & reset thông tin đăng ký</p>
+                        <h2 class="text-sm font-extrabold uppercase text-slate-900 dark:text-white">QUẢN TRỊ HỆ THỐNG (ADMIN DUY NHẤT)</h2>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400">Can thiệp sâu • Chế độ nộp kiểm tra • Sao lưu/Khôi phục • Xuất Excel (Giới hạn cố định: 999)</p>
                     </div>
                 </div>
-                <div class="flex items-center space-x-2">
-                    <button onclick="adminResetAllAccounts()" class="px-3.5 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 text-xs font-bold transition">
+                <div class="flex flex-wrap items-center gap-1.5">
+                    <button onclick="adminExportBackupJSON()" class="px-3 py-2 rounded-xl bg-sky-50 hover:bg-sky-100 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800 text-xs font-bold transition">
+                        <i class="fa-solid fa-database mr-1"></i> Sao lưu JSON
+                    </button>
+                    <label class="px-3 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800 text-xs font-bold transition cursor-pointer">
+                        <i class="fa-solid fa-upload mr-1"></i> Khôi phục JSON
+                        <input type="file" accept=".json" onchange="adminRestoreBackupJSON(event)" class="hidden">
+                    </label>
+                    <button onclick="adminExportAllClassesExcel()" class="px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition">
+                        <i class="fa-solid fa-file-excel mr-1"></i> Xuất Excel Toàn Bộ
+                    </button>
+                    <button onclick="adminResetAllAccounts()" class="px-3 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 text-xs font-bold transition">
                         <i class="fa-solid fa-rotate-left mr-1"></i> Reset Toàn Bộ
                     </button>
                     <button onclick="toggleDarkMode()" title="Đổi giao diện" class="p-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 transition">
@@ -196,17 +206,15 @@
                 </div>
             </div>
         </header>
-
         <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
             <div class="p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800 text-xs text-indigo-900 dark:text-indigo-200 leading-relaxed">
-                <strong>Hướng dẫn Reset & Đăng ký lại:</strong> Khi bạn bấm <strong>"Reset / Xóa"</strong> trên một tài khoản GVCN, hệ thống sẽ xóa tài khoản đó khỏi danh sách đăng ký và xóa toàn bộ kho dữ liệu lớp tương ứng. Sau đó, các thông tin như <strong>SĐT, Tên GVCN, Lớp và Đơn vị/Trường</strong> của tài khoản đó có thể được dùng để đăng ký lại từ đầu.
+                <strong>Quyền can thiệp sâu của Admin:</strong> Bạn có thể bấm <strong>"Chi tiết & Kiểm tra"</strong> để xem toàn bộ số liệu lớp và bật <strong>Chế độ nộp kiểm tra</strong>, bấm <strong>"Sửa HC"</strong> để sửa thông tin hành chính GVCN, bấm <strong>"Vào lớp"</strong> để thao tác trực tiếp dưới danh nghĩa GVCN đó, hoặc <strong>"Xuất Excel"</strong> cho từng lớp hoặc toàn bộ hệ thống. Giới hạn tài khoản GVCN cố định là <strong>999</strong>.
             </div>
-
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
                     <p class="text-xs font-semibold text-slate-400 uppercase">Tài khoản GVCN đã đăng ký</p>
-                    <h4 class="text-2xl font-extrabold mt-1 text-indigo-600" id="admin-stat-accounts">0 / 100</h4>
-                    <p class="text-xs text-slate-500 mt-1">Tối đa 100 tài khoản</p>
+                    <h4 class="text-2xl font-extrabold mt-1 text-indigo-600" id="admin-stat-accounts">0 / 999</h4>
+                    <p class="text-xs text-slate-500 mt-1">Giới hạn cố định: 999 tài khoản (1 Admin duy nhất)</p>
                 </div>
                 <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
                     <p class="text-xs font-semibold text-slate-400 uppercase">Tổng học sinh toàn hệ thống</p>
@@ -219,7 +227,6 @@
                     <p class="text-xs text-slate-500 mt-1">Số đơn vị có tài khoản hoạt động</p>
                 </div>
             </div>
-
             <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col sm:flex-row gap-3 justify-between items-center">
                 <div class="relative w-full sm:w-80">
                     <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
@@ -230,20 +237,19 @@
                     <i class="fa-solid fa-arrows-rotate mr-1"></i> Làm mới danh sách
                 </button>
             </div>
-
             <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-slate-50 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-700 text-[11px] font-bold text-slate-500 uppercase">
-                                <th class="py-3 px-4 text-center w-12">STT</th>
-                                <th class="py-3 px-4">Tên GVCN</th>
-                                <th class="py-3 px-4">SĐT</th>
-                                <th class="py-3 px-4">Lớp</th>
-                                <th class="py-3 px-4">Đơn vị / Trường</th>
-                                <th class="py-3 px-4">Địa phương</th>
-                                <th class="py-3 px-4 text-center">Sĩ số</th>
-                                <th class="py-3 px-4 text-center">Thao tác</th>
+                                <th class="py-3 px-3 text-center w-12">STT</th>
+                                <th class="py-3 px-3">Tên GVCN</th>
+                                <th class="py-3 px-3">SĐT</th>
+                                <th class="py-3 px-3">Lớp</th>
+                                <th class="py-3 px-3">Đơn vị / Trường</th>
+                                <th class="py-3 px-3">Kiểm tra</th>
+                                <th class="py-3 px-3 text-center">Sĩ số</th>
+                                <th class="py-3 px-3 text-center">Thao tác can thiệp</th>
                             </tr>
                         </thead>
                         <tbody id="admin-accounts-tbody" class="divide-y divide-slate-200 dark:divide-slate-700 text-xs"></tbody>
@@ -299,6 +305,9 @@
                         </button>
                     </nav>
                     <div class="flex items-center space-x-1.5 shrink-0">
+                        <button id="btn-back-to-admin" onclick="returnToAdminFromImpersonate()" class="hidden inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-xs font-bold shadow-sm transition">
+                            <i class="fa-solid fa-user-shield"></i><span>Về Admin</span>
+                        </button>
                         <button onclick="openExportModal()" class="inline-flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-sm transition">
                             <i class="fa-solid fa-download"></i><span class="hidden sm:inline">Xuất File</span>
                         </button>
@@ -371,7 +380,8 @@
                     <div id="dash-groups-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3"></div>
                 </div>
             </section>
-            <!-- TAB 2: NHẬP DỮ LIỆU LỚP (LỚP, TRƯỜNG, BAO NHIÊU HS, BAO NHIÊU TỔ + NHẬP DANH SÁCH HS) -->
+
+            <!-- TAB 2: NHẬP DỮ LIỆU LỚP -->
             <section id="view-class-input" class="hidden space-y-6">
                 <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-5">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-700 pb-4">
@@ -411,7 +421,6 @@
                         </div>
                     </form>
                 </div>
-                <!-- Nhập hàng loạt học sinh qua File hoặc dán văn bản -->
                 <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
                     <div class="flex flex-wrap items-center justify-between gap-2">
                         <div>
@@ -446,6 +455,7 @@
                     </div>
                 </div>
             </section>
+
             <!-- TAB 3: DANH SÁCH HỌC SINH -->
             <section id="view-students" class="hidden space-y-4">
                 <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col md:flex-row gap-3 justify-between items-center">
@@ -482,6 +492,7 @@
                     </div>
                 </div>
             </section>
+
             <!-- TAB 4: THI ĐUA TỔ -->
             <section id="view-ranking" class="hidden space-y-6">
                 <div class="bg-gradient-to-r from-sky-600 to-indigo-600 rounded-2xl p-6 text-white shadow flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -498,6 +509,7 @@
                 </div>
                 <div id="ranking-cards-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4"></div>
             </section>
+
             <!-- TAB 5: HẠNH KIỂM -->
             <section id="view-conduct" class="hidden space-y-4">
                 <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
@@ -525,6 +537,7 @@
                     </div>
                 </div>
             </section>
+
             <!-- TAB 6: ĐIỂM DANH -->
             <section id="view-attendance" class="hidden space-y-4">
                 <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
@@ -555,7 +568,8 @@
                     </div>
                 </div>
             </section>
-            <!-- TAB 7: VINH DANH (LƯU GIỮ SUỐT NĂM & TỔNG KẾT CUỐI NĂM) -->
+
+            <!-- TAB 7: VINH DANH -->
             <section id="view-honor" class="hidden space-y-6">
                 <div class="bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 rounded-2xl p-6 text-white shadow flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
@@ -569,9 +583,7 @@
                         </button>
                     </div>
                 </div>
-                <!-- Vinh danh của tháng đang chọn -->
                 <div id="honor-selected-card" class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm"></div>
-                <!-- Danh sách lưu giữ vinh danh các tháng & Tổng kết cuối năm -->
                 <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
                     <div class="flex flex-wrap items-center justify-between gap-2">
                         <div>
@@ -602,7 +614,8 @@
                     </div>
                 </div>
             </section>
-            <!-- TAB 8: XUẤT FILE (EXCEL, WORD, PDF TIẾNG VIỆT CHUẨN ĐỂ IN ẤN) -->
+
+            <!-- TAB 8: XUẤT FILE -->
             <section id="view-export" class="hidden space-y-6">
                 <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-5">
                     <div>
@@ -613,7 +626,6 @@
                         <p class="text-xs text-slate-500 dark:text-slate-400">Toàn bộ dữ liệu được biên soạn và trình bày sẵn bằng tiếng Việt rõ ràng để thầy/cô mở trên Excel, Word hoặc lưu PDF in ra ngay.</p>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <!-- EXCEL -->
                         <div class="p-5 rounded-2xl border border-emerald-200 dark:border-emerald-800/60 bg-emerald-50/40 dark:bg-slate-900/60 flex flex-col justify-between space-y-4">
                             <div class="space-y-2.5">
                                 <div class="w-11 h-11 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-sm">
@@ -628,7 +640,6 @@
                                 <i class="fa-solid fa-download mr-1.5"></i> Tải File Excel (.XLSX)
                             </button>
                         </div>
-                        <!-- WORD -->
                         <div class="p-5 rounded-2xl border border-sky-200 dark:border-sky-800/60 bg-sky-50/40 dark:bg-slate-900/60 flex flex-col justify-between space-y-4">
                             <div class="space-y-2.5">
                                 <div class="w-11 h-11 rounded-xl bg-sky-600 text-white flex items-center justify-center shadow-sm">
@@ -643,7 +654,6 @@
                                 <i class="fa-solid fa-download mr-1.5"></i> Tải File Word (.DOC)
                             </button>
                         </div>
-                        <!-- PDF -->
                         <div class="p-5 rounded-2xl border border-rose-200 dark:border-rose-800/60 bg-rose-50/40 dark:bg-slate-900/60 flex flex-col justify-between space-y-4">
                             <div class="space-y-2.5">
                                 <div class="w-11 h-11 rounded-xl bg-rose-600 text-white flex items-center justify-center shadow-sm">
@@ -662,6 +672,67 @@
                 </div>
             </section>
         </main>
+    </div>
+
+    <!-- MODAL ADMIN: XEM CHI TIẾT LỚP & CHẾ ĐỘ NỘP KIỂM TRA -->
+    <div id="admin-inspect-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-2xl border border-slate-200 dark:border-slate-700 overflow-hidden max-h-[90vh] flex flex-col">
+            <div class="px-6 py-4 bg-indigo-600 text-white flex justify-between items-center">
+                <h4 class="font-bold text-sm" id="admin-inspect-title"><i class="fa-solid fa-clipboard-check mr-1.5"></i>Chi Tiết Lớp & Chế Độ Nộp Kiểm Tra</h4>
+                <button onclick="closeAdminInspectModal()" class="text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="admin-inspect-body" class="p-6 overflow-y-auto space-y-4 text-xs"></div>
+            <div class="px-6 py-3 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-2">
+                <button onclick="closeAdminInspectModal()" class="px-4 py-2 border border-slate-300 rounded-xl font-semibold">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ADMIN: SỬA THÔNG TIN HÀNH CHÍNH GVCN -->
+    <div id="admin-edit-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div class="px-6 py-4 bg-sky-600 text-white flex justify-between items-center">
+                <h4 class="font-bold text-sm"><i class="fa-solid fa-user-pen mr-1.5"></i>Sửa Thông Tin Hành Chính GVCN</h4>
+                <button onclick="closeAdminEditModal()" class="text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form onsubmit="saveAdminAccountEdit(event)" class="p-6 space-y-3 text-xs">
+                <input type="hidden" id="adm-edit-id">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold mb-1">Xã / Phường *</label>
+                        <input type="text" id="adm-edit-ward" required class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Tỉnh *</label>
+                        <input type="text" id="adm-edit-province" required class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold mb-1">Đơn vị / Trường *</label>
+                        <input type="text" id="adm-edit-unit" required class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Tên GVCN *</label>
+                        <input type="text" id="adm-edit-teacher" required class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold mb-1">Lớp *</label>
+                        <input type="text" id="adm-edit-class" required class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">SĐT *</label>
+                        <input type="text" id="adm-edit-phone" required class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl">
+                    </div>
+                </div>
+                <div class="pt-3 flex justify-end gap-2 border-t border-slate-200 dark:border-slate-700">
+                    <button type="button" onclick="closeAdminEditModal()" class="px-4 py-2 border border-slate-300 rounded-xl">Hủy</button>
+                    <button type="submit" class="px-5 py-2 bg-sky-600 hover:bg-sky-700 text-white font-bold rounded-xl">Lưu thay đổi</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <!-- MODAL THÊM / SỬA HỌC SINH -->
@@ -724,6 +795,7 @@
             </form>
         </div>
     </div>
+
     <!-- MODAL NHẬP ĐIỂM THI ĐUA TUẦN -->
     <div id="week-points-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-md border border-slate-200 dark:border-slate-700 overflow-hidden">
@@ -738,6 +810,7 @@
             </div>
         </div>
     </div>
+
     <!-- MODAL VINH DANH -->
     <div id="honor-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-md border border-slate-200 dark:border-slate-700 overflow-hidden">
@@ -769,6 +842,7 @@
             </form>
         </div>
     </div>
+
     <!-- MODAL TỔNG KẾT CUỐI NĂM VINH DANH -->
     <div id="yearend-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-2xl border border-slate-200 dark:border-slate-700 overflow-hidden max-h-[90vh] flex flex-col">
@@ -783,6 +857,7 @@
             </div>
         </div>
     </div>
+
     <!-- TOAST -->
     <div id="toast" class="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-lg flex items-center space-x-2 text-xs font-medium opacity-0 pointer-events-none transition-opacity duration-300">
         <i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i>
@@ -790,7 +865,7 @@
     </div>
 
     <script>
-        const MAX_ACCOUNTS = 100;
+        const MAX_ACCOUNTS = 999;
         const REGISTRY_KEY = 'gvcn_system_accounts_registry_v1';
         const ADMIN_ACCOUNT = {
             username: 'admin',
@@ -799,6 +874,7 @@
         const MONTHS = ['Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12', 'Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5'];
         let currentAccount = null;
         let isAdminMode = false;
+        let isAdminImpersonating = false;
         let classData = {
             meta: {
                 ward: '',
@@ -810,16 +886,23 @@
                 targetStudentCount: 0,
                 groupCount: 5
             },
+            inspection: {
+                status: 'Chưa kiểm tra',
+                note: '',
+                checkedAt: ''
+            },
             students: [],
             weeklyPoints: {},
             conducts: {},
             attendance: {},
             honors: {}
         };
+
         window.onload = function () {
             loadTheme();
             initSelectors();
         };
+
         function getAccountsRegistry() {
             try {
                 const raw = localStorage.getItem(REGISTRY_KEY);
@@ -828,9 +911,11 @@
                 return [];
             }
         }
+
         function saveAccountsRegistry(list) {
             localStorage.setItem(REGISTRY_KEY, JSON.stringify(list));
         }
+
         function switchAuthPage(page) {
             const isLogin = page === 'login';
             document.getElementById('page-login').classList.toggle('hidden', !isLogin);
@@ -844,6 +929,7 @@
             document.getElementById('login-error').classList.add('hidden');
             document.getElementById('register-error').classList.add('hidden');
         }
+
         function togglePass(inputId, iconId) {
             const inp = document.getElementById(inputId);
             const ico = document.getElementById(iconId);
@@ -855,9 +941,11 @@
                 ico.className = 'fa-regular fa-eye';
             }
         }
+
         function normalizePhone(p) {
             return (p || '').replace(/\s+/g, '').trim();
         }
+
         function handleRegisterSubmit(e) {
             e.preventDefault();
             const errBox = document.getElementById('register-error');
@@ -911,6 +999,7 @@
                     targetStudentCount: 0,
                     groupCount: 5
                 },
+                inspection: { status: 'Chưa kiểm tra', note: '', checkedAt: '' },
                 students: [],
                 weeklyPoints: {},
                 conducts: {},
@@ -918,11 +1007,13 @@
                 honors: {}
             };
             isAdminMode = false;
+            isAdminImpersonating = false;
             currentAccount = newAccount;
             saveAccountVault();
             enterMainApp();
             showToast('Tạo tài khoản GVCN thành công!');
         }
+
         function handleLoginSubmit(e) {
             e.preventDefault();
             const errBox = document.getElementById('login-error');
@@ -930,19 +1021,11 @@
             const identifier = document.getElementById('login-identifier').value.trim().toLowerCase();
             const normIdPhone = normalizePhone(identifier);
             const password = document.getElementById('login-password').value;
-
             if (identifier === ADMIN_ACCOUNT.username.toLowerCase() && password === ADMIN_ACCOUNT.password) {
-                isAdminMode = true;
-                currentAccount = null;
-                document.getElementById('auth-screen').classList.add('hidden');
-                document.getElementById('main-app').classList.add('hidden');
-                document.getElementById('admin-panel').classList.remove('hidden');
-                document.getElementById('admin-search-input').value = '';
-                renderAdminDashboard();
-                showToast('Đăng nhập quyền Admin thành công!');
+                openAdminPanel();
+                showToast('Đăng nhập quyền Admin duy nhất thành công!');
                 return;
             }
-
             const registry = getAccountsRegistry();
             const matched = registry.find(acc => {
                 const nameMatch = (acc.teacherName || '').toLowerCase().trim() === identifier;
@@ -955,16 +1038,37 @@
                 return;
             }
             isAdminMode = false;
+            isAdminImpersonating = false;
             currentAccount = matched;
             loadAccountVault();
             enterMainApp();
             showToast(`Xin chào GVCN ${matched.teacherName}!`);
         }
+
+        function openAdminPanel() {
+            isAdminMode = true;
+            isAdminImpersonating = false;
+            currentAccount = null;
+            document.getElementById('auth-screen').classList.add('hidden');
+            document.getElementById('main-app').classList.add('hidden');
+            document.getElementById('admin-panel').classList.remove('hidden');
+            document.getElementById('admin-search-input').value = '';
+            renderAdminDashboard();
+        }
+
+        function parseVault(accountId) {
+            try {
+                const raw = localStorage.getItem(accountId);
+                return raw ? JSON.parse(raw) : null;
+            } catch {
+                return null;
+            }
+        }
+
         function loadAccountVault() {
             if (!currentAccount) return;
-            const raw = localStorage.getItem(currentAccount.id);
-            if (raw) {
-                const parsed = JSON.parse(raw);
+            const parsed = parseVault(currentAccount.id);
+            if (parsed) {
                 classData = {
                     meta: {
                         ward: currentAccount.ward,
@@ -976,6 +1080,12 @@
                         targetStudentCount: 0,
                         groupCount: 5,
                         ...(parsed.meta || {})
+                    },
+                    inspection: {
+                        status: 'Chưa kiểm tra',
+                        note: '',
+                        checkedAt: '',
+                        ...(parsed.inspection || {})
                     },
                     students: Array.isArray(parsed.students) ? parsed.students : [],
                     weeklyPoints: parsed.weeklyPoints || {},
@@ -995,6 +1105,7 @@
                         targetStudentCount: 0,
                         groupCount: 5
                     },
+                    inspection: { status: 'Chưa kiểm tra', note: '', checkedAt: '' },
                     students: [],
                     weeklyPoints: {},
                     conducts: {},
@@ -1003,47 +1114,52 @@
                 };
             }
         }
+
         function saveAccountVault() {
             if (!currentAccount) return;
             localStorage.setItem(currentAccount.id, JSON.stringify(classData));
         }
+
         function enterMainApp() {
             document.getElementById('auth-screen').classList.add('hidden');
             document.getElementById('admin-panel').classList.add('hidden');
             document.getElementById('main-app').classList.remove('hidden');
+            document.getElementById('btn-back-to-admin').classList.toggle('hidden', !isAdminImpersonating);
             document.getElementById('attendance-date-input').value = new Date().toISOString().split('T')[0];
             syncClassMetadataInputs();
             switchTab('dashboard');
         }
+
+        function returnToAdminFromImpersonate() {
+            openAdminPanel();
+            showToast('Đã quay lại giao diện quản trị Admin');
+        }
+
         function logoutAccount() {
             currentAccount = null;
             isAdminMode = false;
+            isAdminImpersonating = false;
             document.getElementById('main-app').classList.add('hidden');
             document.getElementById('admin-panel').classList.add('hidden');
+            document.getElementById('btn-back-to-admin').classList.add('hidden');
             document.getElementById('auth-screen').classList.remove('hidden');
             document.getElementById('login-password').value = '';
             switchAuthPage('login');
         }
 
         // =========================================================================
-        // QUẢN TRỊ VIÊN (ADMIN): XEM, ĐỔI MẬT KHẨU & RESET TÀI KHOẢN ĐỂ ĐĂNG KÝ LẠI
+        // QUẢN TRỊ VIÊN (ADMIN): CAN THIỆP SÂU, NỘP KIỂM TRA, SAO LƯU & EXCEL
         // =========================================================================
         function getStudentCountFromVault(accountId) {
-            try {
-                const raw = localStorage.getItem(accountId);
-                if (!raw) return 0;
-                const parsed = JSON.parse(raw);
-                return Array.isArray(parsed.students) ? parsed.students.length : 0;
-            } catch {
-                return 0;
-            }
+            const parsed = parseVault(accountId);
+            return parsed && Array.isArray(parsed.students) ? parsed.students.length : 0;
         }
+
         function renderAdminDashboard() {
             const registry = getAccountsRegistry();
             const q = (document.getElementById('admin-search-input')?.value || '').toLowerCase().trim();
             const totalStudents = registry.reduce((sum, acc) => sum + getStudentCountFromVault(acc.id), 0);
             const uniqueUnits = new Set(registry.map(acc => (acc.unit || '').trim()).filter(Boolean)).size;
-
             document.getElementById('admin-stat-accounts').textContent = `${registry.length} / ${MAX_ACCOUNTS}`;
             document.getElementById('admin-stat-students').textContent = totalStudents;
             document.getElementById('admin-stat-units').textContent = uniqueUnits;
@@ -1067,25 +1183,217 @@
             }
 
             tbody.innerHTML = filtered.map((acc, idx) => {
-                const stCount = getStudentCountFromVault(acc.id);
-                const loc = [acc.ward, acc.province].filter(Boolean).join(', ');
+                const vault = parseVault(acc.id);
+                const stCount = vault && Array.isArray(vault.students) ? vault.students.length : 0;
+                const inspStatus = vault?.inspection?.status || 'Chưa kiểm tra';
+                const badgeClass = inspStatus === 'Đã nộp & Đạt kiểm tra'
+                    ? 'bg-emerald-100 text-emerald-800'
+                    : inspStatus === 'Cần bổ sung'
+                        ? 'bg-rose-100 text-rose-800'
+                        : 'bg-slate-100 text-slate-700';
+
                 return `
                     <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40">
-                        <td class="py-2.5 px-4 text-center text-slate-400">${idx + 1}</td>
-                        <td class="py-2.5 px-4 font-bold">${esc(acc.teacherName)}</td>
-                        <td class="py-2.5 px-4 font-mono">${esc(acc.phone)}</td>
-                        <td class="py-2.5 px-4 font-semibold text-sky-600">${esc(acc.className)}</td>
-                        <td class="py-2.5 px-4 font-medium">${esc(acc.unit)}</td>
-                        <td class="py-2.5 px-4 text-slate-500">${esc(loc || '---')}</td>
-                        <td class="py-2.5 px-4 text-center font-bold">${stCount}</td>
-                        <td class="py-2.5 px-4 text-center space-x-1.5 whitespace-nowrap">
-                            <button onclick="adminResetPassword('${acc.id}')" class="px-2.5 py-1 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-800 font-semibold transition">Đổi MK</button>
-                            <button onclick="adminResetAccountForReregister('${acc.id}')" class="px-2.5 py-1 rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-700 font-semibold transition">Reset / Xóa</button>
+                        <td class="py-2.5 px-3 text-center text-slate-400">${idx + 1}</td>
+                        <td class="py-2.5 px-3 font-bold">${esc(acc.teacherName)}</td>
+                        <td class="py-2.5 px-3 font-mono">${esc(acc.phone)}</td>
+                        <td class="py-2.5 px-3 font-semibold text-sky-600">${esc(acc.className)}</td>
+                        <td class="py-2.5 px-3 font-medium">${esc(acc.unit)}</td>
+                        <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded-full text-[11px] font-bold ${badgeClass}">${esc(inspStatus)}</span></td>
+                        <td class="py-2.5 px-3 text-center font-bold">${stCount}</td>
+                        <td class="py-2.5 px-3 text-center space-x-1 whitespace-nowrap">
+                            <button onclick="openAdminInspectModal('${acc.id}')" class="px-2 py-1 rounded-lg bg-indigo-100 hover:bg-indigo-200 text-indigo-800 font-semibold transition">Chi tiết & Kiểm tra</button>
+                            <button onclick="openAdminEditModal('${acc.id}')" class="px-2 py-1 rounded-lg bg-sky-100 hover:bg-sky-200 text-sky-800 font-semibold transition">Sửa HC</button>
+                            <button onclick="adminImpersonateAccount('${acc.id}')" class="px-2 py-1 rounded-lg bg-violet-100 hover:bg-violet-200 text-violet-800 font-semibold transition">Vào lớp</button>
+                            <button onclick="adminExportSingleClassExcel('${acc.id}')" class="px-2 py-1 rounded-lg bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-semibold transition">Excel</button>
+                            <button onclick="adminResetPassword('${acc.id}')" class="px-2 py-1 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-800 font-semibold transition">Đổi MK</button>
+                            <button onclick="adminResetAccountForReregister('${acc.id}')" class="px-2 py-1 rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-700 font-semibold transition">Xóa</button>
                         </td>
                     </tr>
                 `;
             }).join('');
         }
+
+        // XEM CHI TIẾT LỚP & CHẾ ĐỘ NỘP KIỂM TRA
+        function openAdminInspectModal(accountId) {
+            const acc = getAccountsRegistry().find(a => a.id === accountId);
+            if (!acc) return;
+            const vault = parseVault(accountId) || {};
+            const students = Array.isArray(vault.students) ? vault.students : [];
+            const gpas = students.map(s => parseFloat(s.gpa)).filter(n => !isNaN(n) && n > 0);
+            const avgGpa = gpas.length ? (gpas.reduce((a, b) => a + b, 0) / gpas.length).toFixed(2) : '0.00';
+            const honorCount = Object.keys(vault.honors || {}).length;
+            const weekCount = Object.keys(vault.weeklyPoints || {}).length;
+            const attDays = Object.keys(vault.attendance || {}).length;
+            const insp = vault.inspection || { status: 'Chưa kiểm tra', note: '', checkedAt: '' };
+
+            document.getElementById('admin-inspect-title').innerHTML =
+                `<i class="fa-solid fa-clipboard-check mr-1.5"></i>Chi Tiết Lớp ${esc(acc.className)} — GVCN: ${esc(acc.teacherName)}`;
+
+            document.getElementById('admin-inspect-body').innerHTML = `
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                    <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                        <div class="text-[11px] text-slate-400">Sĩ số / Mục tiêu</div>
+                        <div class="text-base font-extrabold text-sky-600">${students.length} / ${vault.meta?.targetStudentCount || 0}</div>
+                    </div>
+                    <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                        <div class="text-[11px] text-slate-400">ĐTB lớp</div>
+                        <div class="text-base font-extrabold text-emerald-600">${avgGpa}</div>
+                    </div>
+                    <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                        <div class="text-[11px] text-slate-400">Tuần thi đua / Ngày ĐD</div>
+                        <div class="text-base font-extrabold text-indigo-600">${weekCount} / ${attDays}</div>
+                    </div>
+                    <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                        <div class="text-[11px] text-slate-400">Tháng vinh danh</div>
+                        <div class="text-base font-extrabold text-amber-500">${honorCount}</div>
+                    </div>
+                </div>
+
+                <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 space-y-1">
+                    <div><strong>Đơn vị:</strong> ${esc(acc.unit)} — <strong>Địa phương:</strong> ${esc([acc.ward, acc.province].filter(Boolean).join(', ') || '---')}</div>
+                    <div><strong>SĐT liên hệ:</strong> <span class="font-mono">${esc(acc.phone)}</span> — <strong>Số tổ cấu hình:</strong> ${vault.meta?.groupCount || 5} tổ</div>
+                </div>
+
+                <!-- CHẾ ĐỘ NỘP KIỂM TRA -->
+                <div class="p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800 space-y-3">
+                    <div class="font-bold text-indigo-900 dark:text-indigo-200 flex items-center justify-between">
+                        <span><i class="fa-solid fa-file-circle-check mr-1.5"></i>Chế Độ Nộp Kiểm Tra Hồ Sơ Lớp</span>
+                        ${insp.checkedAt ? `<span class="text-[11px] font-normal text-indigo-700 dark:text-indigo-300">Cập nhật: ${esc(insp.checkedAt)}</span>` : ''}
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Trạng thái nộp kiểm tra</label>
+                        <select id="adm-insp-status" class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-indigo-300 dark:border-indigo-700 rounded-xl font-bold">
+                            <option value="Chưa kiểm tra" ${insp.status === 'Chưa kiểm tra' ? 'selected' : ''}>Chưa kiểm tra</option>
+                            <option value="Đã nộp kiểm tra (Chờ duyệt)" ${insp.status === 'Đã nộp kiểm tra (Chờ duyệt)' ? 'selected' : ''}>Đã nộp kiểm tra (Chờ duyệt)</option>
+                            <option value="Đã nộp & Đạt kiểm tra" ${insp.status === 'Đã nộp & Đạt kiểm tra' ? 'selected' : ''}>Đã nộp & Đạt kiểm tra</option>
+                            <option value="Cần bổ sung" ${insp.status === 'Cần bổ sung' ? 'selected' : ''}>Cần bổ sung</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Nhận xét / Yêu cầu kiểm tra</label>
+                        <textarea id="adm-insp-note" rows="2" placeholder="Nhập ghi chú kiểm tra hồ sơ lớp..." class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-indigo-300 dark:border-indigo-700 rounded-xl">${esc(insp.note || '')}</textarea>
+                    </div>
+                    <div class="flex justify-end">
+                        <button onclick="saveAdminInspection('${acc.id}')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl">
+                            <i class="fa-solid fa-check-double mr-1"></i> Lưu Nộp Kiểm Tra
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="font-bold mb-1.5">Danh sách học sinh (${students.length}):</div>
+                    <div class="max-h-44 overflow-y-auto border border-slate-200 dark:border-slate-700 rounded-xl">
+                        <table class="w-full text-left">
+                            <thead class="bg-slate-100 dark:bg-slate-900 text-[11px]">
+                                <tr><th class="p-2">STT</th><th class="p-2">Họ tên</th><th class="p-2">Tổ</th><th class="p-2">ĐTB</th><th class="p-2">Học lực</th></tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                                ${students.length ? students.map((s, i) => `
+                                    <tr>
+                                        <td class="p-2">${i + 1}</td>
+                                        <td class="p-2 font-semibold">${esc(s.name)}</td>
+                                        <td class="p-2">${esc(s.group)}</td>
+                                        <td class="p-2">${s.gpa || '---'}</td>
+                                        <td class="p-2">${esc(s.academic || '---')}</td>
+                                    </tr>
+                                `).join('') : `<tr><td colspan="5" class="p-4 text-center text-slate-400">Chưa có học sinh.</td></tr>`}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            document.getElementById('admin-inspect-modal').classList.remove('hidden');
+        }
+
+        function closeAdminInspectModal() {
+            document.getElementById('admin-inspect-modal').classList.add('hidden');
+        }
+
+        function saveAdminInspection(accountId) {
+            const status = document.getElementById('adm-insp-status').value;
+            const note = document.getElementById('adm-insp-note').value.trim();
+            const checkedAt = new Date().toLocaleString('vi-VN');
+            const existing = parseVault(accountId) || {
+                meta: {},
+                students: [],
+                weeklyPoints: {},
+                conducts: {},
+                attendance: {},
+                honors: {}
+            };
+            existing.inspection = { status, note, checkedAt };
+            localStorage.setItem(accountId, JSON.stringify(existing));
+            renderAdminDashboard();
+            openAdminInspectModal(accountId);
+            showToast('Đã lưu trạng thái nộp kiểm tra!');
+        }
+
+        // SỬA THÔNG TIN HÀNH CHÍNH GVCN
+        function openAdminEditModal(accountId) {
+            const acc = getAccountsRegistry().find(a => a.id === accountId);
+            if (!acc) return;
+            document.getElementById('adm-edit-id').value = acc.id;
+            document.getElementById('adm-edit-ward').value = acc.ward || '';
+            document.getElementById('adm-edit-province').value = acc.province || '';
+            document.getElementById('adm-edit-unit').value = acc.unit || '';
+            document.getElementById('adm-edit-teacher').value = acc.teacherName || '';
+            document.getElementById('adm-edit-class').value = acc.className || '';
+            document.getElementById('adm-edit-phone').value = acc.phone || '';
+            document.getElementById('admin-edit-modal').classList.remove('hidden');
+        }
+
+        function closeAdminEditModal() {
+            document.getElementById('admin-edit-modal').classList.add('hidden');
+        }
+
+        function saveAdminAccountEdit(e) {
+            e.preventDefault();
+            const id = document.getElementById('adm-edit-id').value;
+            const registry = getAccountsRegistry();
+            const idx = registry.findIndex(a => a.id === id);
+            if (idx === -1) return;
+
+            const ward = document.getElementById('adm-edit-ward').value.trim();
+            const province = document.getElementById('adm-edit-province').value.trim();
+            const unit = document.getElementById('adm-edit-unit').value.trim();
+            const teacherName = document.getElementById('adm-edit-teacher').value.trim();
+            const className = document.getElementById('adm-edit-class').value.trim();
+            const phone = normalizePhone(document.getElementById('adm-edit-phone').value);
+
+            const dup = registry.some((a, i) => i !== idx && normalizePhone(a.phone) === phone);
+            if (dup) {
+                alert('Số điện thoại này đã thuộc về một tài khoản GVCN khác!');
+                return;
+            }
+
+            registry[idx] = { ...registry[idx], ward, province, unit, teacherName, className, phone };
+            saveAccountsRegistry(registry);
+
+            const vault = parseVault(id);
+            if (vault) {
+                vault.meta = { ...(vault.meta || {}), ward, province, unit, className, teacherName, phone };
+                localStorage.setItem(id, JSON.stringify(vault));
+            }
+
+            closeAdminEditModal();
+            renderAdminDashboard();
+            showToast(`Đã cập nhật thông tin hành chính cho GVCN ${teacherName}`);
+        }
+
+        // VÀO LÀM VIỆC TRỰC TIẾP DƯỚI DANH NGHĨA GVCN
+        function adminImpersonateAccount(accountId) {
+            const acc = getAccountsRegistry().find(a => a.id === accountId);
+            if (!acc) return;
+            if (!confirm(`Vào giao diện làm việc trực tiếp dưới danh nghĩa GVCN "${acc.teacherName}" (Lớp ${acc.className})?`)) return;
+            isAdminMode = false;
+            isAdminImpersonating = true;
+            currentAccount = acc;
+            loadAccountVault();
+            enterMainApp();
+            showToast(`Đang thao tác trực tiếp trên lớp ${acc.className} (GVCN: ${acc.teacherName})`);
+        }
+
         function adminResetPassword(accountId) {
             const registry = getAccountsRegistry();
             const acc = registry.find(a => a.id === accountId);
@@ -1100,19 +1408,19 @@
             saveAccountsRegistry(registry);
             showToast(`Đã cập nhật mật khẩu cho ${acc.teacherName}`);
         }
+
         function adminResetAccountForReregister(accountId) {
             const registry = getAccountsRegistry();
             const acc = registry.find(a => a.id === accountId);
             if (!acc) return;
             const msg = `Reset & xóa tài khoản của GVCN "${acc.teacherName}"?\n\nCác thông tin sau sẽ được giải phóng để đăng ký lại:\n- SĐT: ${acc.phone}\n- Tên GVCN: ${acc.teacherName}\n- Lớp: ${acc.className}\n- Đơn vị: ${acc.unit}\n\nToàn bộ dữ liệu lớp thuộc tài khoản này cũng sẽ bị xóa vĩnh viễn.`;
             if (!confirm(msg)) return;
-
-            const updated = registry.filter(a => a.id !== accountId);
-            saveAccountsRegistry(updated);
+            saveAccountsRegistry(registry.filter(a => a.id !== accountId));
             localStorage.removeItem(accountId);
             renderAdminDashboard();
             showToast(`Đã reset thông tin của ${acc.teacherName}. Có thể đăng ký lại!`);
         }
+
         function adminResetAllAccounts() {
             const registry = getAccountsRegistry();
             if (!registry.length) {
@@ -1130,6 +1438,193 @@
             showToast('Đã reset toàn bộ hệ thống tài khoản!');
         }
 
+        // SAO LƯU & KHÔI PHỤC JSON
+        function adminExportBackupJSON() {
+            const registry = getAccountsRegistry();
+            const vaults = {};
+            registry.forEach(acc => {
+                vaults[acc.id] = parseVault(acc.id);
+            });
+            const payload = {
+                exportedAt: new Date().toISOString(),
+                maxAccounts: MAX_ACCOUNTS,
+                registry,
+                vaults
+            };
+            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `SaoLuu_HeThong_GVCN_${new Date().toISOString().slice(0, 10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('Đã tải file sao lưu hệ thống (.JSON)!');
+        }
+
+        function adminRestoreBackupJSON(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = ev => {
+                try {
+                    const data = JSON.parse(ev.target.result);
+                    if (!Array.isArray(data.registry)) {
+                        alert('File sao lưu không hợp lệ!');
+                        return;
+                    }
+                    if (!confirm(`Khôi phục ${data.registry.length} tài khoản GVCN từ file sao lưu? Dữ liệu hiện tại sẽ được ghi đè.`)) return;
+                    const oldReg = getAccountsRegistry();
+                    oldReg.forEach(acc => localStorage.removeItem(acc.id));
+                    const trimmedReg = data.registry.slice(0, MAX_ACCOUNTS);
+                    saveAccountsRegistry(trimmedReg);
+                    if (data.vaults && typeof data.vaults === 'object') {
+                        trimmedReg.forEach(acc => {
+                            if (data.vaults[acc.id]) {
+                                localStorage.setItem(acc.id, JSON.stringify(data.vaults[acc.id]));
+                            }
+                        });
+                    }
+                    renderAdminDashboard();
+                    showToast('Đã khôi phục dữ liệu hệ thống thành công!');
+                } catch (err) {
+                    alert('Lỗi đọc file JSON: ' + err.message);
+                }
+            };
+            reader.readAsText(file, 'UTF-8');
+            e.target.value = '';
+        }
+
+        // XUẤT EXCEL CHO TỪNG LỚP HOẶC TOÀN BỘ HỆ THỐNG
+        function buildWorkbookForVault(acc, vault) {
+            const wb = XLSX.utils.book_new();
+            const meta = (vault && vault.meta) || acc;
+            const students = Array.isArray(vault?.students) ? vault.students : [];
+            const gpas = students.map(s => parseFloat(s.gpa)).filter(n => !isNaN(n) && n > 0);
+            const avgGpa = gpas.length ? Number((gpas.reduce((a, b) => a + b, 0) / gpas.length).toFixed(2)) : 0;
+            const insp = vault?.inspection || { status: 'Chưa kiểm tra', note: '', checkedAt: '' };
+
+            const wsOverview = XLSX.utils.aoa_to_sheet([
+                ['THÔNG TIN TỔNG QUAN LỚP CHỦ NHIỆM'],
+                ['Đơn vị / Trường', meta.unit || acc.unit || ''],
+                ['Lớp', meta.className || acc.className || ''],
+                ['Giáo viên chủ nhiệm', meta.teacherName || acc.teacherName || ''],
+                ['SĐT', meta.phone || acc.phone || ''],
+                ['Địa phương', [meta.ward || acc.ward, meta.province || acc.province].filter(Boolean).join(', ')],
+                ['Sĩ số hiện tại', students.length],
+                ['Sĩ số mục tiêu', meta.targetStudentCount || 0],
+                ['ĐTB lớp', avgGpa],
+                ['Trạng thái nộp kiểm tra', insp.status],
+                ['Ghi chú kiểm tra', insp.note],
+                ['Thời điểm kiểm tra', insp.checkedAt]
+            ]);
+            wsOverview['!cols'] = [{ wch: 28 }, { wch: 40 }];
+            XLSX.utils.book_append_sheet(wb, wsOverview, 'Tong_Quan');
+
+            const wsStudents = XLSX.utils.aoa_to_sheet([
+                ['STT', 'Họ và tên', 'Giới tính', 'Ngày sinh', 'Dân tộc', 'Tổ', 'ĐTB', 'Học lực'],
+                ...(students.length ? students.map((s, i) => [
+                    i + 1, s.name || '', s.gender || '', s.dob || '', s.ethnicity || 'Kinh', s.group || '', s.gpa || '', s.academic || ''
+                ]) : [['', 'Chưa có học sinh', '', '', '', '', '', '']])
+            ]);
+            wsStudents['!cols'] = [{ wch: 6 }, { wch: 28 }, { wch: 12 }, { wch: 15 }, { wch: 14 }, { wch: 12 }, { wch: 10 }, { wch: 18 }];
+            XLSX.utils.book_append_sheet(wb, wsStudents, 'Danh_Sach_HS');
+
+            const honors = MONTHS.filter(mo => vault?.honors?.[mo]).map(mo => {
+                const h = vault.honors[mo];
+                const st = students.find(s => s.id === h.studentId);
+                return [mo, st ? st.name : '', st ? st.group : '', h.title || '', h.desc || '', h.updatedAt || ''];
+            });
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([
+                ['Tháng', 'Học sinh', 'Tổ', 'Danh hiệu', 'Thành tích / Ghi chú', 'Ngày cập nhật'],
+                ...(honors.length ? honors : [['', 'Chưa có vinh danh', '', '', '', '']])
+            ]), 'Vinh_Danh');
+
+            return wb;
+        }
+
+        function adminExportSingleClassExcel(accountId) {
+            if (typeof XLSX === 'undefined') {
+                alert('Đang tải thư viện xuất Excel, vui lòng thử lại!');
+                return;
+            }
+            const acc = getAccountsRegistry().find(a => a.id === accountId);
+            if (!acc) return;
+            const vault = parseVault(accountId);
+            const wb = buildWorkbookForVault(acc, vault);
+            XLSX.writeFile(wb, `Lop_${sanitizeFileName(acc.className)}_${sanitizeFileName(acc.teacherName)}.xlsx`);
+            showToast(`Đã xuất file Excel riêng cho lớp ${acc.className}!`);
+        }
+
+        function adminExportAllClassesExcel() {
+            if (typeof XLSX === 'undefined') {
+                alert('Đang tải thư viện xuất Excel, vui lòng thử lại!');
+                return;
+            }
+            const registry = getAccountsRegistry();
+            if (!registry.length) {
+                alert('Chưa có tài khoản GVCN nào để xuất Excel toàn bộ!');
+                return;
+            }
+            const wb = XLSX.utils.book_new();
+
+            const summaryRows = [
+                ['BÁO CÁO TỔNG HỢP TOÀN BỘ HỆ THỐNG LỚP CHỦ NHIỆM (TỐI ĐA 999 TÀI KHOẢN)'],
+                ['Ngày xuất', getFormattedDateVN()],
+                [],
+                ['STT', 'Tên GVCN', 'SĐT', 'Lớp', 'Đơn vị / Trường', 'Địa phương', 'Sĩ số', 'Trạng thái kiểm tra', 'Ghi chú kiểm tra']
+            ];
+
+            const allStudentsRows = [
+                ['STT', 'Lớp', 'Tên GVCN', 'Họ và tên HS', 'Giới tính', 'Ngày sinh', 'Dân tộc', 'Tổ', 'ĐTB', 'Học lực']
+            ];
+            let stIdx = 1;
+
+            registry.forEach((acc, i) => {
+                const vault = parseVault(acc.id) || {};
+                const students = Array.isArray(vault.students) ? vault.students : [];
+                const insp = vault.inspection || {};
+                summaryRows.push([
+                    i + 1,
+                    acc.teacherName || '',
+                    acc.phone || '',
+                    acc.className || '',
+                    acc.unit || '',
+                    [acc.ward, acc.province].filter(Boolean).join(', '),
+                    students.length,
+                    insp.status || 'Chưa kiểm tra',
+                    insp.note || ''
+                ]);
+                students.forEach(s => {
+                    allStudentsRows.push([
+                        stIdx++,
+                        acc.className || '',
+                        acc.teacherName || '',
+                        s.name || '',
+                        s.gender || '',
+                        s.dob || '',
+                        s.ethnicity || 'Kinh',
+                        s.group || '',
+                        s.gpa || '',
+                        s.academic || ''
+                    ]);
+                });
+            });
+
+            const wsSummary = XLSX.utils.aoa_to_sheet(summaryRows);
+            wsSummary['!cols'] = [{ wch: 6 }, { wch: 24 }, { wch: 15 }, { wch: 12 }, { wch: 28 }, { wch: 24 }, { wch: 10 }, { wch: 24 }, { wch: 30 }];
+            XLSX.utils.book_append_sheet(wb, wsSummary, 'Tong_Hop_Cac_Lop');
+
+            const wsAllStudents = XLSX.utils.aoa_to_sheet(allStudentsRows);
+            wsAllStudents['!cols'] = [{ wch: 6 }, { wch: 12 }, { wch: 22 }, { wch: 28 }, { wch: 10 }, { wch: 14 }, { wch: 12 }, { wch: 10 }, { wch: 8 }, { wch: 16 }];
+            XLSX.utils.book_append_sheet(wb, wsAllStudents, 'Toan_Bo_Hoc_Sinh');
+
+            XLSX.writeFile(wb, `Toan_Bo_He_Thong_GVCN_${new Date().toISOString().slice(0, 10)}.xlsx`);
+            showToast(`Đã xuất file Excel toàn bộ ${registry.length} lớp!`);
+        }
+
+        // =========================================================================
+        // CÁC CHỨC NĂNG QUẢN LÝ LỚP CỦA GVCN
+        // =========================================================================
         function initSelectors() {
             const weekSel = document.getElementById('ranking-week-select');
             weekSel.innerHTML = Array.from({ length: 35 }, (_, i) => `<option value="Tuần ${i + 1}">Tuần ${i + 1}</option>`).join('');
@@ -1138,10 +1633,12 @@
             document.getElementById('honor-month-select').innerHTML = monthOpts;
             document.getElementById('hm-month').innerHTML = monthOpts;
         }
+
         function getGroupNames() {
             const count = Math.max(1, Math.min(15, parseInt(classData.meta.groupCount) || 5));
             return Array.from({ length: count }, (_, i) => `Tổ ${i + 1}`);
         }
+
         function syncGroupSelects() {
             const groups = getGroupNames();
             const filterSel = document.getElementById('filter-student-group');
@@ -1153,12 +1650,14 @@
             stGroupSel.innerHTML = groups.map(g => `<option value="${g}">${g}</option>`).join('');
             if (groups.includes(prevSt)) stGroupSel.value = prevSt;
         }
+
         function syncClassMetadataInputs() {
             document.getElementById('meta-class').value = classData.meta.className || '';
             document.getElementById('meta-school').value = classData.meta.unit || '';
             document.getElementById('meta-student-count').value = classData.meta.targetStudentCount ?? 0;
             document.getElementById('meta-group-count').value = classData.meta.groupCount ?? 5;
         }
+
         function saveClassMetadata(e) {
             e.preventDefault();
             classData.meta.className = document.getElementById('meta-class').value.trim();
@@ -1176,6 +1675,7 @@
             renderAllViews();
             showToast('Đã lưu thông tin dữ liệu lớp!');
         }
+
         function switchTab(tab) {
             const tabs = ['dashboard', 'class-input', 'students', 'ranking', 'conduct', 'attendance', 'honor', 'export'];
             tabs.forEach(t => {
@@ -1195,6 +1695,7 @@
             });
             renderAllViews();
         }
+
         function renderAllViews() {
             if (!currentAccount) return;
             syncGroupSelects();
@@ -1205,6 +1706,7 @@
             renderAttendanceView();
             renderHonorView();
         }
+
         function updateHeaderAndDashboard() {
             const m = classData.meta;
             document.getElementById('header-class-badge').textContent = m.className || 'LỚP';
@@ -1239,7 +1741,7 @@
                 </div>`;
             }).join('');
         }
-        // NHẬP HÀNG LOẠT
+
         function readBulkFile(e) {
             const file = e.target.files[0];
             if (!file) return;
@@ -1249,6 +1751,7 @@
             };
             reader.readAsText(file, 'UTF-8');
         }
+
         function importBulkStudents() {
             const raw = document.getElementById('bulk-text-input').value.trim();
             if (!raw) {
@@ -1305,7 +1808,7 @@
                 alert('Lỗi định dạng dữ liệu: ' + err.message);
             }
         }
-        // QUẢN LÝ HỌC SINH
+
         function openStudentModal(id = null) {
             syncGroupSelects();
             if (id) {
@@ -1333,9 +1836,11 @@
             }
             document.getElementById('student-modal').classList.remove('hidden');
         }
+
         function closeStudentModal() {
             document.getElementById('student-modal').classList.add('hidden');
         }
+
         function saveStudentForm(e) {
             e.preventDefault();
             const id = document.getElementById('edit-student-id').value;
@@ -1360,6 +1865,7 @@
             renderAllViews();
             showToast('Đã lưu thông tin học sinh!');
         }
+
         function deleteStudent(id) {
             const st = classData.students.find(s => s.id === id);
             if (!st) return;
@@ -1370,6 +1876,7 @@
                 showToast('Đã xóa học sinh');
             }
         }
+
         function renderStudentsTable() {
             const q = (document.getElementById('search-student').value || '').toLowerCase().trim();
             const grp = document.getElementById('filter-student-group').value;
@@ -1400,7 +1907,7 @@
                 </tr>
             `).join('');
         }
-        // THI ĐUA TỔ
+
         function renderRankingView() {
             const week = document.getElementById('ranking-week-select').value;
             const groups = getGroupNames();
@@ -1421,6 +1928,7 @@
                 </div>
             `).join('');
         }
+
         function openWeekPointsModal() {
             const week = document.getElementById('ranking-week-select').value;
             const groups = getGroupNames();
@@ -1434,9 +1942,11 @@
             `).join('');
             document.getElementById('week-points-modal').classList.remove('hidden');
         }
+
         function closeWeekPointsModal() {
             document.getElementById('week-points-modal').classList.add('hidden');
         }
+
         function saveWeekPoints() {
             const week = document.getElementById('ranking-week-select').value;
             const groups = getGroupNames();
@@ -1450,7 +1960,7 @@
             renderRankingView();
             showToast(`Đã lưu điểm ${week}`);
         }
-        // HẠNH KIỂM
+
         function renderConductView() {
             const month = document.getElementById('conduct-month-select').value;
             const mData = classData.conducts[month] || {};
@@ -1475,6 +1985,7 @@
                 `;
             }).join('');
         }
+
         function editStudentConduct(studentId) {
             const month = document.getElementById('conduct-month-select').value;
             const st = classData.students.find(s => s.id === studentId);
@@ -1493,7 +2004,7 @@
             renderConductView();
             showToast('Đã cập nhật hạnh kiểm');
         }
-        // ĐIỂM DANH
+
         function renderAttendanceView() {
             const dateStr = document.getElementById('attendance-date-input').value;
             const tbody = document.getElementById('attendance-tbody');
@@ -1521,6 +2032,7 @@
                 `;
             }).join('');
         }
+
         function saveAttendanceData() {
             const dateStr = document.getElementById('attendance-date-input').value;
             if (!dateStr) return;
@@ -1533,7 +2045,7 @@
             saveAccountVault();
             showToast(`Đã lưu điểm danh ngày ${dateStr}`);
         }
-        // VINH DANH & TỔNG KẾT CUỐI NĂM
+
         function openHonorModal() {
             if (!classData.students.length) {
                 alert('Hãy thêm học sinh trước khi vinh danh!');
@@ -1554,9 +2066,11 @@
             }
             document.getElementById('honor-modal').classList.remove('hidden');
         }
+
         function closeHonorModal() {
             document.getElementById('honor-modal').classList.add('hidden');
         }
+
         function saveHonorEntry(e) {
             e.preventDefault();
             const month = document.getElementById('hm-month').value;
@@ -1576,6 +2090,7 @@
             renderAllViews();
             showToast(`Đã lưu vinh danh ${month} để tổng kết cuối năm!`);
         }
+
         function deleteHonorEntry(month) {
             if (confirm(`Xóa bản ghi vinh danh của ${month}?`)) {
                 delete classData.honors[month];
@@ -1584,6 +2099,7 @@
                 showToast(`Đã xóa vinh danh ${month}`);
             }
         }
+
         function renderHonorView() {
             const month = document.getElementById('honor-month-select').value;
             const entry = classData.honors[month];
@@ -1624,6 +2140,7 @@
             });
             archiveTbody.innerHTML = rows.length ? rows.join('') : `<tr><td colspan="6" class="py-6 text-center text-slate-400">Chưa có vinh danh nào được lưu trong năm học.</td></tr>`;
         }
+
         function openYearEndSummaryModal() {
             const honoredMonths = MONTHS.filter(m => classData.honors[m]);
             const countByStudent = {};
@@ -1652,144 +2169,38 @@
             `;
             document.getElementById('yearend-modal').classList.remove('hidden');
         }
+
         function closeYearEndSummaryModal() {
             document.getElementById('yearend-modal').classList.add('hidden');
         }
-        // =========================================================================
-        // XUẤT FILE TIẾNG VIỆT CHUẨN IN ẤN: EXCEL (.XLSX), WORD (.DOC), PDF
-        // =========================================================================
+
         function openExportModal() {
             switchTab('export');
         }
+
         function sanitizeFileName(str) {
             return String(str || 'Lop_GVCN')
                 .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
                 .replace(/đ/g, 'd').replace(/Đ/g, 'D')
                 .replace(/[^a-zA-Z0-9_-]+/g, '_');
         }
+
         function getFormattedDateVN() {
             const d = new Date();
             return `Ngày ${String(d.getDate()).padStart(2, '0')} tháng ${String(d.getMonth() + 1).padStart(2, '0')} năm ${d.getFullYear()}`;
         }
+
         function exportExcelVN() {
             if (typeof XLSX === 'undefined') {
                 alert('Đang tải thư viện xuất Excel, vui lòng thử lại sau vài giây!');
                 return;
             }
+            const wb = buildWorkbookForVault(currentAccount || {}, classData);
             const m = classData.meta;
-            const wb = XLSX.utils.book_new();
-            const total = classData.students.length;
-            const male = classData.students.filter(s => s.gender === 'Nam').length;
-            const female = classData.students.filter(s => s.gender === 'Nữ').length;
-            const gpas = classData.students.map(s => parseFloat(s.gpa)).filter(n => !isNaN(n) && n > 0);
-            const avgGpa = gpas.length ? Number((gpas.reduce((a, b) => a + b, 0) / gpas.length).toFixed(2)) : 0;
-            const overviewRows = [
-                ['HỒ SƠ QUẢN LÝ LỚP HỌC CHỦ NHIỆM'],
-                ['Đơn vị / Trường', m.unit || ''],
-                ['Lớp chủ nhiệm', m.className || ''],
-                ['Giáo viên chủ nhiệm', m.teacherName || ''],
-                ['Địa phương', `${m.ward || ''}, ${m.province || ''}`],
-                ['Ngày xuất báo cáo', getFormattedDateVN()],
-                [],
-                ['THỐNG KÊ CHUNG', 'SỐ LIỆU'],
-                ['Sĩ số hiện tại', total],
-                ['Sĩ số mục tiêu', m.targetStudentCount || 0],
-                ['Số học sinh Nam', male],
-                ['Số học sinh Nữ', female],
-                ['Số tổ trong lớp', getGroupNames().length],
-                ['Điểm trung bình học tập cả lớp', avgGpa],
-                ['Số tháng đã lưu vinh danh', Object.keys(classData.honors || {}).length]
-            ];
-            const wsOverview = XLSX.utils.aoa_to_sheet(overviewRows);
-            wsOverview['!cols'] = [{ wch: 34 }, { wch: 38 }];
-            XLSX.utils.book_append_sheet(wb, wsOverview, 'Tong_Quan_Lop');
-            const studentHeader = ['STT', 'Họ và tên học sinh', 'Giới tính', 'Ngày sinh', 'Dân tộc', 'Tổ', 'Điểm trung bình', 'Xếp loại học lực'];
-            const studentRows = classData.students.map((s, i) => [
-                i + 1,
-                s.name || '',
-                s.gender || '',
-                s.dob || '',
-                s.ethnicity || 'Kinh',
-                s.group || '',
-                s.gpa > 0 ? s.gpa : '',
-                s.academic || 'Chưa xếp loại'
-            ]);
-            const wsStudents = XLSX.utils.aoa_to_sheet([
-                [`DANH SÁCH HỌC SINH LỚP ${m.className || ''} - ${m.unit || ''}`],
-                [`Giáo viên chủ nhiệm: ${m.teacherName || ''}`],
-                [],
-                studentHeader,
-                ...(studentRows.length ? studentRows : [['', 'Chưa có dữ liệu học sinh', '', '', '', '', '', '']])
-            ]);
-            wsStudents['!cols'] = [{ wch: 6 }, { wch: 28 }, { wch: 12 }, { wch: 15 }, { wch: 14 }, { wch: 12 }, { wch: 18 }, { wch: 20 }];
-            XLSX.utils.book_append_sheet(wb, wsStudents, 'Danh_Sach_Hoc_Sinh');
-            const honorHeader = ['Tháng', 'Họ và tên học sinh', 'Tổ', 'Danh hiệu khen thưởng', 'Thành tích nổi bật / Ghi chú', 'Ngày ghi nhận'];
-            const honorRows = MONTHS.filter(mo => classData.honors[mo]).map(mo => {
-                const h = classData.honors[mo];
-                const st = classData.students.find(s => s.id === h.studentId);
-                return [mo, st ? st.name : '', st ? st.group : '', h.title || '', h.desc || '', h.updatedAt || ''];
-            });
-            const wsHonor = XLSX.utils.aoa_to_sheet([
-                [`SỔ VINH DANH & TỔNG KẾT KHEN THƯỞNG CUỐI NĂM - LỚP ${m.className || ''}`],
-                [`Giáo viên chủ nhiệm: ${m.teacherName || ''}`],
-                [],
-                honorHeader,
-                ...(honorRows.length ? honorRows : [['', 'Chưa có dữ liệu vinh danh', '', '', '', '']])
-            ]);
-            wsHonor['!cols'] = [{ wch: 14 }, { wch: 26 }, { wch: 12 }, { wch: 30 }, { wch: 42 }, { wch: 16 }];
-            XLSX.utils.book_append_sheet(wb, wsHonor, 'Vinh_Danh_Cuoi_Nam');
-            const conductHeader = ['STT', 'Họ và tên học sinh', 'Tổ'];
-            MONTHS.forEach(mo => {
-                conductHeader.push(`${mo} (Điểm)`, `${mo} (Xếp loại)`);
-            });
-            const conductRows = classData.students.map((s, i) => {
-                const row = [i + 1, s.name || '', s.group || ''];
-                MONTHS.forEach(mo => {
-                    const c = (classData.conducts[mo] && classData.conducts[mo][s.id]) || { score: 100, rating: 'Tốt' };
-                    row.push(c.score, c.rating);
-                });
-                return row;
-            });
-            const wsConduct = XLSX.utils.aoa_to_sheet([
-                [`BẢNG THEO DÕI ĐIỂM RÈN LUYỆN & HẠNH KIỂM LỚP ${m.className || ''}`],
-                [],
-                conductHeader,
-                ...(conductRows.length ? conductRows : [['', 'Chưa có dữ liệu học sinh']])
-            ]);
-            XLSX.utils.book_append_sheet(wb, wsConduct, 'Hanh_Kiem_Thang');
-            const groups = getGroupNames();
-            const recordedWeeks = Object.keys(classData.weeklyPoints || {});
-            const rankingHeader = ['Tuần học', ...groups];
-            const rankingRows = recordedWeeks.map(w => [
-                w,
-                ...groups.map(g => (classData.weeklyPoints[w][g] !== undefined ? classData.weeklyPoints[w][g] : 100))
-            ]);
-            const wsRanking = XLSX.utils.aoa_to_sheet([
-                [`BẢNG TỔNG HỢP ĐIỂM THI ĐUA CÁC TỔ - LỚP ${m.className || ''}`],
-                [],
-                rankingHeader,
-                ...(rankingRows.length ? rankingRows : [['Chưa nhập điểm tuần', ...groups.map(() => '')]])
-            ]);
-            XLSX.utils.book_append_sheet(wb, wsRanking, 'Thi_Dua_Cac_To');
-            const attDates = Object.keys(classData.attendance || {}).sort();
-            const attHeader = ['STT', 'Họ và tên học sinh', 'Tổ', ...attDates];
-            const attRows = classData.students.map((s, i) => [
-                i + 1,
-                s.name || '',
-                s.group || '',
-                ...attDates.map(d => (classData.attendance[d] && classData.attendance[d][s.id]) || 'Có mặt')
-            ]);
-            const wsAtt = XLSX.utils.aoa_to_sheet([
-                [`BẢNG THEO DÕI ĐIỂM DANH CHUYÊN CẦN LỚP ${m.className || ''}`],
-                [],
-                attHeader,
-                ...(attRows.length ? attRows : [['', 'Chưa có dữ liệu học sinh']])
-            ]);
-            XLSX.utils.book_append_sheet(wb, wsAtt, 'Diem_Danh_Chuyen_Can');
-            const fileName = `HoSo_Lop_${sanitizeFileName(m.className)}_${sanitizeFileName(m.unit)}.xlsx`;
-            XLSX.writeFile(wb, fileName);
+            XLSX.writeFile(wb, `HoSo_Lop_${sanitizeFileName(m.className)}_${sanitizeFileName(m.unit)}.xlsx`);
             showToast('Đã xuất file Excel (.XLSX) tiếng Việt đầy đủ!');
         }
+
         function buildVietnameseReportHTML() {
             const m = classData.meta;
             const total = classData.students.length;
@@ -1961,6 +2372,7 @@
                 </div>
             `;
         }
+
         function exportWordVN() {
             const m = classData.meta;
             const bodyHTML = buildVietnameseReportHTML();
@@ -1989,6 +2401,7 @@
             URL.revokeObjectURL(url);
             showToast('Đã xuất file Word (.DOC) tiếng Việt chuẩn in ấn!');
         }
+
         function exportPDFVN() {
             const m = classData.meta;
             const bodyHTML = buildVietnameseReportHTML();
@@ -2031,16 +2444,19 @@
             printWin.document.close();
             showToast('Đang mở bản in / lưu file PDF tiếng Việt!');
         }
+
         function toggleDarkMode() {
             const dark = document.documentElement.classList.toggle('dark');
             localStorage.setItem('gvcn_theme_mode', dark ? 'dark' : 'light');
             updateThemeIcon(dark);
         }
+
         function loadTheme() {
             const dark = localStorage.getItem('gvcn_theme_mode') === 'dark';
             document.documentElement.classList.toggle('dark', dark);
             updateThemeIcon(dark);
         }
+
         function updateThemeIcon(dark) {
             ['icon-moon', 'admin-icon-moon'].forEach(id => {
                 const el = document.getElementById(id);
@@ -2051,9 +2467,11 @@
                 if (el) el.classList.toggle('hidden', !dark);
             });
         }
+
         function esc(str) {
             return String(str ?? '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
         }
+
         function showToast(msg) {
             const t = document.getElementById('toast');
             document.getElementById('toast-text').textContent = msg;
