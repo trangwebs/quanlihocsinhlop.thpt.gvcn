@@ -58,7 +58,7 @@
             <!-- TRANG 1: ĐĂNG NHẬP -->
             <div id="page-login" class="space-y-4">
                 <div class="p-3 rounded-xl bg-sky-50 dark:bg-sky-950/30 border border-sky-200 dark:border-sky-800 text-xs text-sky-800 dark:text-sky-300 font-medium">
-                    <strong>*Lưu Ý :</strong> Nhập đúng Tên GVCN Hoặc SĐT đã đăng kí cùng mật khẩu để đăng nhập.
+                    <strong>*Lưu Ý:</strong> Nhập đúng Tên GVCN hoặc SĐT đã đăng ký cùng mật khẩu. Mỗi tài khoản giới hạn tối đa <strong>50 thiết bị</strong> (thiết bị mới cần mã xác nhận từ Admin).
                 </div>
                 <form onsubmit="handleLoginSubmit(event)" class="space-y-4">
                     <div>
@@ -94,7 +94,7 @@
             <!-- TRANG 2: TẠO TÀI KHOẢN GVCN -->
             <div id="page-register" class="hidden space-y-4">
                 <div class="p-3 rounded-xl bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800 text-xs text-indigo-800 dark:text-indigo-300 font-medium">
-                    <strong>*Lưu Ý :</strong> Điền đầy đủ thông tin hành chính và thiết lập mật khẩu an toàn.
+                    <strong>*Lưu Ý:</strong> Điền đầy đủ thông tin hành chính và thiết lập mật khẩu an toàn.
                 </div>
                 <form onsubmit="handleRegisterSubmit(event)" class="space-y-3.5">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -169,6 +169,36 @@
         </div>
     </div>
 
+    <!-- MODAL XÁC NHẬN THIẾT BỊ MỚI (DÀNH CHO GVCN NHẬP MÃ TỪ ADMIN) -->
+    <div id="device-verify-modal" class="fixed inset-0 z-[60] bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl w-full max-w-md border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div class="px-6 py-4 bg-gradient-to-r from-amber-500 to-orange-600 text-white flex justify-between items-center">
+                <h4 class="font-bold text-sm"><i class="fa-solid fa-shield-halved mr-1.5"></i>Xác Nhận Thiết Bị Mới</h4>
+                <button onclick="closeDeviceVerifyModal()" class="text-white hover:opacity-80"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form onsubmit="submitDeviceVerificationCode(event)" class="p-6 space-y-4 text-xs">
+                <div class="p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-200 space-y-1.5">
+                    <p class="font-bold text-sm"><i class="fa-solid fa-paper-plane mr-1"></i> Yêu cầu cấp mã đã gửi về Admin!</p>
+                    <p>Tài khoản <strong id="dv-account-name">---</strong> hiện đang dùng <strong id="dv-device-count">0 / 50</strong> thiết bị.</p>
+                    <p>Mã thiết bị hiện tại: <code id="dv-device-id" class="px-1.5 py-0.5 rounded bg-white dark:bg-slate-900 font-mono font-bold text-indigo-600">---</code></p>
+                    <p class="text-[11px] opacity-90">Vui lòng liên hệ <strong>Admin</strong> để nhận mã xác nhận 6 số hiển thị trong mục Quản lý thiết bị.</p>
+                </div>
+                <div>
+                    <label class="block font-bold mb-1.5 text-slate-700 dark:text-slate-200">Nhập mã xác nhận từ Admin (6 chữ số) <span class="text-rose-500">*</span></label>
+                    <input type="text" id="dv-code-input" maxlength="6" required placeholder="VD: 123456"
+                        class="w-full px-4 py-3 text-center tracking-[0.35em] text-lg font-extrabold font-mono bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500">
+                </div>
+                <div id="dv-error" class="hidden p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-600 dark:text-rose-400 font-semibold"></div>
+                <div class="flex justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-700">
+                    <button type="button" onclick="closeDeviceVerifyModal()" class="px-4 py-2.5 border border-slate-300 dark:border-slate-600 rounded-xl font-semibold">Hủy</button>
+                    <button type="submit" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl shadow">
+                        <i class="fa-solid fa-check mr-1"></i> Xác Nhận & Truy Cập
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- GIAO DIỆN QUẢN TRỊ VIÊN (ADMIN) -->
     <div id="admin-panel" class="hidden flex-grow flex flex-col">
         <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 shadow-sm no-print">
@@ -179,7 +209,7 @@
                     </div>
                     <div>
                         <h2 class="text-sm font-extrabold uppercase text-slate-900 dark:text-white">QUẢN TRỊ HỆ THỐNG (ADMIN)</h2>
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400">Can Thiệp • Kiểm Tra • Hỗ Trợ </p>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400">Can Thiệp • Kiểm Tra • Cấp Mã Thiết Bị (Tối đa 50 thiết bị/TK)</p>
                     </div>
                 </div>
                 <div class="flex flex-wrap items-center gap-1.5">
@@ -208,13 +238,18 @@
         </header>
         <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
             <div class="p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800 text-xs text-indigo-900 dark:text-indigo-200 leading-relaxed">
-                <strong>Quyền can thiệp của Admin:</strong> Toàn quyền kiểm tra, chỉnh sửa <strong> thông tin hành chính </strong> thao tác trực tiếp trên từng lớp </strong> và xuất dữ liệu trên hệ thống.
+                <strong>Quyền can thiệp của Admin:</strong> Toàn quyền kiểm tra, chỉnh sửa <strong>thông tin hành chính</strong>, quản lý <strong>giới hạn 50 thiết bị & cấp mã xác nhận</strong>, thao tác trực tiếp trên từng lớp và xuất dữ liệu hệ thống.
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
                 <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
                     <p class="text-xs font-semibold text-slate-400 uppercase">Tài khoản GVCN đã đăng ký</p>
                     <h4 class="text-2xl font-extrabold mt-1 text-indigo-600" id="admin-stat-accounts">0 / 999</h4>
-                    <p class="text-xs text-slate-500 mt-1">Giới hạn: 999 tài khoản (Admin Quản lí)</p>
+                    <p class="text-xs text-slate-500 mt-1">Giới hạn: 999 tài khoản</p>
+                </div>
+                <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <p class="text-xs font-semibold text-slate-400 uppercase">Thiết bị & Chờ cấp mã</p>
+                    <h4 class="text-2xl font-extrabold mt-1 text-amber-500" id="admin-stat-devices">0 / 0 chờ</h4>
+                    <p class="text-xs text-slate-500 mt-1">Tối đa 50 thiết bị / tài khoản</p>
                 </div>
                 <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
                     <p class="text-xs font-semibold text-slate-400 uppercase">Tổng học sinh toàn hệ thống</p>
@@ -247,6 +282,7 @@
                                 <th class="py-3 px-3">SĐT</th>
                                 <th class="py-3 px-3">Lớp</th>
                                 <th class="py-3 px-3">Đơn vị / Trường</th>
+                                <th class="py-3 px-3 text-center">Thiết bị (Max 50)</th>
                                 <th class="py-3 px-3">Kiểm tra</th>
                                 <th class="py-3 px-3 text-center">Sĩ số</th>
                                 <th class="py-3 px-3 text-center">Thao tác can thiệp</th>
@@ -257,6 +293,23 @@
                 </div>
             </div>
         </main>
+    </div>
+
+    <!-- MODAL ADMIN: QUẢN LÝ THIẾT BỊ & XEM MÃ XÁC NHẬN (TỐI ĐA 50 THIẾT BỊ) -->
+    <div id="admin-devices-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-2xl border border-slate-200 dark:border-slate-700 overflow-hidden max-h-[90vh] flex flex-col">
+            <div class="px-6 py-4 bg-gradient-to-r from-amber-500 to-orange-600 text-white flex justify-between items-center">
+                <h4 class="font-bold text-sm" id="admin-devices-title"><i class="fa-solid fa-laptop-code mr-1.5"></i>Quản Lý Thiết Bị & Cấp Mã Xác Nhận</h4>
+                <button onclick="closeAdminDevicesModal()" class="text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="admin-devices-body" class="p-6 overflow-y-auto space-y-5 text-xs"></div>
+            <div class="px-6 py-3 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 flex justify-between items-center">
+                <button id="btn-sim-new-device" class="px-3.5 py-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs transition">
+                    <i class="fa-solid fa-plus mr-1"></i> Tạo thử yêu cầu thiết bị mới
+                </button>
+                <button onclick="closeAdminDevicesModal()" class="px-4 py-2 border border-slate-300 rounded-xl font-semibold text-xs">Đóng</button>
+            </div>
+        </div>
     </div>
 
     <!-- GIAO DIỆN CHÍNH KHI ĐÃ ĐĂNG NHẬP -->
@@ -367,9 +420,9 @@
                         <p class="text-xs text-slate-500 mt-1">Trung bình điểm học sinh</p>
                     </div>
                     <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
-                        <p class="text-xs font-semibold text-slate-400 uppercase">Vinh danh đã lưu</p>
-                        <h4 class="text-2xl font-extrabold mt-1 text-amber-500" id="dash-stat-honor-count">0 tháng</h4>
-                        <p class="text-xs text-slate-500 mt-1">Lưu giữ đến cuối năm</p>
+                        <p class="text-xs font-semibold text-slate-400 uppercase">Thiết bị truy cập</p>
+                        <h4 class="text-2xl font-extrabold mt-1 text-amber-500" id="dash-stat-devices">1 / 50</h4>
+                        <p class="text-xs text-slate-500 mt-1" id="dash-stat-honor-count">Vinh danh: 0 tháng</p>
                     </div>
                 </div>
                 <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-3">
@@ -380,7 +433,6 @@
                     <div id="dash-groups-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3"></div>
                 </div>
             </section>
-
             <!-- TAB 2: NHẬP DỮ LIỆU LỚP -->
             <section id="view-class-input" class="hidden space-y-6">
                 <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-5">
@@ -455,7 +507,6 @@
                     </div>
                 </div>
             </section>
-
             <!-- TAB 3: DANH SÁCH HỌC SINH -->
             <section id="view-students" class="hidden space-y-4">
                 <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col md:flex-row gap-3 justify-between items-center">
@@ -492,7 +543,6 @@
                     </div>
                 </div>
             </section>
-
             <!-- TAB 4: THI ĐUA TỔ -->
             <section id="view-ranking" class="hidden space-y-6">
                 <div class="bg-gradient-to-r from-sky-600 to-indigo-600 rounded-2xl p-6 text-white shadow flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -509,7 +559,6 @@
                 </div>
                 <div id="ranking-cards-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4"></div>
             </section>
-
             <!-- TAB 5: HẠNH KIỂM -->
             <section id="view-conduct" class="hidden space-y-4">
                 <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
@@ -537,7 +586,6 @@
                     </div>
                 </div>
             </section>
-
             <!-- TAB 6: ĐIỂM DANH -->
             <section id="view-attendance" class="hidden space-y-4">
                 <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
@@ -568,7 +616,6 @@
                     </div>
                 </div>
             </section>
-
             <!-- TAB 7: VINH DANH -->
             <section id="view-honor" class="hidden space-y-6">
                 <div class="bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 rounded-2xl p-6 text-white shadow flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -614,7 +661,6 @@
                     </div>
                 </div>
             </section>
-
             <!-- TAB 8: XUẤT FILE -->
             <section id="view-export" class="hidden space-y-6">
                 <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-5">
@@ -859,20 +905,24 @@
     </div>
 
     <!-- TOAST -->
-    <div id="toast" class="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-lg flex items-center space-x-2 text-xs font-medium opacity-0 pointer-events-none transition-opacity duration-300">
+    <div id="toast" class="fixed bottom-5 right-5 z-[70] bg-slate-900 text-white px-4 py-3 rounded-xl shadow-lg flex items-center space-x-2 text-xs font-medium opacity-0 pointer-events-none transition-opacity duration-300">
         <i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i>
         <span id="toast-text">Đã lưu</span>
     </div>
 
     <script>
         const MAX_ACCOUNTS = 999;
+        const MAX_DEVICES_PER_ACCOUNT = 50;
         const REGISTRY_KEY = 'gvcn_system_accounts_registry_v1';
+        const DEVICE_ID_KEY = 'gvcn_browser_device_id_v1';
         const ADMIN_ACCOUNT = {
             username: 'admin',
             password: 'Admin@nnc2011'
         };
         const MONTHS = ['Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12', 'Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5'];
         let currentAccount = null;
+        let pendingVerifyAccountId = null;
+        let pendingVerifyDeviceId = null;
         let isAdminMode = false;
         let isAdminImpersonating = false;
         let classData = {
@@ -901,12 +951,53 @@
         window.onload = function () {
             loadTheme();
             initSelectors();
+            getCurrentDeviceId();
         };
+
+        // =========================================================================
+        // QUẢN LÝ ĐỊNH DANH THIẾT BỊ & XÁC THỰC TỐI ĐA 50 THIẾT BỊ / TÀI KHOẢN
+        // =========================================================================
+        function getCurrentDeviceId() {
+            let devId = localStorage.getItem(DEVICE_ID_KEY);
+            if (!devId) {
+                devId = 'DEV-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-' + Date.now().toString(36).slice(-4).toUpperCase();
+                localStorage.setItem(DEVICE_ID_KEY, devId);
+            }
+            return devId;
+        }
+
+        function getCurrentDeviceLabel() {
+            const ua = navigator.userAgent || '';
+            let os = 'Máy tính';
+            if (/Android/i.test(ua)) os = 'Android';
+            else if (/iPhone|iPad|iPod/i.test(ua)) os = 'iOS';
+            else if (/Windows/i.test(ua)) os = 'Windows';
+            else if (/Mac/i.test(ua)) os = 'macOS';
+
+            let browser = 'Trình duyệt';
+            if (/Edg\//i.test(ua)) browser = 'Edge';
+            else if (/Chrome\//i.test(ua)) browser = 'Chrome';
+            else if (/Firefox\//i.test(ua)) browser = 'Firefox';
+            else if (/Safari\//i.test(ua)) browser = 'Safari';
+
+            return `${os} • ${browser}`;
+        }
+
+        function generateSixDigitCode() {
+            return String(Math.floor(100000 + Math.random() * 900000));
+        }
+
+        function ensureDeviceFields(acc) {
+            if (!Array.isArray(acc.approvedDevices)) acc.approvedDevices = [];
+            if (!Array.isArray(acc.pendingDevices)) acc.pendingDevices = [];
+            return acc;
+        }
 
         function getAccountsRegistry() {
             try {
                 const raw = localStorage.getItem(REGISTRY_KEY);
-                return raw ? JSON.parse(raw) : [];
+                const list = raw ? JSON.parse(raw) : [];
+                return list.map(ensureDeviceFields);
             } catch {
                 return [];
             }
@@ -975,6 +1066,7 @@
                 errBox.classList.remove('hidden');
                 return;
             }
+            const deviceId = getCurrentDeviceId();
             const storageKey = `gvcn_isolated_vault_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
             const newAccount = {
                 id: storageKey,
@@ -984,7 +1076,13 @@
                 teacherName,
                 className,
                 phone,
-                password
+                password,
+                approvedDevices: [{
+                    deviceId,
+                    deviceName: getCurrentDeviceLabel() + ' (Thiết bị khởi tạo)',
+                    approvedAt: new Date().toLocaleString('vi-VN')
+                }],
+                pendingDevices: []
             };
             registry.push(newAccount);
             saveAccountsRegistry(registry);
@@ -1011,7 +1109,7 @@
             currentAccount = newAccount;
             saveAccountVault();
             enterMainApp();
-            showToast('Tạo tài khoản GVCN thành công!');
+            showToast('Tạo tài khoản GVCN thành công (Thiết bị 1/50)!');
         }
 
         function handleLoginSubmit(e) {
@@ -1021,28 +1119,134 @@
             const identifier = document.getElementById('login-identifier').value.trim().toLowerCase();
             const normIdPhone = normalizePhone(identifier);
             const password = document.getElementById('login-password').value;
+
             if (identifier === ADMIN_ACCOUNT.username.toLowerCase() && password === ADMIN_ACCOUNT.password) {
                 openAdminPanel();
-                showToast('Đăng nhập quyền Admin duy nhất thành công!');
+                showToast('Đăng nhập quyền Admin thành công!');
                 return;
             }
+
             const registry = getAccountsRegistry();
-            const matched = registry.find(acc => {
+            const accIdx = registry.findIndex(acc => {
                 const nameMatch = (acc.teacherName || '').toLowerCase().trim() === identifier;
                 const phoneMatch = normalizePhone(acc.phone) === normIdPhone;
                 return (nameMatch || phoneMatch) && acc.password === password;
             });
-            if (!matched) {
+
+            if (accIdx === -1) {
                 errBox.textContent = 'Tên GVCN/SĐT hoặc Mật khẩu không đúng. Vui lòng kiểm tra lại!';
                 errBox.classList.remove('hidden');
                 return;
             }
+
+            const matched = ensureDeviceFields(registry[accIdx]);
+            const deviceId = getCurrentDeviceId();
+
+            // Kiểm tra thiết bị hiện tại đã được cấp phép chưa
+            const isApproved = matched.approvedDevices.some(d => d.deviceId === deviceId);
+            if (isApproved) {
+                isAdminMode = false;
+                isAdminImpersonating = false;
+                currentAccount = matched;
+                loadAccountVault();
+                enterMainApp();
+                showToast(`Xin chào GVCN ${matched.teacherName}!`);
+                return;
+            }
+
+            // Nếu thiết bị chưa được cấp phép -> Kiểm tra giới hạn 50 thiết bị
+            if (matched.approvedDevices.length >= MAX_DEVICES_PER_ACCOUNT) {
+                errBox.textContent = `Tài khoản này đã đạt giới hạn tối đa ${MAX_DEVICES_PER_ACCOUNT} thiết bị truy cập! Vui lòng liên hệ Admin để thu hồi bớt thiết bị cũ.`;
+                errBox.classList.remove('hidden');
+                return;
+            }
+
+            // Tạo hoặc lấy yêu cầu cấp mã xác nhận gửi về Admin
+            let pendingItem = matched.pendingDevices.find(p => p.deviceId === deviceId);
+            if (!pendingItem) {
+                pendingItem = {
+                    deviceId,
+                    deviceName: getCurrentDeviceLabel(),
+                    code: generateSixDigitCode(),
+                    requestedAt: new Date().toLocaleString('vi-VN')
+                };
+                matched.pendingDevices.push(pendingItem);
+                registry[accIdx] = matched;
+                saveAccountsRegistry(registry);
+            }
+
+            openDeviceVerifyModal(matched, pendingItem.deviceId);
+        }
+
+        function openDeviceVerifyModal(acc, deviceId) {
+            pendingVerifyAccountId = acc.id;
+            pendingVerifyDeviceId = deviceId;
+            document.getElementById('dv-account-name').textContent = `${acc.teacherName} (Lớp ${acc.className})`;
+            document.getElementById('dv-device-count').textContent = `${acc.approvedDevices.length} / ${MAX_DEVICES_PER_ACCOUNT}`;
+            document.getElementById('dv-device-id').textContent = deviceId;
+            document.getElementById('dv-code-input').value = '';
+            document.getElementById('dv-error').classList.add('hidden');
+            document.getElementById('device-verify-modal').classList.remove('hidden');
+        }
+
+        function closeDeviceVerifyModal() {
+            document.getElementById('device-verify-modal').classList.add('hidden');
+            pendingVerifyAccountId = null;
+            pendingVerifyDeviceId = null;
+        }
+
+        function submitDeviceVerificationCode(e) {
+            e.preventDefault();
+            const errBox = document.getElementById('dv-error');
+            errBox.classList.add('hidden');
+            const inputCode = document.getElementById('dv-code-input').value.trim();
+
+            const registry = getAccountsRegistry();
+            const accIdx = registry.findIndex(a => a.id === pendingVerifyAccountId);
+            if (accIdx === -1) {
+                errBox.textContent = 'Không tìm thấy tài khoản!';
+                errBox.classList.remove('hidden');
+                return;
+            }
+
+            const acc = ensureDeviceFields(registry[accIdx]);
+            if (acc.approvedDevices.length >= MAX_DEVICES_PER_ACCOUNT) {
+                errBox.textContent = `Tài khoản đã đủ ${MAX_DEVICES_PER_ACCOUNT} thiết bị tối đa!`;
+                errBox.classList.remove('hidden');
+                return;
+            }
+
+            const pendingIdx = acc.pendingDevices.findIndex(p => p.deviceId === pendingVerifyDeviceId);
+            if (pendingIdx === -1) {
+                errBox.textContent = 'Yêu cầu xác nhận thiết bị không tồn tại hoặc đã hết hạn. Vui lòng đăng nhập lại!';
+                errBox.classList.remove('hidden');
+                return;
+            }
+
+            const pendingItem = acc.pendingDevices[pendingIdx];
+            if (pendingItem.code !== inputCode) {
+                errBox.textContent = 'Mã xác nhận không chính xác! Vui lòng kiểm tra lại mã do Admin cấp.';
+                errBox.classList.remove('hidden');
+                return;
+            }
+
+            // Mã hợp lệ -> Kích hoạt thiết bị vào danh sách đã duyệt
+            acc.pendingDevices.splice(pendingIdx, 1);
+            acc.approvedDevices.push({
+                deviceId: pendingItem.deviceId,
+                deviceName: pendingItem.deviceName,
+                approvedAt: new Date().toLocaleString('vi-VN')
+            });
+            registry[accIdx] = acc;
+            saveAccountsRegistry(registry);
+
+            closeDeviceVerifyModal();
             isAdminMode = false;
             isAdminImpersonating = false;
-            currentAccount = matched;
+            currentAccount = acc;
             loadAccountVault();
             enterMainApp();
-            showToast(`Xin chào GVCN ${matched.teacherName}!`);
+            showToast(`Xác nhận thiết bị thành công (${acc.approvedDevices.length}/${MAX_DEVICES_PER_ACCOUNT} thiết bị)!`);
         }
 
         function openAdminPanel() {
@@ -1148,7 +1352,7 @@
         }
 
         // =========================================================================
-        // QUẢN TRỊ VIÊN (ADMIN): CAN THIỆP SÂU, NỘP KIỂM TRA, SAO LƯU & EXCEL
+        // QUẢN TRỊ VIÊN (ADMIN): QUẢN LÝ THIẾT BỊ, MÃ XÁC NHẬN, NỘP KIỂM TRA & EXCEL
         // =========================================================================
         function getStudentCountFromVault(accountId) {
             const parsed = parseVault(accountId);
@@ -1159,8 +1363,12 @@
             const registry = getAccountsRegistry();
             const q = (document.getElementById('admin-search-input')?.value || '').toLowerCase().trim();
             const totalStudents = registry.reduce((sum, acc) => sum + getStudentCountFromVault(acc.id), 0);
+            const totalApprovedDevices = registry.reduce((sum, acc) => sum + (acc.approvedDevices?.length || 0), 0);
+            const totalPendingDevices = registry.reduce((sum, acc) => sum + (acc.pendingDevices?.length || 0), 0);
             const uniqueUnits = new Set(registry.map(acc => (acc.unit || '').trim()).filter(Boolean)).size;
+
             document.getElementById('admin-stat-accounts').textContent = `${registry.length} / ${MAX_ACCOUNTS}`;
+            document.getElementById('admin-stat-devices').textContent = `${totalApprovedDevices} / ${totalPendingDevices} chờ`;
             document.getElementById('admin-stat-students').textContent = totalStudents;
             document.getElementById('admin-stat-units').textContent = uniqueUnits;
 
@@ -1178,20 +1386,21 @@
 
             const tbody = document.getElementById('admin-accounts-tbody');
             if (!filtered.length) {
-                tbody.innerHTML = `<tr><td colspan="8" class="py-8 text-center text-slate-400">${registry.length ? 'Không tìm thấy tài khoản phù hợp.' : 'Chưa có tài khoản GVCN nào được đăng ký.'}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="9" class="py-8 text-center text-slate-400">${registry.length ? 'Không tìm thấy tài khoản phù hợp.' : 'Chưa có tài khoản GVCN nào được đăng ký.'}</td></tr>`;
                 return;
             }
 
             tbody.innerHTML = filtered.map((acc, idx) => {
                 const vault = parseVault(acc.id);
                 const stCount = vault && Array.isArray(vault.students) ? vault.students.length : 0;
+                const appDevCount = acc.approvedDevices?.length || 0;
+                const penDevCount = acc.pendingDevices?.length || 0;
                 const inspStatus = vault?.inspection?.status || 'Chưa kiểm tra';
                 const badgeClass = inspStatus === 'Đã nộp & Đạt kiểm tra'
                     ? 'bg-emerald-100 text-emerald-800'
                     : inspStatus === 'Cần bổ sung'
                         ? 'bg-rose-100 text-rose-800'
                         : 'bg-slate-100 text-slate-700';
-
                 return `
                     <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40">
                         <td class="py-2.5 px-3 text-center text-slate-400">${idx + 1}</td>
@@ -1199,19 +1408,195 @@
                         <td class="py-2.5 px-3 font-mono">${esc(acc.phone)}</td>
                         <td class="py-2.5 px-3 font-semibold text-sky-600">${esc(acc.className)}</td>
                         <td class="py-2.5 px-3 font-medium">${esc(acc.unit)}</td>
+                        <td class="py-2.5 px-3 text-center">
+                            <button onclick="openAdminDevicesModal('${acc.id}')" class="px-2.5 py-1 rounded-lg font-bold transition ${penDevCount > 0 ? 'bg-amber-500 text-white animate-pulse' : 'bg-amber-100 hover:bg-amber-200 text-amber-900'}">
+                                ${appDevCount}/${MAX_DEVICES_PER_ACCOUNT} ${penDevCount > 0 ? `(+${penDevCount} chờ mã)` : ''}
+                            </button>
+                        </td>
                         <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded-full text-[11px] font-bold ${badgeClass}">${esc(inspStatus)}</span></td>
                         <td class="py-2.5 px-3 text-center font-bold">${stCount}</td>
                         <td class="py-2.5 px-3 text-center space-x-1 whitespace-nowrap">
-                            <button onclick="openAdminInspectModal('${acc.id}')" class="px-2 py-1 rounded-lg bg-indigo-100 hover:bg-indigo-200 text-indigo-800 font-semibold transition">Chi tiết & Kiểm tra</button>
+                            <button onclick="openAdminDevicesModal('${acc.id}')" class="px-2 py-1 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-800 font-semibold transition">Mã TB</button>
+                            <button onclick="openAdminInspectModal('${acc.id}')" class="px-2 py-1 rounded-lg bg-indigo-100 hover:bg-indigo-200 text-indigo-800 font-semibold transition">Chi tiết</button>
                             <button onclick="openAdminEditModal('${acc.id}')" class="px-2 py-1 rounded-lg bg-sky-100 hover:bg-sky-200 text-sky-800 font-semibold transition">Sửa HC</button>
                             <button onclick="adminImpersonateAccount('${acc.id}')" class="px-2 py-1 rounded-lg bg-violet-100 hover:bg-violet-200 text-violet-800 font-semibold transition">Vào lớp</button>
                             <button onclick="adminExportSingleClassExcel('${acc.id}')" class="px-2 py-1 rounded-lg bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-semibold transition">Excel</button>
-                            <button onclick="adminResetPassword('${acc.id}')" class="px-2 py-1 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-800 font-semibold transition">Đổi MK</button>
+                            <button onclick="adminResetPassword('${acc.id}')" class="px-2 py-1 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold transition">Đổi MK</button>
                             <button onclick="adminResetAccountForReregister('${acc.id}')" class="px-2 py-1 rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-700 font-semibold transition">Xóa</button>
                         </td>
                     </tr>
                 `;
             }).join('');
+        }
+
+        // MODAL ADMIN: QUẢN LÝ THIẾT BỊ & XEM MÃ XÁC NHẬN
+        function openAdminDevicesModal(accountId) {
+            const acc = getAccountsRegistry().find(a => a.id === accountId);
+            if (!acc) return;
+            ensureDeviceFields(acc);
+
+            document.getElementById('admin-devices-title').innerHTML =
+                `<i class="fa-solid fa-laptop-code mr-1.5"></i>Thiết Bị & Mã Xác Nhận — ${esc(acc.teacherName)} (${acc.approvedDevices.length}/${MAX_DEVICES_PER_ACCOUNT})`;
+
+            document.getElementById('btn-sim-new-device').onclick = function () {
+                adminCreateTestDeviceRequest(accountId);
+            };
+
+            const pendingHTML = acc.pendingDevices.length
+                ? acc.pendingDevices.map(p => `
+                    <div class="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div class="space-y-1">
+                            <div class="font-bold text-slate-900 dark:text-white"><i class="fa-solid fa-desktop text-amber-600 mr-1"></i> ${esc(p.deviceName)}</div>
+                            <div class="text-[11px] text-slate-500">ID: <code class="font-mono font-bold">${esc(p.deviceId)}</code> • Gửi lúc: ${esc(p.requestedAt)}</div>
+                        </div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <div class="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border-2 border-amber-500 text-center">
+                                <div class="text-[10px] uppercase font-bold text-slate-400">Mã xác nhận cấp</div>
+                                <div class="text-base font-extrabold font-mono tracking-widest text-amber-600">${esc(p.code)}</div>
+                            </div>
+                            <button onclick="adminApproveDeviceDirectly('${acc.id}', '${p.deviceId}')" class="px-2.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition" title="Kích hoạt luôn thiết bị này">
+                                Duyệt nhanh
+                            </button>
+                            <button onclick="adminRegenerateDeviceCode('${acc.id}', '${p.deviceId}')" class="px-2.5 py-2 rounded-xl bg-sky-100 hover:bg-sky-200 text-sky-800 font-bold transition" title="Cấp mã mới">
+                                Đổi mã
+                            </button>
+                            <button onclick="adminRejectPendingDevice('${acc.id}', '${p.deviceId}')" class="px-2.5 py-2 rounded-xl bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold transition" title="Từ chối">
+                                Hủy
+                            </button>
+                        </div>
+                    </div>
+                `).join('')
+                : `<div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 text-center text-slate-400">Hiện không có thiết bị mới nào đang chờ cấp mã xác nhận.</div>`;
+
+            const approvedHTML = acc.approvedDevices.length
+                ? acc.approvedDevices.map((d, idx) => `
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40">
+                        <td class="p-2.5 text-center text-slate-400">${idx + 1}</td>
+                        <td class="p-2.5 font-semibold">${esc(d.deviceName)}</td>
+                        <td class="p-2.5 font-mono text-[11px]">${esc(d.deviceId)}</td>
+                        <td class="p-2.5 text-[11px] text-slate-500">${esc(d.approvedAt || '---')}</td>
+                        <td class="p-2.5 text-center">
+                            <button onclick="adminRevokeApprovedDevice('${acc.id}', '${d.deviceId}')" class="px-2.5 py-1 rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-700 font-semibold transition">
+                                Thu hồi
+                            </button>
+                        </td>
+                    </tr>
+                `).join('')
+                : `<tr><td colspan="5" class="p-4 text-center text-slate-400">Chưa có thiết bị nào được kích hoạt.</td></tr>`;
+
+            document.getElementById('admin-devices-body').innerHTML = `
+                <div class="space-y-2.5">
+                    <div class="flex items-center justify-between">
+                        <h5 class="font-bold text-amber-600 uppercase text-[11px]"><i class="fa-solid fa-key mr-1"></i>1. Yêu cầu thiết bị mới & Mã xác nhận Admin cấp (${acc.pendingDevices.length})</h5>
+                    </div>
+                    ${pendingHTML}
+                </div>
+                <div class="space-y-2.5">
+                    <div class="flex items-center justify-between">
+                        <h5 class="font-bold text-emerald-600 uppercase text-[11px]"><i class="fa-solid fa-circle-check mr-1"></i>2. Danh sách thiết bị được phép truy cập (${acc.approvedDevices.length} / ${MAX_DEVICES_PER_ACCOUNT})</h5>
+                    </div>
+                    <div class="border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden max-h-56 overflow-y-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead class="bg-slate-100 dark:bg-slate-900 text-[11px]">
+                                <tr>
+                                    <th class="p-2.5 text-center w-10">STT</th>
+                                    <th class="p-2.5">Tên thiết bị</th>
+                                    <th class="p-2.5">Mã thiết bị</th>
+                                    <th class="p-2.5">Thời gian cấp</th>
+                                    <th class="p-2.5 text-center">Quản lý</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 dark:divide-slate-800">${approvedHTML}</tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            document.getElementById('admin-devices-modal').classList.remove('hidden');
+        }
+
+        function closeAdminDevicesModal() {
+            document.getElementById('admin-devices-modal').classList.add('hidden');
+        }
+
+        function adminCreateTestDeviceRequest(accountId) {
+            const registry = getAccountsRegistry();
+            const acc = registry.find(a => a.id === accountId);
+            if (!acc) return;
+            ensureDeviceFields(acc);
+            if (acc.approvedDevices.length >= MAX_DEVICES_PER_ACCOUNT) {
+                alert(`Tài khoản đã đạt giới hạn tối đa ${MAX_DEVICES_PER_ACCOUNT} thiết bị!`);
+                return;
+            }
+            const simId = 'DEV-SIM-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+            acc.pendingDevices.push({
+                deviceId: simId,
+                deviceName: 'Thiết bị phụ #' + (acc.approvedDevices.length + acc.pendingDevices.length + 1),
+                code: generateSixDigitCode(),
+                requestedAt: new Date().toLocaleString('vi-VN')
+            });
+            saveAccountsRegistry(registry);
+            renderAdminDashboard();
+            openAdminDevicesModal(accountId);
+            showToast('Đã tạo yêu cầu thiết bị mới & sinh mã xác nhận!');
+        }
+
+        function adminApproveDeviceDirectly(accountId, deviceId) {
+            const registry = getAccountsRegistry();
+            const acc = registry.find(a => a.id === accountId);
+            if (!acc) return;
+            ensureDeviceFields(acc);
+            if (acc.approvedDevices.length >= MAX_DEVICES_PER_ACCOUNT) {
+                alert(`Đã đạt giới hạn tối đa ${MAX_DEVICES_PER_ACCOUNT} thiết bị!`);
+                return;
+            }
+            const idx = acc.pendingDevices.findIndex(p => p.deviceId === deviceId);
+            if (idx === -1) return;
+            const item = acc.pendingDevices.splice(idx, 1)[0];
+            acc.approvedDevices.push({
+                deviceId: item.deviceId,
+                deviceName: item.deviceName,
+                approvedAt: new Date().toLocaleString('vi-VN')
+            });
+            saveAccountsRegistry(registry);
+            renderAdminDashboard();
+            openAdminDevicesModal(accountId);
+            showToast(`Đã cấp quyền truy cập cho thiết bị ${item.deviceId}!`);
+        }
+
+        function adminRegenerateDeviceCode(accountId, deviceId) {
+            const registry = getAccountsRegistry();
+            const acc = registry.find(a => a.id === accountId);
+            if (!acc) return;
+            const item = (acc.pendingDevices || []).find(p => p.deviceId === deviceId);
+            if (!item) return;
+            item.code = generateSixDigitCode();
+            item.requestedAt = new Date().toLocaleString('vi-VN');
+            saveAccountsRegistry(registry);
+            openAdminDevicesModal(accountId);
+            showToast(`Đã tạo mã xác nhận mới: ${item.code}`);
+        }
+
+        function adminRejectPendingDevice(accountId, deviceId) {
+            const registry = getAccountsRegistry();
+            const acc = registry.find(a => a.id === accountId);
+            if (!acc) return;
+            acc.pendingDevices = (acc.pendingDevices || []).filter(p => p.deviceId !== deviceId);
+            saveAccountsRegistry(registry);
+            renderAdminDashboard();
+            openAdminDevicesModal(accountId);
+            showToast('Đã hủy yêu cầu thiết bị!');
+        }
+
+        function adminRevokeApprovedDevice(accountId, deviceId) {
+            if (!confirm(`Thu hồi quyền truy cập của thiết bị "${deviceId}"? Thiết bị này sẽ phải xin mã xác nhận lại khi đăng nhập.`)) return;
+            const registry = getAccountsRegistry();
+            const acc = registry.find(a => a.id === accountId);
+            if (!acc) return;
+            acc.approvedDevices = (acc.approvedDevices || []).filter(d => d.deviceId !== deviceId);
+            saveAccountsRegistry(registry);
+            renderAdminDashboard();
+            openAdminDevicesModal(accountId);
+            showToast(`Đã thu hồi quyền của thiết bị ${deviceId}`);
         }
 
         // XEM CHI TIẾT LỚP & CHẾ ĐỘ NỘP KIỂM TRA
@@ -1226,10 +1611,8 @@
             const weekCount = Object.keys(vault.weeklyPoints || {}).length;
             const attDays = Object.keys(vault.attendance || {}).length;
             const insp = vault.inspection || { status: 'Chưa kiểm tra', note: '', checkedAt: '' };
-
             document.getElementById('admin-inspect-title').innerHTML =
                 `<i class="fa-solid fa-clipboard-check mr-1.5"></i>Chi Tiết Lớp ${esc(acc.className)} — GVCN: ${esc(acc.teacherName)}`;
-
             document.getElementById('admin-inspect-body').innerHTML = `
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                     <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
@@ -1241,20 +1624,18 @@
                         <div class="text-base font-extrabold text-emerald-600">${avgGpa}</div>
                     </div>
                     <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
-                        <div class="text-[11px] text-slate-400">Tuần thi đua / Ngày ĐD</div>
-                        <div class="text-base font-extrabold text-indigo-600">${weekCount} / ${attDays}</div>
+                        <div class="text-[11px] text-slate-400">Thiết bị kích hoạt</div>
+                        <div class="text-base font-extrabold text-amber-500">${acc.approvedDevices?.length || 0} / ${MAX_DEVICES_PER_ACCOUNT}</div>
                     </div>
                     <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
-                        <div class="text-[11px] text-slate-400">Tháng vinh danh</div>
-                        <div class="text-base font-extrabold text-amber-500">${honorCount}</div>
+                        <div class="text-[11px] text-slate-400">Tuần TĐ / Tháng VD</div>
+                        <div class="text-base font-extrabold text-indigo-600">${weekCount} / ${honorCount}</div>
                     </div>
                 </div>
-
                 <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 space-y-1">
                     <div><strong>Đơn vị:</strong> ${esc(acc.unit)} — <strong>Địa phương:</strong> ${esc([acc.ward, acc.province].filter(Boolean).join(', ') || '---')}</div>
                     <div><strong>SĐT liên hệ:</strong> <span class="font-mono">${esc(acc.phone)}</span> — <strong>Số tổ cấu hình:</strong> ${vault.meta?.groupCount || 5} tổ</div>
                 </div>
-
                 <!-- CHẾ ĐỘ NỘP KIỂM TRA -->
                 <div class="p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800 space-y-3">
                     <div class="font-bold text-indigo-900 dark:text-indigo-200 flex items-center justify-between">
@@ -1280,7 +1661,6 @@
                         </button>
                     </div>
                 </div>
-
                 <div>
                     <div class="font-bold mb-1.5">Danh sách học sinh (${students.length}):</div>
                     <div class="max-h-44 overflow-y-auto border border-slate-200 dark:border-slate-700 rounded-xl">
@@ -1353,29 +1733,24 @@
             const registry = getAccountsRegistry();
             const idx = registry.findIndex(a => a.id === id);
             if (idx === -1) return;
-
             const ward = document.getElementById('adm-edit-ward').value.trim();
             const province = document.getElementById('adm-edit-province').value.trim();
             const unit = document.getElementById('adm-edit-unit').value.trim();
             const teacherName = document.getElementById('adm-edit-teacher').value.trim();
             const className = document.getElementById('adm-edit-class').value.trim();
             const phone = normalizePhone(document.getElementById('adm-edit-phone').value);
-
             const dup = registry.some((a, i) => i !== idx && normalizePhone(a.phone) === phone);
             if (dup) {
                 alert('Số điện thoại này đã thuộc về một tài khoản GVCN khác!');
                 return;
             }
-
             registry[idx] = { ...registry[idx], ward, province, unit, teacherName, className, phone };
             saveAccountsRegistry(registry);
-
             const vault = parseVault(id);
             if (vault) {
                 vault.meta = { ...(vault.meta || {}), ward, province, unit, className, teacherName, phone };
                 localStorage.setItem(id, JSON.stringify(vault));
             }
-
             closeAdminEditModal();
             renderAdminDashboard();
             showToast(`Đã cập nhật thông tin hành chính cho GVCN ${teacherName}`);
@@ -1413,7 +1788,7 @@
             const registry = getAccountsRegistry();
             const acc = registry.find(a => a.id === accountId);
             if (!acc) return;
-            const msg = `Reset & xóa tài khoản của GVCN "${acc.teacherName}"?\n\nCác thông tin sau sẽ được giải phóng để đăng ký lại:\n- SĐT: ${acc.phone}\n- Tên GVCN: ${acc.teacherName}\n- Lớp: ${acc.className}\n- Đơn vị: ${acc.unit}\n\nToàn bộ dữ liệu lớp thuộc tài khoản này cũng sẽ bị xóa vĩnh viễn.`;
+            const msg = `Reset & xóa tài khoản của GVCN "${acc.teacherName}"?\n\nCác thông tin sau sẽ được giải phóng để đăng ký lại:\n- SĐT: ${acc.phone}\n- Tên GVCN: ${acc.teacherName}\n- Lớp: ${acc.className}\n- Đơn vị: ${acc.unit}\n\nToàn bộ dữ liệu lớp và thiết bị thuộc tài khoản này cũng sẽ bị xóa vĩnh viễn.`;
             if (!confirm(msg)) return;
             saveAccountsRegistry(registry.filter(a => a.id !== accountId));
             localStorage.removeItem(accountId);
@@ -1448,6 +1823,7 @@
             const payload = {
                 exportedAt: new Date().toISOString(),
                 maxAccounts: MAX_ACCOUNTS,
+                maxDevicesPerAccount: MAX_DEVICES_PER_ACCOUNT,
                 registry,
                 vaults
             };
@@ -1475,7 +1851,7 @@
                     if (!confirm(`Khôi phục ${data.registry.length} tài khoản GVCN từ file sao lưu? Dữ liệu hiện tại sẽ được ghi đè.`)) return;
                     const oldReg = getAccountsRegistry();
                     oldReg.forEach(acc => localStorage.removeItem(acc.id));
-                    const trimmedReg = data.registry.slice(0, MAX_ACCOUNTS);
+                    const trimmedReg = data.registry.slice(0, MAX_ACCOUNTS).map(ensureDeviceFields);
                     saveAccountsRegistry(trimmedReg);
                     if (data.vaults && typeof data.vaults === 'object') {
                         trimmedReg.forEach(acc => {
@@ -1502,7 +1878,6 @@
             const gpas = students.map(s => parseFloat(s.gpa)).filter(n => !isNaN(n) && n > 0);
             const avgGpa = gpas.length ? Number((gpas.reduce((a, b) => a + b, 0) / gpas.length).toFixed(2)) : 0;
             const insp = vault?.inspection || { status: 'Chưa kiểm tra', note: '', checkedAt: '' };
-
             const wsOverview = XLSX.utils.aoa_to_sheet([
                 ['THÔNG TIN TỔNG QUAN LỚP CHỦ NHIỆM'],
                 ['Đơn vị / Trường', meta.unit || acc.unit || ''],
@@ -1513,6 +1888,7 @@
                 ['Sĩ số hiện tại', students.length],
                 ['Sĩ số mục tiêu', meta.targetStudentCount || 0],
                 ['ĐTB lớp', avgGpa],
+                ['Số thiết bị kích hoạt', `${acc.approvedDevices?.length || 0} / ${MAX_DEVICES_PER_ACCOUNT}`],
                 ['Trạng thái nộp kiểm tra', insp.status],
                 ['Ghi chú kiểm tra', insp.note],
                 ['Thời điểm kiểm tra', insp.checkedAt]
@@ -1538,7 +1914,6 @@
                 ['Tháng', 'Học sinh', 'Tổ', 'Danh hiệu', 'Thành tích / Ghi chú', 'Ngày cập nhật'],
                 ...(honors.length ? honors : [['', 'Chưa có vinh danh', '', '', '', '']])
             ]), 'Vinh_Danh');
-
             return wb;
         }
 
@@ -1566,19 +1941,16 @@
                 return;
             }
             const wb = XLSX.utils.book_new();
-
             const summaryRows = [
                 ['BÁO CÁO TỔNG HỢP TOÀN BỘ HỆ THỐNG LỚP CHỦ NHIỆM (TỐI ĐA 999 TÀI KHOẢN)'],
                 ['Ngày xuất', getFormattedDateVN()],
                 [],
-                ['STT', 'Tên GVCN', 'SĐT', 'Lớp', 'Đơn vị / Trường', 'Địa phương', 'Sĩ số', 'Trạng thái kiểm tra', 'Ghi chú kiểm tra']
+                ['STT', 'Tên GVCN', 'SĐT', 'Lớp', 'Đơn vị / Trường', 'Địa phương', 'Thiết bị', 'Sĩ số', 'Trạng thái kiểm tra', 'Ghi chú kiểm tra']
             ];
-
             const allStudentsRows = [
                 ['STT', 'Lớp', 'Tên GVCN', 'Họ và tên HS', 'Giới tính', 'Ngày sinh', 'Dân tộc', 'Tổ', 'ĐTB', 'Học lực']
             ];
             let stIdx = 1;
-
             registry.forEach((acc, i) => {
                 const vault = parseVault(acc.id) || {};
                 const students = Array.isArray(vault.students) ? vault.students : [];
@@ -1590,6 +1962,7 @@
                     acc.className || '',
                     acc.unit || '',
                     [acc.ward, acc.province].filter(Boolean).join(', '),
+                    `${acc.approvedDevices?.length || 0}/${MAX_DEVICES_PER_ACCOUNT}`,
                     students.length,
                     insp.status || 'Chưa kiểm tra',
                     insp.note || ''
@@ -1609,15 +1982,13 @@
                     ]);
                 });
             });
-
             const wsSummary = XLSX.utils.aoa_to_sheet(summaryRows);
-            wsSummary['!cols'] = [{ wch: 6 }, { wch: 24 }, { wch: 15 }, { wch: 12 }, { wch: 28 }, { wch: 24 }, { wch: 10 }, { wch: 24 }, { wch: 30 }];
+            wsSummary['!cols'] = [{ wch: 6 }, { wch: 24 }, { wch: 15 }, { wch: 12 }, { wch: 28 }, { wch: 24 }, { wch: 12 }, { wch: 10 }, { wch: 24 }, { wch: 30 }];
             XLSX.utils.book_append_sheet(wb, wsSummary, 'Tong_Hop_Cac_Lop');
 
             const wsAllStudents = XLSX.utils.aoa_to_sheet(allStudentsRows);
             wsAllStudents['!cols'] = [{ wch: 6 }, { wch: 12 }, { wch: 22 }, { wch: 28 }, { wch: 10 }, { wch: 14 }, { wch: 12 }, { wch: 10 }, { wch: 8 }, { wch: 16 }];
             XLSX.utils.book_append_sheet(wb, wsAllStudents, 'Toan_Bo_Hoc_Sinh');
-
             XLSX.writeFile(wb, `Toan_Bo_He_Thong_GVCN_${new Date().toISOString().slice(0, 10)}.xlsx`);
             showToast(`Đã xuất file Excel toàn bộ ${registry.length} lớp!`);
         }
@@ -1715,6 +2086,7 @@
             document.getElementById('nav-student-count').textContent = `Danh sách (${classData.students.length})`;
             document.getElementById('dash-title').textContent = `Tổng Quan Lớp ${m.className || ''} — ${m.unit || ''}`;
             document.getElementById('dash-subtitle').textContent = `GVCN: ${m.teacherName} (${m.ward}, ${m.province})`;
+
             const total = classData.students.length;
             const target = m.targetStudentCount || 0;
             const male = classData.students.filter(s => s.gender === 'Nam').length;
@@ -1722,6 +2094,10 @@
             const gpas = classData.students.map(s => parseFloat(s.gpa)).filter(n => !isNaN(n) && n > 0);
             const avgGpa = gpas.length ? (gpas.reduce((a, b) => a + b, 0) / gpas.length).toFixed(2) : '0.00';
             const honorCount = Object.keys(classData.honors || {}).length;
+
+            const freshAcc = getAccountsRegistry().find(a => a.id === currentAccount.id) || currentAccount;
+            const devCount = freshAcc.approvedDevices?.length || 1;
+
             document.getElementById('dash-stat-total').textContent = `${total} / ${target}`;
             document.getElementById('dash-stat-groups-info').textContent = `Số tổ cấu hình: ${getGroupNames().length} tổ`;
             document.getElementById('dash-stat-male').textContent = male;
@@ -1730,7 +2106,9 @@
                 ? `${Math.round((male / total) * 100)}% Nam / ${Math.round((female / total) * 100)}% Nữ`
                 : 'Chưa có học sinh';
             document.getElementById('dash-stat-gpa').textContent = avgGpa;
-            document.getElementById('dash-stat-honor-count').textContent = `${honorCount} tháng`;
+            document.getElementById('dash-stat-devices').textContent = `${devCount} / ${MAX_DEVICES_PER_ACCOUNT}`;
+            document.getElementById('dash-stat-honor-count').textContent = `Vinh danh: ${honorCount} tháng`;
+
             const groups = getGroupNames();
             document.getElementById('dash-groups-grid').innerHTML = groups.map(g => {
                 const cnt = classData.students.filter(s => s.group === g).length;
@@ -2210,6 +2588,7 @@
             const avgGpa = gpas.length ? (gpas.reduce((a, b) => a + b, 0) / gpas.length).toFixed(2) : 'Chưa có';
             const curMonth = document.getElementById('conduct-month-select').value || 'Tháng 9';
             const curWeek = document.getElementById('ranking-week-select').value || 'Tuần 1';
+
             const studentRowsHTML = classData.students.length
                 ? classData.students.map((s, i) => `
                     <tr>
@@ -2224,6 +2603,7 @@
                     </tr>
                 `).join('')
                 : `<tr><td colspan="8" style="text-align:center;font-style:italic;color:#666;">Chưa có danh sách học sinh.</td></tr>`;
+
             const honoredMonths = MONTHS.filter(mo => classData.honors[mo]);
             const honorRowsHTML = honoredMonths.length
                 ? honoredMonths.map((mo, i) => {
@@ -2241,6 +2621,7 @@
                     `;
                 }).join('')
                 : `<tr><td colspan="6" style="text-align:center;font-style:italic;color:#666;">Chưa có học sinh được vinh danh trong năm học.</td></tr>`;
+
             const groups = getGroupNames();
             const wData = classData.weeklyPoints[curWeek] || {};
             const rankingSorted = groups.map(g => ({
@@ -2248,6 +2629,7 @@
                 points: wData[g] !== undefined ? Number(wData[g]) : 100,
                 count: classData.students.filter(s => s.group === g).length
             })).sort((a, b) => b.points - a.points);
+
             const rankingRowsHTML = rankingSorted.map((item, idx) => `
                 <tr>
                     <td style="text-align:center;"><strong>Hạng ${idx + 1}</strong></td>
@@ -2256,6 +2638,7 @@
                     <td style="text-align:center;"><strong>${item.points} điểm</strong></td>
                 </tr>
             `).join('');
+
             const mConduct = classData.conducts[curMonth] || {};
             const conductRowsHTML = classData.students.length
                 ? classData.students.map((s, i) => {
@@ -2271,6 +2654,7 @@
                     `;
                 }).join('')
                 : `<tr><td colspan="5" style="text-align:center;font-style:italic;color:#666;">Chưa có dữ liệu hạnh kiểm.</td></tr>`;
+
             return `
                 <div style="font-family:'Times New Roman', Times, serif; color:#000; font-size:13pt; line-height:1.45;">
                     <table style="width:100%; border:none; margin-bottom:12px;">
