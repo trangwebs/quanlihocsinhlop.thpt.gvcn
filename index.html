@@ -41,7 +41,7 @@
                     HỆ THỐNG QUẢN LÝ LỚP HỌC GVCN
                 </h1>
                 <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">
-                    Bản Quyền Nguyễn Ngân Chương
+                    Bản Thử Nghiệm Đa Thiết Bị & An Toàn, Hiệu Quả.
                 </p>
             </div>
             <!-- 2 NÚT CHUYỂN TRANG RIÊNG BIỆT -->
@@ -81,7 +81,7 @@
                         </div>
                     </div>
                     <div id="login-error" class="hidden p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-xs text-rose-600 dark:text-rose-400 font-medium"></div>
-                    <button type="submit" class="w-full py-3 bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white font-bold rounded-xl text-sm shadow-md transition">
+                    <button type="submit" id="login-submit-btn" class="w-full py-3 bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white font-bold rounded-xl text-sm shadow-md transition">
                         Đăng Nhập Hệ Thống
                     </button>
                 </form>
@@ -168,7 +168,6 @@
             </div>
         </div>
     </div>
-
     <!-- MODAL XÁC NHẬN THIẾT BỊ MỚI (DÀNH CHO GVCN NHẬP MÃ TỪ ADMIN) -->
     <div id="device-verify-modal" class="fixed inset-0 z-[60] bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl w-full max-w-md border border-slate-200 dark:border-slate-700 overflow-hidden">
@@ -198,7 +197,6 @@
             </form>
         </div>
     </div>
-
     <!-- GIAO DIỆN QUẢN TRỊ VIÊN (ADMIN) -->
     <div id="admin-panel" class="hidden flex-grow flex flex-col">
         <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 shadow-sm no-print">
@@ -268,7 +266,7 @@
                     <input type="text" id="admin-search-input" oninput="renderAdminDashboard()" placeholder="Tìm theo Tên GVCN, SĐT, Lớp hoặc Trường..."
                         class="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
-                <button onclick="renderAdminDashboard()" class="px-3.5 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl text-xs font-semibold transition">
+                <button onclick="syncFromCloud(true)" class="px-3.5 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl text-xs font-semibold transition">
                     <i class="fa-solid fa-arrows-rotate mr-1"></i> Làm mới danh sách
                 </button>
             </div>
@@ -294,7 +292,6 @@
             </div>
         </main>
     </div>
-
     <!-- MODAL ADMIN: QUẢN LÝ THIẾT BỊ & XEM MÃ XÁC NHẬN (TỐI ĐA 50 THIẾT BỊ) -->
     <div id="admin-devices-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-2xl border border-slate-200 dark:border-slate-700 overflow-hidden max-h-[90vh] flex flex-col">
@@ -311,7 +308,6 @@
             </div>
         </div>
     </div>
-
     <!-- GIAO DIỆN CHÍNH KHI ĐÃ ĐĂNG NHẬP -->
     <div id="main-app" class="hidden flex flex-col flex-grow">
         <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 shadow-sm no-print">
@@ -719,7 +715,6 @@
             </section>
         </main>
     </div>
-
     <!-- MODAL ADMIN: XEM CHI TIẾT LỚP & CHẾ ĐỘ NỘP KIỂM TRA -->
     <div id="admin-inspect-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-2xl border border-slate-200 dark:border-slate-700 overflow-hidden max-h-[90vh] flex flex-col">
@@ -733,7 +728,6 @@
             </div>
         </div>
     </div>
-
     <!-- MODAL ADMIN: SỬA THÔNG TIN HÀNH CHÍNH GVCN -->
     <div id="admin-edit-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
@@ -780,7 +774,6 @@
             </form>
         </div>
     </div>
-
     <!-- MODAL THÊM / SỬA HỌC SINH -->
     <div id="student-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-md border border-slate-200 dark:border-slate-700 overflow-hidden">
@@ -841,7 +834,6 @@
             </form>
         </div>
     </div>
-
     <!-- MODAL NHẬP ĐIỂM THI ĐUA TUẦN -->
     <div id="week-points-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-md border border-slate-200 dark:border-slate-700 overflow-hidden">
@@ -856,7 +848,6 @@
             </div>
         </div>
     </div>
-
     <!-- MODAL VINH DANH -->
     <div id="honor-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-md border border-slate-200 dark:border-slate-700 overflow-hidden">
@@ -888,7 +879,6 @@
             </form>
         </div>
     </div>
-
     <!-- MODAL TỔNG KẾT CUỐI NĂM VINH DANH -->
     <div id="yearend-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-2xl border border-slate-200 dark:border-slate-700 overflow-hidden max-h-[90vh] flex flex-col">
@@ -903,14 +893,50 @@
             </div>
         </div>
     </div>
-
     <!-- TOAST -->
     <div id="toast" class="fixed bottom-5 right-5 z-[70] bg-slate-900 text-white px-4 py-3 rounded-xl shadow-lg flex items-center space-x-2 text-xs font-medium opacity-0 pointer-events-none transition-opacity duration-300">
         <i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i>
         <span id="toast-text">Đã lưu</span>
     </div>
-
     <script>
+        // =========================================================================
+        // CẤU HÌNH ĐÁM MÂY FIREBASE REALTIME DATABASE (ĐỒNG BỘ MỌI THIẾT BỊ)
+        // Thay các giá trị bên dưới bằng cấu hình Project Firebase của bạn
+        // =========================================================================
+        const FIREBASE_CONFIG = {
+            apiKey: "",
+            authDomain: "",
+            databaseURL: "https://phan-mem-quan-li-c-sinh-default-rtdb.asia-southeast1.firebasedatabase.app/",
+            projectId: "",
+            storageBucket: "",
+            messagingSenderId: "",
+            appId: ""
+        };
+        function isCloudConfigured() {
+            return Boolean(FIREBASE_CONFIG.databaseURL && FIREBASE_CONFIG.databaseURL.trim().startsWith('https://'));
+        }
+        function getCloudBaseUrl() {
+            return FIREBASE_CONFIG.databaseURL.replace(/\/+$/, '');
+        }
+        async function cloudRead(path) {
+            if (!isCloudConfigured()) return null;
+            const res = await fetch(`${getCloudBaseUrl()}/${path}.json`);
+            if (!res.ok) throw new Error('Không thể đọc dữ liệu từ đám mây');
+            return await res.json();
+        }
+        async function cloudWrite(path, data) {
+            if (!isCloudConfigured()) return;
+            await fetch(`${getCloudBaseUrl()}/${path}.json`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+        }
+        async function cloudDelete(path) {
+            if (!isCloudConfigured()) return;
+            await fetch(`${getCloudBaseUrl()}/${path}.json`, { method: 'DELETE' });
+        }
+
         const MAX_ACCOUNTS = 999;
         const MAX_DEVICES_PER_ACCOUNT = 50;
         const REGISTRY_KEY = 'gvcn_system_accounts_registry_v1';
@@ -947,13 +973,56 @@
             attendance: {},
             honors: {}
         };
-
-        window.onload = function () {
+        window.onload = async function () {
             loadTheme();
             initSelectors();
             getCurrentDeviceId();
+            if (isCloudConfigured()) {
+                await syncFromCloud(false);
+            }
         };
-
+        async function syncFromCloud(showNotice = false) {
+            if (!isCloudConfigured()) {
+                if (isAdminMode) renderAdminDashboard();
+                return;
+            }
+            try {
+                const cloudState = await cloudRead('gvcn_system');
+                if (cloudState && typeof cloudState === 'object') {
+                    if (Array.isArray(cloudState.registry)) {
+                        localStorage.setItem(REGISTRY_KEY, JSON.stringify(cloudState.registry.map(ensureDeviceFields)));
+                    }
+                    if (cloudState.vaults && typeof cloudState.vaults === 'object') {
+                        Object.entries(cloudState.vaults).forEach(([accId, vaultObj]) => {
+                            if (vaultObj) localStorage.setItem(accId, JSON.stringify(vaultObj));
+                        });
+                    }
+                }
+                if (currentAccount) {
+                    const updatedAcc = getAccountsRegistry().find(a => a.id === currentAccount.id);
+                    if (updatedAcc) currentAccount = updatedAcc;
+                    loadAccountVault();
+                    renderAllViews();
+                } else if (isAdminMode) {
+                    renderAdminDashboard();
+                }
+                if (showNotice) showToast('Đã đồng bộ dữ liệu mới nhất từ đám mây!');
+            } catch (e) {
+                console.warn('Đồng bộ đám mây gặp sự cố, dùng dữ liệu cục bộ:', e);
+            }
+        }
+        async function pushAccountAndVaultToCloud(accountObj, vaultObj) {
+            if (!isCloudConfigured()) return;
+            try {
+                if (accountObj) {
+                    await cloudWrite(`gvcn_system/vaults/${accountObj.id}`, vaultObj || parseVault(accountObj.id) || {});
+                }
+                const reg = getAccountsRegistry();
+                await cloudWrite('gvcn_system/registry', reg);
+            } catch (e) {
+                console.warn('Không thể đẩy dữ liệu lên đám mây:', e);
+            }
+        }
         // =========================================================================
         // QUẢN LÝ ĐỊNH DANH THIẾT BỊ & XÁC THỰC TỐI ĐA 50 THIẾT BỊ / TÀI KHOẢN
         // =========================================================================
@@ -965,7 +1034,6 @@
             }
             return devId;
         }
-
         function getCurrentDeviceLabel() {
             const ua = navigator.userAgent || '';
             let os = 'Máy tính';
@@ -973,26 +1041,21 @@
             else if (/iPhone|iPad|iPod/i.test(ua)) os = 'iOS';
             else if (/Windows/i.test(ua)) os = 'Windows';
             else if (/Mac/i.test(ua)) os = 'macOS';
-
             let browser = 'Trình duyệt';
             if (/Edg\//i.test(ua)) browser = 'Edge';
             else if (/Chrome\//i.test(ua)) browser = 'Chrome';
             else if (/Firefox\//i.test(ua)) browser = 'Firefox';
             else if (/Safari\//i.test(ua)) browser = 'Safari';
-
             return `${os} • ${browser}`;
         }
-
         function generateSixDigitCode() {
             return String(Math.floor(100000 + Math.random() * 900000));
         }
-
         function ensureDeviceFields(acc) {
             if (!Array.isArray(acc.approvedDevices)) acc.approvedDevices = [];
             if (!Array.isArray(acc.pendingDevices)) acc.pendingDevices = [];
             return acc;
         }
-
         function getAccountsRegistry() {
             try {
                 const raw = localStorage.getItem(REGISTRY_KEY);
@@ -1002,11 +1065,12 @@
                 return [];
             }
         }
-
         function saveAccountsRegistry(list) {
             localStorage.setItem(REGISTRY_KEY, JSON.stringify(list));
+            if (isCloudConfigured()) {
+                cloudWrite('gvcn_system/registry', list).catch(() => {});
+            }
         }
-
         function switchAuthPage(page) {
             const isLogin = page === 'login';
             document.getElementById('page-login').classList.toggle('hidden', !isLogin);
@@ -1020,7 +1084,6 @@
             document.getElementById('login-error').classList.add('hidden');
             document.getElementById('register-error').classList.add('hidden');
         }
-
         function togglePass(inputId, iconId) {
             const inp = document.getElementById(inputId);
             const ico = document.getElementById(iconId);
@@ -1032,15 +1095,14 @@
                 ico.className = 'fa-regular fa-eye';
             }
         }
-
         function normalizePhone(p) {
             return (p || '').replace(/\s+/g, '').trim();
         }
-
-        function handleRegisterSubmit(e) {
+        async function handleRegisterSubmit(e) {
             e.preventDefault();
             const errBox = document.getElementById('register-error');
             errBox.classList.add('hidden');
+            if (isCloudConfigured()) await syncFromCloud(false);
             const registry = getAccountsRegistry();
             if (registry.length >= MAX_ACCOUNTS) {
                 errBox.textContent = `Hệ thống chỉ quản lý tối đa ${MAX_ACCOUNTS} tài khoản. Đã đạt giới hạn tài khoản!`;
@@ -1108,41 +1170,45 @@
             isAdminImpersonating = false;
             currentAccount = newAccount;
             saveAccountVault();
+            await pushAccountAndVaultToCloud(newAccount, classData);
             enterMainApp();
             showToast('Tạo tài khoản GVCN thành công (Thiết bị 1/50)!');
         }
-
-        function handleLoginSubmit(e) {
+        async function handleLoginSubmit(e) {
             e.preventDefault();
             const errBox = document.getElementById('login-error');
+            const submitBtn = document.getElementById('login-submit-btn');
             errBox.classList.add('hidden');
             const identifier = document.getElementById('login-identifier').value.trim().toLowerCase();
             const normIdPhone = normalizePhone(identifier);
             const password = document.getElementById('login-password').value;
+
+            if (isCloudConfigured()) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Đang đồng bộ dữ liệu...';
+                await syncFromCloud(false);
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Đăng Nhập Hệ Thống';
+            }
 
             if (identifier === ADMIN_ACCOUNT.username.toLowerCase() && password === ADMIN_ACCOUNT.password) {
                 openAdminPanel();
                 showToast('Đăng nhập quyền Admin thành công!');
                 return;
             }
-
             const registry = getAccountsRegistry();
             const accIdx = registry.findIndex(acc => {
                 const nameMatch = (acc.teacherName || '').toLowerCase().trim() === identifier;
                 const phoneMatch = normalizePhone(acc.phone) === normIdPhone;
                 return (nameMatch || phoneMatch) && acc.password === password;
             });
-
             if (accIdx === -1) {
                 errBox.textContent = 'Tên GVCN/SĐT hoặc Mật khẩu không đúng. Vui lòng kiểm tra lại!';
                 errBox.classList.remove('hidden');
                 return;
             }
-
             const matched = ensureDeviceFields(registry[accIdx]);
             const deviceId = getCurrentDeviceId();
-
-            // Kiểm tra thiết bị hiện tại đã được cấp phép chưa
             const isApproved = matched.approvedDevices.some(d => d.deviceId === deviceId);
             if (isApproved) {
                 isAdminMode = false;
@@ -1153,15 +1219,11 @@
                 showToast(`Xin chào GVCN ${matched.teacherName}!`);
                 return;
             }
-
-            // Nếu thiết bị chưa được cấp phép -> Kiểm tra giới hạn 50 thiết bị
             if (matched.approvedDevices.length >= MAX_DEVICES_PER_ACCOUNT) {
                 errBox.textContent = `Tài khoản này đã đạt giới hạn tối đa ${MAX_DEVICES_PER_ACCOUNT} thiết bị truy cập! Vui lòng liên hệ Admin để thu hồi bớt thiết bị cũ.`;
                 errBox.classList.remove('hidden');
                 return;
             }
-
-            // Tạo hoặc lấy yêu cầu cấp mã xác nhận gửi về Admin
             let pendingItem = matched.pendingDevices.find(p => p.deviceId === deviceId);
             if (!pendingItem) {
                 pendingItem = {
@@ -1174,10 +1236,8 @@
                 registry[accIdx] = matched;
                 saveAccountsRegistry(registry);
             }
-
             openDeviceVerifyModal(matched, pendingItem.deviceId);
         }
-
         function openDeviceVerifyModal(acc, deviceId) {
             pendingVerifyAccountId = acc.id;
             pendingVerifyDeviceId = deviceId;
@@ -1188,19 +1248,17 @@
             document.getElementById('dv-error').classList.add('hidden');
             document.getElementById('device-verify-modal').classList.remove('hidden');
         }
-
         function closeDeviceVerifyModal() {
             document.getElementById('device-verify-modal').classList.add('hidden');
             pendingVerifyAccountId = null;
             pendingVerifyDeviceId = null;
         }
-
-        function submitDeviceVerificationCode(e) {
+        async function submitDeviceVerificationCode(e) {
             e.preventDefault();
             const errBox = document.getElementById('dv-error');
             errBox.classList.add('hidden');
+            if (isCloudConfigured()) await syncFromCloud(false);
             const inputCode = document.getElementById('dv-code-input').value.trim();
-
             const registry = getAccountsRegistry();
             const accIdx = registry.findIndex(a => a.id === pendingVerifyAccountId);
             if (accIdx === -1) {
@@ -1208,29 +1266,24 @@
                 errBox.classList.remove('hidden');
                 return;
             }
-
             const acc = ensureDeviceFields(registry[accIdx]);
             if (acc.approvedDevices.length >= MAX_DEVICES_PER_ACCOUNT) {
                 errBox.textContent = `Tài khoản đã đủ ${MAX_DEVICES_PER_ACCOUNT} thiết bị tối đa!`;
                 errBox.classList.remove('hidden');
                 return;
             }
-
             const pendingIdx = acc.pendingDevices.findIndex(p => p.deviceId === pendingVerifyDeviceId);
             if (pendingIdx === -1) {
                 errBox.textContent = 'Yêu cầu xác nhận thiết bị không tồn tại hoặc đã hết hạn. Vui lòng đăng nhập lại!';
                 errBox.classList.remove('hidden');
                 return;
             }
-
             const pendingItem = acc.pendingDevices[pendingIdx];
             if (pendingItem.code !== inputCode) {
                 errBox.textContent = 'Mã xác nhận không chính xác! Vui lòng kiểm tra lại mã do Admin cấp.';
                 errBox.classList.remove('hidden');
                 return;
             }
-
-            // Mã hợp lệ -> Kích hoạt thiết bị vào danh sách đã duyệt
             acc.pendingDevices.splice(pendingIdx, 1);
             acc.approvedDevices.push({
                 deviceId: pendingItem.deviceId,
@@ -1239,7 +1292,6 @@
             });
             registry[accIdx] = acc;
             saveAccountsRegistry(registry);
-
             closeDeviceVerifyModal();
             isAdminMode = false;
             isAdminImpersonating = false;
@@ -1248,7 +1300,6 @@
             enterMainApp();
             showToast(`Xác nhận thiết bị thành công (${acc.approvedDevices.length}/${MAX_DEVICES_PER_ACCOUNT} thiết bị)!`);
         }
-
         function openAdminPanel() {
             isAdminMode = true;
             isAdminImpersonating = false;
@@ -1259,7 +1310,6 @@
             document.getElementById('admin-search-input').value = '';
             renderAdminDashboard();
         }
-
         function parseVault(accountId) {
             try {
                 const raw = localStorage.getItem(accountId);
@@ -1268,7 +1318,6 @@
                 return null;
             }
         }
-
         function loadAccountVault() {
             if (!currentAccount) return;
             const parsed = parseVault(currentAccount.id);
@@ -1318,12 +1367,13 @@
                 };
             }
         }
-
         function saveAccountVault() {
             if (!currentAccount) return;
             localStorage.setItem(currentAccount.id, JSON.stringify(classData));
+            if (isCloudConfigured()) {
+                cloudWrite(`gvcn_system/vaults/${currentAccount.id}`, classData).catch(() => {});
+            }
         }
-
         function enterMainApp() {
             document.getElementById('auth-screen').classList.add('hidden');
             document.getElementById('admin-panel').classList.add('hidden');
@@ -1333,12 +1383,10 @@
             syncClassMetadataInputs();
             switchTab('dashboard');
         }
-
         function returnToAdminFromImpersonate() {
             openAdminPanel();
             showToast('Đã quay lại giao diện quản trị Admin');
         }
-
         function logoutAccount() {
             currentAccount = null;
             isAdminMode = false;
@@ -1350,7 +1398,6 @@
             document.getElementById('login-password').value = '';
             switchAuthPage('login');
         }
-
         // =========================================================================
         // QUẢN TRỊ VIÊN (ADMIN): QUẢN LÝ THIẾT BỊ, MÃ XÁC NHẬN, NỘP KIỂM TRA & EXCEL
         // =========================================================================
@@ -1358,7 +1405,6 @@
             const parsed = parseVault(accountId);
             return parsed && Array.isArray(parsed.students) ? parsed.students.length : 0;
         }
-
         function renderAdminDashboard() {
             const registry = getAccountsRegistry();
             const q = (document.getElementById('admin-search-input')?.value || '').toLowerCase().trim();
@@ -1366,12 +1412,10 @@
             const totalApprovedDevices = registry.reduce((sum, acc) => sum + (acc.approvedDevices?.length || 0), 0);
             const totalPendingDevices = registry.reduce((sum, acc) => sum + (acc.pendingDevices?.length || 0), 0);
             const uniqueUnits = new Set(registry.map(acc => (acc.unit || '').trim()).filter(Boolean)).size;
-
             document.getElementById('admin-stat-accounts').textContent = `${registry.length} / ${MAX_ACCOUNTS}`;
             document.getElementById('admin-stat-devices').textContent = `${totalApprovedDevices} / ${totalPendingDevices} chờ`;
             document.getElementById('admin-stat-students').textContent = totalStudents;
             document.getElementById('admin-stat-units').textContent = uniqueUnits;
-
             const filtered = registry.filter(acc => {
                 if (!q) return true;
                 return (
@@ -1383,13 +1427,11 @@
                     (acc.province || '').toLowerCase().includes(q)
                 );
             });
-
             const tbody = document.getElementById('admin-accounts-tbody');
             if (!filtered.length) {
                 tbody.innerHTML = `<tr><td colspan="9" class="py-8 text-center text-slate-400">${registry.length ? 'Không tìm thấy tài khoản phù hợp.' : 'Chưa có tài khoản GVCN nào được đăng ký.'}</td></tr>`;
                 return;
             }
-
             tbody.innerHTML = filtered.map((acc, idx) => {
                 const vault = parseVault(acc.id);
                 const stCount = vault && Array.isArray(vault.students) ? vault.students.length : 0;
@@ -1428,20 +1470,15 @@
                 `;
             }).join('');
         }
-
-        // MODAL ADMIN: QUẢN LÝ THIẾT BỊ & XEM MÃ XÁC NHẬN
         function openAdminDevicesModal(accountId) {
             const acc = getAccountsRegistry().find(a => a.id === accountId);
             if (!acc) return;
             ensureDeviceFields(acc);
-
             document.getElementById('admin-devices-title').innerHTML =
                 `<i class="fa-solid fa-laptop-code mr-1.5"></i>Thiết Bị & Mã Xác Nhận — ${esc(acc.teacherName)} (${acc.approvedDevices.length}/${MAX_DEVICES_PER_ACCOUNT})`;
-
             document.getElementById('btn-sim-new-device').onclick = function () {
                 adminCreateTestDeviceRequest(accountId);
             };
-
             const pendingHTML = acc.pendingDevices.length
                 ? acc.pendingDevices.map(p => `
                     <div class="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -1467,7 +1504,6 @@
                     </div>
                 `).join('')
                 : `<div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 text-center text-slate-400">Hiện không có thiết bị mới nào đang chờ cấp mã xác nhận.</div>`;
-
             const approvedHTML = acc.approvedDevices.length
                 ? acc.approvedDevices.map((d, idx) => `
                     <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40">
@@ -1483,7 +1519,6 @@
                     </tr>
                 `).join('')
                 : `<tr><td colspan="5" class="p-4 text-center text-slate-400">Chưa có thiết bị nào được kích hoạt.</td></tr>`;
-
             document.getElementById('admin-devices-body').innerHTML = `
                 <div class="space-y-2.5">
                     <div class="flex items-center justify-between">
@@ -1513,11 +1548,9 @@
             `;
             document.getElementById('admin-devices-modal').classList.remove('hidden');
         }
-
         function closeAdminDevicesModal() {
             document.getElementById('admin-devices-modal').classList.add('hidden');
         }
-
         function adminCreateTestDeviceRequest(accountId) {
             const registry = getAccountsRegistry();
             const acc = registry.find(a => a.id === accountId);
@@ -1539,7 +1572,6 @@
             openAdminDevicesModal(accountId);
             showToast('Đã tạo yêu cầu thiết bị mới & sinh mã xác nhận!');
         }
-
         function adminApproveDeviceDirectly(accountId, deviceId) {
             const registry = getAccountsRegistry();
             const acc = registry.find(a => a.id === accountId);
@@ -1562,7 +1594,6 @@
             openAdminDevicesModal(accountId);
             showToast(`Đã cấp quyền truy cập cho thiết bị ${item.deviceId}!`);
         }
-
         function adminRegenerateDeviceCode(accountId, deviceId) {
             const registry = getAccountsRegistry();
             const acc = registry.find(a => a.id === accountId);
@@ -1575,7 +1606,6 @@
             openAdminDevicesModal(accountId);
             showToast(`Đã tạo mã xác nhận mới: ${item.code}`);
         }
-
         function adminRejectPendingDevice(accountId, deviceId) {
             const registry = getAccountsRegistry();
             const acc = registry.find(a => a.id === accountId);
@@ -1586,7 +1616,6 @@
             openAdminDevicesModal(accountId);
             showToast('Đã hủy yêu cầu thiết bị!');
         }
-
         function adminRevokeApprovedDevice(accountId, deviceId) {
             if (!confirm(`Thu hồi quyền truy cập của thiết bị "${deviceId}"? Thiết bị này sẽ phải xin mã xác nhận lại khi đăng nhập.`)) return;
             const registry = getAccountsRegistry();
@@ -1598,8 +1627,6 @@
             openAdminDevicesModal(accountId);
             showToast(`Đã thu hồi quyền của thiết bị ${deviceId}`);
         }
-
-        // XEM CHI TIẾT LỚP & CHẾ ĐỘ NỘP KIỂM TRA
         function openAdminInspectModal(accountId) {
             const acc = getAccountsRegistry().find(a => a.id === accountId);
             if (!acc) return;
@@ -1609,7 +1636,6 @@
             const avgGpa = gpas.length ? (gpas.reduce((a, b) => a + b, 0) / gpas.length).toFixed(2) : '0.00';
             const honorCount = Object.keys(vault.honors || {}).length;
             const weekCount = Object.keys(vault.weeklyPoints || {}).length;
-            const attDays = Object.keys(vault.attendance || {}).length;
             const insp = vault.inspection || { status: 'Chưa kiểm tra', note: '', checkedAt: '' };
             document.getElementById('admin-inspect-title').innerHTML =
                 `<i class="fa-solid fa-clipboard-check mr-1.5"></i>Chi Tiết Lớp ${esc(acc.className)} — GVCN: ${esc(acc.teacherName)}`;
@@ -1636,7 +1662,6 @@
                     <div><strong>Đơn vị:</strong> ${esc(acc.unit)} — <strong>Địa phương:</strong> ${esc([acc.ward, acc.province].filter(Boolean).join(', ') || '---')}</div>
                     <div><strong>SĐT liên hệ:</strong> <span class="font-mono">${esc(acc.phone)}</span> — <strong>Số tổ cấu hình:</strong> ${vault.meta?.groupCount || 5} tổ</div>
                 </div>
-                <!-- CHẾ ĐỘ NỘP KIỂM TRA -->
                 <div class="p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800 space-y-3">
                     <div class="font-bold text-indigo-900 dark:text-indigo-200 flex items-center justify-between">
                         <span><i class="fa-solid fa-file-circle-check mr-1.5"></i>Chế Độ Nộp Kiểm Tra Hồ Sơ Lớp</span>
@@ -1685,11 +1710,9 @@
             `;
             document.getElementById('admin-inspect-modal').classList.remove('hidden');
         }
-
         function closeAdminInspectModal() {
             document.getElementById('admin-inspect-modal').classList.add('hidden');
         }
-
         function saveAdminInspection(accountId) {
             const status = document.getElementById('adm-insp-status').value;
             const note = document.getElementById('adm-insp-note').value.trim();
@@ -1704,12 +1727,11 @@
             };
             existing.inspection = { status, note, checkedAt };
             localStorage.setItem(accountId, JSON.stringify(existing));
+            if (isCloudConfigured()) cloudWrite(`gvcn_system/vaults/${accountId}`, existing).catch(() => {});
             renderAdminDashboard();
             openAdminInspectModal(accountId);
             showToast('Đã lưu trạng thái nộp kiểm tra!');
         }
-
-        // SỬA THÔNG TIN HÀNH CHÍNH GVCN
         function openAdminEditModal(accountId) {
             const acc = getAccountsRegistry().find(a => a.id === accountId);
             if (!acc) return;
@@ -1722,11 +1744,9 @@
             document.getElementById('adm-edit-phone').value = acc.phone || '';
             document.getElementById('admin-edit-modal').classList.remove('hidden');
         }
-
         function closeAdminEditModal() {
             document.getElementById('admin-edit-modal').classList.add('hidden');
         }
-
         function saveAdminAccountEdit(e) {
             e.preventDefault();
             const id = document.getElementById('adm-edit-id').value;
@@ -1750,13 +1770,12 @@
             if (vault) {
                 vault.meta = { ...(vault.meta || {}), ward, province, unit, className, teacherName, phone };
                 localStorage.setItem(id, JSON.stringify(vault));
+                if (isCloudConfigured()) cloudWrite(`gvcn_system/vaults/${id}`, vault).catch(() => {});
             }
             closeAdminEditModal();
             renderAdminDashboard();
             showToast(`Đã cập nhật thông tin hành chính cho GVCN ${teacherName}`);
         }
-
-        // VÀO LÀM VIỆC TRỰC TIẾP DƯỚI DANH NGHĨA GVCN
         function adminImpersonateAccount(accountId) {
             const acc = getAccountsRegistry().find(a => a.id === accountId);
             if (!acc) return;
@@ -1768,7 +1787,6 @@
             enterMainApp();
             showToast(`Đang thao tác trực tiếp trên lớp ${acc.className} (GVCN: ${acc.teacherName})`);
         }
-
         function adminResetPassword(accountId) {
             const registry = getAccountsRegistry();
             const acc = registry.find(a => a.id === accountId);
@@ -1783,7 +1801,6 @@
             saveAccountsRegistry(registry);
             showToast(`Đã cập nhật mật khẩu cho ${acc.teacherName}`);
         }
-
         function adminResetAccountForReregister(accountId) {
             const registry = getAccountsRegistry();
             const acc = registry.find(a => a.id === accountId);
@@ -1792,10 +1809,10 @@
             if (!confirm(msg)) return;
             saveAccountsRegistry(registry.filter(a => a.id !== accountId));
             localStorage.removeItem(accountId);
+            if (isCloudConfigured()) cloudDelete(`gvcn_system/vaults/${accountId}`).catch(() => {});
             renderAdminDashboard();
             showToast(`Đã reset thông tin của ${acc.teacherName}. Có thể đăng ký lại!`);
         }
-
         function adminResetAllAccounts() {
             const registry = getAccountsRegistry();
             if (!registry.length) {
@@ -1809,11 +1826,10 @@
             }
             registry.forEach(acc => localStorage.removeItem(acc.id));
             saveAccountsRegistry([]);
+            if (isCloudConfigured()) cloudDelete('gvcn_system/vaults').catch(() => {});
             renderAdminDashboard();
             showToast('Đã reset toàn bộ hệ thống tài khoản!');
         }
-
-        // SAO LƯU & KHÔI PHỤC JSON
         function adminExportBackupJSON() {
             const registry = getAccountsRegistry();
             const vaults = {};
@@ -1836,12 +1852,11 @@
             URL.revokeObjectURL(url);
             showToast('Đã tải file sao lưu hệ thống (.JSON)!');
         }
-
         function adminRestoreBackupJSON(e) {
             const file = e.target.files[0];
             if (!file) return;
             const reader = new FileReader();
-            reader.onload = ev => {
+            reader.onload = async ev => {
                 try {
                     const data = JSON.parse(ev.target.result);
                     if (!Array.isArray(data.registry)) {
@@ -1853,12 +1868,17 @@
                     oldReg.forEach(acc => localStorage.removeItem(acc.id));
                     const trimmedReg = data.registry.slice(0, MAX_ACCOUNTS).map(ensureDeviceFields);
                     saveAccountsRegistry(trimmedReg);
+                    const nextVaults = {};
                     if (data.vaults && typeof data.vaults === 'object') {
                         trimmedReg.forEach(acc => {
                             if (data.vaults[acc.id]) {
                                 localStorage.setItem(acc.id, JSON.stringify(data.vaults[acc.id]));
+                                nextVaults[acc.id] = data.vaults[acc.id];
                             }
                         });
+                    }
+                    if (isCloudConfigured()) {
+                        await cloudWrite('gvcn_system', { registry: trimmedReg, vaults: nextVaults });
                     }
                     renderAdminDashboard();
                     showToast('Đã khôi phục dữ liệu hệ thống thành công!');
@@ -1869,8 +1889,6 @@
             reader.readAsText(file, 'UTF-8');
             e.target.value = '';
         }
-
-        // XUẤT EXCEL CHO TỪNG LỚP HOẶC TOÀN BỘ HỆ THỐNG
         function buildWorkbookForVault(acc, vault) {
             const wb = XLSX.utils.book_new();
             const meta = (vault && vault.meta) || acc;
@@ -1895,7 +1913,6 @@
             ]);
             wsOverview['!cols'] = [{ wch: 28 }, { wch: 40 }];
             XLSX.utils.book_append_sheet(wb, wsOverview, 'Tong_Quan');
-
             const wsStudents = XLSX.utils.aoa_to_sheet([
                 ['STT', 'Họ và tên', 'Giới tính', 'Ngày sinh', 'Dân tộc', 'Tổ', 'ĐTB', 'Học lực'],
                 ...(students.length ? students.map((s, i) => [
@@ -1904,7 +1921,6 @@
             ]);
             wsStudents['!cols'] = [{ wch: 6 }, { wch: 28 }, { wch: 12 }, { wch: 15 }, { wch: 14 }, { wch: 12 }, { wch: 10 }, { wch: 18 }];
             XLSX.utils.book_append_sheet(wb, wsStudents, 'Danh_Sach_HS');
-
             const honors = MONTHS.filter(mo => vault?.honors?.[mo]).map(mo => {
                 const h = vault.honors[mo];
                 const st = students.find(s => s.id === h.studentId);
@@ -1916,7 +1932,6 @@
             ]), 'Vinh_Danh');
             return wb;
         }
-
         function adminExportSingleClassExcel(accountId) {
             if (typeof XLSX === 'undefined') {
                 alert('Đang tải thư viện xuất Excel, vui lòng thử lại!');
@@ -1929,7 +1944,6 @@
             XLSX.writeFile(wb, `Lop_${sanitizeFileName(acc.className)}_${sanitizeFileName(acc.teacherName)}.xlsx`);
             showToast(`Đã xuất file Excel riêng cho lớp ${acc.className}!`);
         }
-
         function adminExportAllClassesExcel() {
             if (typeof XLSX === 'undefined') {
                 alert('Đang tải thư viện xuất Excel, vui lòng thử lại!');
@@ -1985,14 +1999,12 @@
             const wsSummary = XLSX.utils.aoa_to_sheet(summaryRows);
             wsSummary['!cols'] = [{ wch: 6 }, { wch: 24 }, { wch: 15 }, { wch: 12 }, { wch: 28 }, { wch: 24 }, { wch: 12 }, { wch: 10 }, { wch: 24 }, { wch: 30 }];
             XLSX.utils.book_append_sheet(wb, wsSummary, 'Tong_Hop_Cac_Lop');
-
             const wsAllStudents = XLSX.utils.aoa_to_sheet(allStudentsRows);
             wsAllStudents['!cols'] = [{ wch: 6 }, { wch: 12 }, { wch: 22 }, { wch: 28 }, { wch: 10 }, { wch: 14 }, { wch: 12 }, { wch: 10 }, { wch: 8 }, { wch: 16 }];
             XLSX.utils.book_append_sheet(wb, wsAllStudents, 'Toan_Bo_Hoc_Sinh');
             XLSX.writeFile(wb, `Toan_Bo_He_Thong_GVCN_${new Date().toISOString().slice(0, 10)}.xlsx`);
             showToast(`Đã xuất file Excel toàn bộ ${registry.length} lớp!`);
         }
-
         // =========================================================================
         // CÁC CHỨC NĂNG QUẢN LÝ LỚP CỦA GVCN
         // =========================================================================
@@ -2004,12 +2016,10 @@
             document.getElementById('honor-month-select').innerHTML = monthOpts;
             document.getElementById('hm-month').innerHTML = monthOpts;
         }
-
         function getGroupNames() {
             const count = Math.max(1, Math.min(15, parseInt(classData.meta.groupCount) || 5));
             return Array.from({ length: count }, (_, i) => `Tổ ${i + 1}`);
         }
-
         function syncGroupSelects() {
             const groups = getGroupNames();
             const filterSel = document.getElementById('filter-student-group');
@@ -2021,14 +2031,12 @@
             stGroupSel.innerHTML = groups.map(g => `<option value="${g}">${g}</option>`).join('');
             if (groups.includes(prevSt)) stGroupSel.value = prevSt;
         }
-
         function syncClassMetadataInputs() {
             document.getElementById('meta-class').value = classData.meta.className || '';
             document.getElementById('meta-school').value = classData.meta.unit || '';
             document.getElementById('meta-student-count').value = classData.meta.targetStudentCount ?? 0;
             document.getElementById('meta-group-count').value = classData.meta.groupCount ?? 5;
         }
-
         function saveClassMetadata(e) {
             e.preventDefault();
             classData.meta.className = document.getElementById('meta-class').value.trim();
@@ -2046,7 +2054,6 @@
             renderAllViews();
             showToast('Đã lưu thông tin dữ liệu lớp!');
         }
-
         function switchTab(tab) {
             const tabs = ['dashboard', 'class-input', 'students', 'ranking', 'conduct', 'attendance', 'honor', 'export'];
             tabs.forEach(t => {
@@ -2066,7 +2073,6 @@
             });
             renderAllViews();
         }
-
         function renderAllViews() {
             if (!currentAccount) return;
             syncGroupSelects();
@@ -2077,7 +2083,6 @@
             renderAttendanceView();
             renderHonorView();
         }
-
         function updateHeaderAndDashboard() {
             const m = classData.meta;
             document.getElementById('header-class-badge').textContent = m.className || 'LỚP';
@@ -2086,7 +2091,6 @@
             document.getElementById('nav-student-count').textContent = `Danh sách (${classData.students.length})`;
             document.getElementById('dash-title').textContent = `Tổng Quan Lớp ${m.className || ''} — ${m.unit || ''}`;
             document.getElementById('dash-subtitle').textContent = `GVCN: ${m.teacherName} (${m.ward}, ${m.province})`;
-
             const total = classData.students.length;
             const target = m.targetStudentCount || 0;
             const male = classData.students.filter(s => s.gender === 'Nam').length;
@@ -2094,10 +2098,8 @@
             const gpas = classData.students.map(s => parseFloat(s.gpa)).filter(n => !isNaN(n) && n > 0);
             const avgGpa = gpas.length ? (gpas.reduce((a, b) => a + b, 0) / gpas.length).toFixed(2) : '0.00';
             const honorCount = Object.keys(classData.honors || {}).length;
-
             const freshAcc = getAccountsRegistry().find(a => a.id === currentAccount.id) || currentAccount;
             const devCount = freshAcc.approvedDevices?.length || 1;
-
             document.getElementById('dash-stat-total').textContent = `${total} / ${target}`;
             document.getElementById('dash-stat-groups-info').textContent = `Số tổ cấu hình: ${getGroupNames().length} tổ`;
             document.getElementById('dash-stat-male').textContent = male;
@@ -2108,7 +2110,6 @@
             document.getElementById('dash-stat-gpa').textContent = avgGpa;
             document.getElementById('dash-stat-devices').textContent = `${devCount} / ${MAX_DEVICES_PER_ACCOUNT}`;
             document.getElementById('dash-stat-honor-count').textContent = `Vinh danh: ${honorCount} tháng`;
-
             const groups = getGroupNames();
             document.getElementById('dash-groups-grid').innerHTML = groups.map(g => {
                 const cnt = classData.students.filter(s => s.group === g).length;
@@ -2119,7 +2120,6 @@
                 </div>`;
             }).join('');
         }
-
         function readBulkFile(e) {
             const file = e.target.files[0];
             if (!file) return;
@@ -2129,7 +2129,6 @@
             };
             reader.readAsText(file, 'UTF-8');
         }
-
         function importBulkStudents() {
             const raw = document.getElementById('bulk-text-input').value.trim();
             if (!raw) {
@@ -2186,7 +2185,6 @@
                 alert('Lỗi định dạng dữ liệu: ' + err.message);
             }
         }
-
         function openStudentModal(id = null) {
             syncGroupSelects();
             if (id) {
@@ -2214,11 +2212,9 @@
             }
             document.getElementById('student-modal').classList.remove('hidden');
         }
-
         function closeStudentModal() {
             document.getElementById('student-modal').classList.add('hidden');
         }
-
         function saveStudentForm(e) {
             e.preventDefault();
             const id = document.getElementById('edit-student-id').value;
@@ -2243,7 +2239,6 @@
             renderAllViews();
             showToast('Đã lưu thông tin học sinh!');
         }
-
         function deleteStudent(id) {
             const st = classData.students.find(s => s.id === id);
             if (!st) return;
@@ -2254,7 +2249,6 @@
                 showToast('Đã xóa học sinh');
             }
         }
-
         function renderStudentsTable() {
             const q = (document.getElementById('search-student').value || '').toLowerCase().trim();
             const grp = document.getElementById('filter-student-group').value;
@@ -2285,7 +2279,6 @@
                 </tr>
             `).join('');
         }
-
         function renderRankingView() {
             const week = document.getElementById('ranking-week-select').value;
             const groups = getGroupNames();
@@ -2306,7 +2299,6 @@
                 </div>
             `).join('');
         }
-
         function openWeekPointsModal() {
             const week = document.getElementById('ranking-week-select').value;
             const groups = getGroupNames();
@@ -2320,11 +2312,9 @@
             `).join('');
             document.getElementById('week-points-modal').classList.remove('hidden');
         }
-
         function closeWeekPointsModal() {
             document.getElementById('week-points-modal').classList.add('hidden');
         }
-
         function saveWeekPoints() {
             const week = document.getElementById('ranking-week-select').value;
             const groups = getGroupNames();
@@ -2338,7 +2328,6 @@
             renderRankingView();
             showToast(`Đã lưu điểm ${week}`);
         }
-
         function renderConductView() {
             const month = document.getElementById('conduct-month-select').value;
             const mData = classData.conducts[month] || {};
@@ -2363,7 +2352,6 @@
                 `;
             }).join('');
         }
-
         function editStudentConduct(studentId) {
             const month = document.getElementById('conduct-month-select').value;
             const st = classData.students.find(s => s.id === studentId);
@@ -2382,7 +2370,6 @@
             renderConductView();
             showToast('Đã cập nhật hạnh kiểm');
         }
-
         function renderAttendanceView() {
             const dateStr = document.getElementById('attendance-date-input').value;
             const tbody = document.getElementById('attendance-tbody');
@@ -2410,7 +2397,6 @@
                 `;
             }).join('');
         }
-
         function saveAttendanceData() {
             const dateStr = document.getElementById('attendance-date-input').value;
             if (!dateStr) return;
@@ -2423,7 +2409,6 @@
             saveAccountVault();
             showToast(`Đã lưu điểm danh ngày ${dateStr}`);
         }
-
         function openHonorModal() {
             if (!classData.students.length) {
                 alert('Hãy thêm học sinh trước khi vinh danh!');
@@ -2444,11 +2429,9 @@
             }
             document.getElementById('honor-modal').classList.remove('hidden');
         }
-
         function closeHonorModal() {
             document.getElementById('honor-modal').classList.add('hidden');
         }
-
         function saveHonorEntry(e) {
             e.preventDefault();
             const month = document.getElementById('hm-month').value;
@@ -2468,7 +2451,6 @@
             renderAllViews();
             showToast(`Đã lưu vinh danh ${month} để tổng kết cuối năm!`);
         }
-
         function deleteHonorEntry(month) {
             if (confirm(`Xóa bản ghi vinh danh của ${month}?`)) {
                 delete classData.honors[month];
@@ -2477,7 +2459,6 @@
                 showToast(`Đã xóa vinh danh ${month}`);
             }
         }
-
         function renderHonorView() {
             const month = document.getElementById('honor-month-select').value;
             const entry = classData.honors[month];
@@ -2518,7 +2499,6 @@
             });
             archiveTbody.innerHTML = rows.length ? rows.join('') : `<tr><td colspan="6" class="py-6 text-center text-slate-400">Chưa có vinh danh nào được lưu trong năm học.</td></tr>`;
         }
-
         function openYearEndSummaryModal() {
             const honoredMonths = MONTHS.filter(m => classData.honors[m]);
             const countByStudent = {};
@@ -2547,27 +2527,22 @@
             `;
             document.getElementById('yearend-modal').classList.remove('hidden');
         }
-
         function closeYearEndSummaryModal() {
             document.getElementById('yearend-modal').classList.add('hidden');
         }
-
         function openExportModal() {
             switchTab('export');
         }
-
         function sanitizeFileName(str) {
             return String(str || 'Lop_GVCN')
                 .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
                 .replace(/đ/g, 'd').replace(/Đ/g, 'D')
                 .replace(/[^a-zA-Z0-9_-]+/g, '_');
         }
-
         function getFormattedDateVN() {
             const d = new Date();
             return `Ngày ${String(d.getDate()).padStart(2, '0')} tháng ${String(d.getMonth() + 1).padStart(2, '0')} năm ${d.getFullYear()}`;
         }
-
         function exportExcelVN() {
             if (typeof XLSX === 'undefined') {
                 alert('Đang tải thư viện xuất Excel, vui lòng thử lại sau vài giây!');
@@ -2578,7 +2553,6 @@
             XLSX.writeFile(wb, `HoSo_Lop_${sanitizeFileName(m.className)}_${sanitizeFileName(m.unit)}.xlsx`);
             showToast('Đã xuất file Excel (.XLSX) tiếng Việt đầy đủ!');
         }
-
         function buildVietnameseReportHTML() {
             const m = classData.meta;
             const total = classData.students.length;
@@ -2588,7 +2562,6 @@
             const avgGpa = gpas.length ? (gpas.reduce((a, b) => a + b, 0) / gpas.length).toFixed(2) : 'Chưa có';
             const curMonth = document.getElementById('conduct-month-select').value || 'Tháng 9';
             const curWeek = document.getElementById('ranking-week-select').value || 'Tuần 1';
-
             const studentRowsHTML = classData.students.length
                 ? classData.students.map((s, i) => `
                     <tr>
@@ -2603,7 +2576,6 @@
                     </tr>
                 `).join('')
                 : `<tr><td colspan="8" style="text-align:center;font-style:italic;color:#666;">Chưa có danh sách học sinh.</td></tr>`;
-
             const honoredMonths = MONTHS.filter(mo => classData.honors[mo]);
             const honorRowsHTML = honoredMonths.length
                 ? honoredMonths.map((mo, i) => {
@@ -2621,7 +2593,6 @@
                     `;
                 }).join('')
                 : `<tr><td colspan="6" style="text-align:center;font-style:italic;color:#666;">Chưa có học sinh được vinh danh trong năm học.</td></tr>`;
-
             const groups = getGroupNames();
             const wData = classData.weeklyPoints[curWeek] || {};
             const rankingSorted = groups.map(g => ({
@@ -2629,7 +2600,6 @@
                 points: wData[g] !== undefined ? Number(wData[g]) : 100,
                 count: classData.students.filter(s => s.group === g).length
             })).sort((a, b) => b.points - a.points);
-
             const rankingRowsHTML = rankingSorted.map((item, idx) => `
                 <tr>
                     <td style="text-align:center;"><strong>Hạng ${idx + 1}</strong></td>
@@ -2638,7 +2608,6 @@
                     <td style="text-align:center;"><strong>${item.points} điểm</strong></td>
                 </tr>
             `).join('');
-
             const mConduct = classData.conducts[curMonth] || {};
             const conductRowsHTML = classData.students.length
                 ? classData.students.map((s, i) => {
@@ -2654,7 +2623,6 @@
                     `;
                 }).join('')
                 : `<tr><td colspan="5" style="text-align:center;font-style:italic;color:#666;">Chưa có dữ liệu hạnh kiểm.</td></tr>`;
-
             return `
                 <div style="font-family:'Times New Roman', Times, serif; color:#000; font-size:13pt; line-height:1.45;">
                     <table style="width:100%; border:none; margin-bottom:12px;">
@@ -2756,7 +2724,6 @@
                 </div>
             `;
         }
-
         function exportWordVN() {
             const m = classData.meta;
             const bodyHTML = buildVietnameseReportHTML();
@@ -2785,7 +2752,6 @@
             URL.revokeObjectURL(url);
             showToast('Đã xuất file Word (.DOC) tiếng Việt chuẩn in ấn!');
         }
-
         function exportPDFVN() {
             const m = classData.meta;
             const bodyHTML = buildVietnameseReportHTML();
@@ -2828,19 +2794,16 @@
             printWin.document.close();
             showToast('Đang mở bản in / lưu file PDF tiếng Việt!');
         }
-
         function toggleDarkMode() {
             const dark = document.documentElement.classList.toggle('dark');
             localStorage.setItem('gvcn_theme_mode', dark ? 'dark' : 'light');
             updateThemeIcon(dark);
         }
-
         function loadTheme() {
             const dark = localStorage.getItem('gvcn_theme_mode') === 'dark';
             document.documentElement.classList.toggle('dark', dark);
             updateThemeIcon(dark);
         }
-
         function updateThemeIcon(dark) {
             ['icon-moon', 'admin-icon-moon'].forEach(id => {
                 const el = document.getElementById(id);
@@ -2851,11 +2814,9 @@
                 if (el) el.classList.toggle('hidden', !dark);
             });
         }
-
         function esc(str) {
             return String(str ?? '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
         }
-
         function showToast(msg) {
             const t = document.getElementById('toast');
             document.getElementById('toast-text').textContent = msg;
