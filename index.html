@@ -207,7 +207,7 @@
                     </div>
                     <div>
                         <h2 class="text-sm font-extrabold uppercase text-slate-900 dark:text-white">QUẢN TRỊ HỆ THỐNG (ADMIN)</h2>
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400">Can Thiệp • Kiểm Tra • Cấp Mã Thiết Bị (Tối đa 50 thiết bị/TK)</p>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400">Can Thiệp • Kiểm Tra • Hỗ Trợ </p>
                     </div>
                 </div>
                 <div class="flex flex-wrap items-center gap-1.5">
@@ -236,7 +236,7 @@
         </header>
         <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
             <div class="p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800 text-xs text-indigo-900 dark:text-indigo-200 leading-relaxed">
-                <strong>Quyền can thiệp của Admin:</strong> Toàn quyền kiểm tra, chỉnh sửa <strong>thông tin hành chính</strong>, quản lý <strong>giới hạn 50 thiết bị & cấp mã xác nhận</strong>, thao tác trực tiếp trên từng lớp và xuất dữ liệu hệ thống.
+                <strong>Quyền can thiệp của Admin:</strong> Toàn quyền kiểm tra, chỉnh sửa <strong>thông tin hành chính</strong>, quản lý tài khoản, <strong> thao tác trực tiếp trên từng lớp và xuất dữ liệu hệ thống.
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
                 <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
@@ -2357,7 +2357,7 @@
             const st = classData.students.find(s => s.id === studentId);
             if (!st) return;
             const current = (classData.conducts[month] && classData.conducts[month][studentId]) || { score: 100, rating: 'Tốt' };
-            const newScore = prompt(`Điểm rèn luyện (${month}) của ${st.name} (0-100):`, current.score);
+            const newScore = prompt(`Điểm rèn luyện (${month}) của ${st.name} (0-150):`, current.score);
             if (newScore === null) return;
             const newRating = prompt(`Xếp loại hạnh kiểm (Tốt / Khá / Đạt / Chưa đạt):`, current.rating);
             if (newRating === null) return;
