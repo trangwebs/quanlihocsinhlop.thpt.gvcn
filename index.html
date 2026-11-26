@@ -560,7 +560,7 @@
                 <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                     <div>
                         <h3 class="text-lg font-bold">Hạnh Kiểm Theo Tháng</h3>
-                        <p class="text-xs text-slate-500">Theo dõi và cập nhật điểm rèn luyện, hạnh kiểm từng tháng</p>
+                        <p class="text-xs text-slate-500">Theo dõi và cập nhật điểm rèn luyện (thang điểm 0 – 150 điểm), hạnh kiểm từng tháng</p>
                     </div>
                     <select id="conduct-month-select" onchange="renderConductView()" class="px-3.5 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-bold"></select>
                 </div>
@@ -2357,13 +2357,13 @@
             const st = classData.students.find(s => s.id === studentId);
             if (!st) return;
             const current = (classData.conducts[month] && classData.conducts[month][studentId]) || { score: 100, rating: 'Tốt' };
-            const newScore = prompt(`Điểm rèn luyện (${month}) của ${st.name} (0-150):`, current.score);
+            const newScore = prompt(`Điểm rèn luyện (${month}) của ${st.name} (0 - 150 điểm):`, current.score);
             if (newScore === null) return;
             const newRating = prompt(`Xếp loại hạnh kiểm (Tốt / Khá / Đạt / Chưa đạt):`, current.rating);
             if (newRating === null) return;
             if (!classData.conducts[month]) classData.conducts[month] = {};
             classData.conducts[month][studentId] = {
-                score: Math.max(0, Math.min(100, parseInt(newScore) || 0)),
+                score: Math.max(0, Math.min(150, parseInt(newScore, 10) || 0)),
                 rating: newRating.trim() || 'Tốt'
             };
             saveAccountVault();
