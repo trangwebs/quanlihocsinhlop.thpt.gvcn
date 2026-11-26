@@ -1921,6 +1921,46 @@
             ]);
             wsStudents['!cols'] = [{ wch: 6 }, { wch: 28 }, { wch: 12 }, { wch: 15 }, { wch: 14 }, { wch: 12 }, { wch: 10 }, { wch: 18 }];
             XLSX.utils.book_append_sheet(wb, wsStudents, 'Danh_Sach_HS');
+
+            // Sheet Thi đua các tổ (tất cả các tuần)
+            const groupCount = Math.max(1, Math.min(15, parseInt(meta.groupCount) || 5));
+            const groups = Array.from({ length: groupCount }, (_, i) => `Tổ ${i + 1}`);
+            const allWeeks = Array.from({ length: 35 }, (_, i) => `Tuần ${i + 1}`);
+            const weeklyPoints = vault?.weeklyPoints || {};
+            const recordedWeeks = allWeeks.filter(w => weeklyPoints[w] && Object.keys(weeklyPoints[w]).length > 0);
+            const weeksToExport = recordedWeeks.length ? recordedWeeks : ['Tuần 1'];
+            const rankingHeader = ['Tuần', ...groups, 'Tổ hạng Nhất'];
+            const rankingRows = weeksToExport.map(w => {
+                const wData = weeklyPoints[w] || {};
+                const scores = groups.map(g => wData[g] !== undefined ? Number(wData[g]) : 100);
+                const maxScore = Math.max(...scores);
+                const topGroups = groups.filter((g, idx) => scores[idx] === maxScore).join(', ');
+                return [w, ...scores, topGroups];
+            });
+            const wsRanking = XLSX.utils.aoa_to_sheet([rankingHeader, ...rankingRows]);
+            wsRanking['!cols'] = [{ wch: 12 }, ...groups.map(() => ({ wch: 12 })), { wch: 22 }];
+            XLSX.utils.book_append_sheet(wb, wsRanking, 'Thi_Dua_To');
+
+            // Sheet Hạnh kiểm cả năm (tất cả các tháng từ Tháng 9 đến Tháng 5)
+            const conducts = vault?.conducts || {};
+            const conductHeader = ['STT', 'Họ và tên', 'Tổ'];
+            MONTHS.forEach(mo => {
+                conductHeader.push(`${mo} (Điểm)`, `${mo} (Xếp loại)`);
+            });
+            const conductRows = students.length
+                ? students.map((s, i) => {
+                    const row = [i + 1, s.name || '', s.group || ''];
+                    MONTHS.forEach(mo => {
+                        const c = conducts[mo]?.[s.id];
+                        row.push(c ? c.score : 100, c ? c.rating : 'Tốt');
+                    });
+                    return row;
+                })
+                : [['', 'Chưa có học sinh', '', ...MONTHS.flatMap(() => ['', ''])]];
+            const wsConduct = XLSX.utils.aoa_to_sheet([conductHeader, ...conductRows]);
+            wsConduct['!cols'] = [{ wch: 6 }, { wch: 26 }, { wch: 10 }, ...MONTHS.flatMap(() => [{ wch: 14 }, { wch: 16 }])];
+            XLSX.utils.book_append_sheet(wb, wsConduct, 'Hanh_Kiem_Nam');
+
             const honors = MONTHS.filter(mo => vault?.honors?.[mo]).map(mo => {
                 const h = vault.honors[mo];
                 const st = students.find(s => s.id === h.studentId);
@@ -2560,8 +2600,6 @@
             const female = classData.students.filter(s => s.gender === 'Nữ').length;
             const gpas = classData.students.map(s => parseFloat(s.gpa)).filter(n => !isNaN(n) && n > 0);
             const avgGpa = gpas.length ? (gpas.reduce((a, b) => a + b, 0) / gpas.length).toFixed(2) : 'Chưa có';
-            const curMonth = document.getElementById('conduct-month-select').value || 'Tháng 9';
-            const curWeek = document.getElementById('ranking-week-select').value || 'Tuần 1';
             const studentRowsHTML = classData.students.length
                 ? classData.students.map((s, i) => `
                     <tr>
@@ -2594,35 +2632,40 @@
                 }).join('')
                 : `<tr><td colspan="6" style="text-align:center;font-style:italic;color:#666;">Chưa có học sinh được vinh danh trong năm học.</td></tr>`;
             const groups = getGroupNames();
-            const wData = classData.weeklyPoints[curWeek] || {};
-            const rankingSorted = groups.map(g => ({
-                group: g,
-                points: wData[g] !== undefined ? Number(wData[g]) : 100,
-                count: classData.students.filter(s => s.group === g).length
-            })).sort((a, b) => b.points - a.points);
-            const rankingRowsHTML = rankingSorted.map((item, idx) => `
-                <tr>
-                    <td style="text-align:center;"><strong>Hạng ${idx + 1}</strong></td>
-                    <td style="text-align:center;">${esc(item.group)}</td>
-                    <td style="text-align:center;">${item.count} học sinh</td>
-                    <td style="text-align:center;"><strong>${item.points} điểm</strong></td>
-                </tr>
-            `).join('');
-            const mConduct = classData.conducts[curMonth] || {};
+            const allWeeks = Array.from({ length: 35 }, (_, i) => `Tuần ${i + 1}`);
+            const recordedWeeks = allWeeks.filter(w => classData.weeklyPoints[w] && Object.keys(classData.weeklyPoints[w]).length > 0);
+            const weeksToShow = recordedWeeks.length ? recordedWeeks : [document.getElementById('ranking-week-select').value || 'Tuần 1'];
+            const rankingHeaderCols = groups.map(g => `<th>${esc(g)}</th>`).join('');
+            const rankingRowsHTML = weeksToShow.map(w => {
+                const wData = classData.weeklyPoints[w] || {};
+                const scores = groups.map(g => wData[g] !== undefined ? Number(wData[g]) : 100);
+                const maxScore = Math.max(...scores);
+                const topGroups = groups.filter((g, idx) => scores[idx] === maxScore).join(', ');
+                return `
+                    <tr>
+                        <td style="text-align:center;"><strong>${esc(w)}</strong></td>
+                        ${scores.map(sc => `<td style="text-align:center;">${sc} điểm</td>`).join('')}
+                        <td style="text-align:center;"><strong>${esc(topGroups)}</strong></td>
+                    </tr>
+                `;
+            }).join('');
+            const conductMonthHeaders = MONTHS.map(mo => `<th style="font-size:9.5pt;">${esc(mo)}</th>`).join('');
             const conductRowsHTML = classData.students.length
                 ? classData.students.map((s, i) => {
-                    const c = mConduct[s.id] || { score: 100, rating: 'Tốt' };
+                    const monthCells = MONTHS.map(mo => {
+                        const c = classData.conducts[mo]?.[s.id] || { score: 100, rating: 'Tốt' };
+                        return `<td style="text-align:center; font-size:9.5pt;">${c.score}<br><strong>${esc(c.rating)}</strong></td>`;
+                    }).join('');
                     return `
                         <tr>
                             <td style="text-align:center;">${i + 1}</td>
-                            <td>${esc(s.name)}</td>
+                            <td style="white-space:nowrap;">${esc(s.name)}</td>
                             <td style="text-align:center;">${esc(s.group)}</td>
-                            <td style="text-align:center;">${c.score}</td>
-                            <td style="text-align:center;"><strong>${esc(c.rating)}</strong></td>
+                            ${monthCells}
                         </tr>
                     `;
                 }).join('')
-                : `<tr><td colspan="5" style="text-align:center;font-style:italic;color:#666;">Chưa có dữ liệu hạnh kiểm.</td></tr>`;
+                : `<tr><td colspan="${3 + MONTHS.length}" style="text-align:center;font-style:italic;color:#666;">Chưa có dữ liệu hạnh kiểm.</td></tr>`;
             return `
                 <div style="font-family:'Times New Roman', Times, serif; color:#000; font-size:13pt; line-height:1.45;">
                     <table style="width:100%; border:none; margin-bottom:12px;">
@@ -2671,27 +2714,25 @@
                         </thead>
                         <tbody>${studentRowsHTML}</tbody>
                     </table>
-                    <h3 style="font-size:13.5pt; font-weight:bold; margin:16px 0 6px 0;">III. BẢNG XẾP HẠNG THI ĐUA CÁC TỔ (${esc(curWeek.toUpperCase())})</h3>
-                    <table border="1" cellspacing="0" cellpadding="5" style="width:100%; border-collapse:collapse; font-size:11.5pt;">
+                    <h3 style="font-size:13.5pt; font-weight:bold; margin:16px 0 6px 0;">III. BẢNG TỔNG HỢP THI ĐUA CÁC TỔ CẢ NĂM (THEO TUẦN)</h3>
+                    <table border="1" cellspacing="0" cellpadding="5" style="width:100%; border-collapse:collapse; font-size:11pt;">
                         <thead>
                             <tr style="background-color:#e2e8f0; font-weight:bold; text-align:center;">
-                                <th style="width:110px;">Xếp hạng</th>
-                                <th>Tên tổ</th>
-                                <th>Sĩ số tổ</th>
-                                <th>Tổng điểm thi đua</th>
+                                <th style="width:85px;">Tuần</th>
+                                ${rankingHeaderCols}
+                                <th style="width:130px;">Tổ hạng Nhất</th>
                             </tr>
                         </thead>
                         <tbody>${rankingRowsHTML}</tbody>
                     </table>
-                    <h3 style="font-size:13.5pt; font-weight:bold; margin:16px 0 6px 0;">IV. KẾT QUẢ RÈN LUYỆN & HẠNH KIỂM (${esc(curMonth.toUpperCase())})</h3>
-                    <table border="1" cellspacing="0" cellpadding="5" style="width:100%; border-collapse:collapse; font-size:11.5pt;">
+                    <h3 style="font-size:13.5pt; font-weight:bold; margin:16px 0 6px 0;">IV. KẾT QUẢ RÈN LUYỆN & HẠNH KIỂM CẢ NĂM (THÁNG 9 ĐẾN THÁNG 5)</h3>
+                    <table border="1" cellspacing="0" cellpadding="4" style="width:100%; border-collapse:collapse; font-size:10pt;">
                         <thead>
                             <tr style="background-color:#e2e8f0; font-weight:bold; text-align:center;">
-                                <th style="width:45px;">STT</th>
+                                <th style="width:34px;">STT</th>
                                 <th>Họ và tên học sinh</th>
-                                <th style="width:80px;">Tổ</th>
-                                <th style="width:120px;">Điểm rèn luyện</th>
-                                <th style="width:130px;">Xếp loại hạnh kiểm</th>
+                                <th style="width:52px;">Tổ</th>
+                                ${conductMonthHeaders}
                             </tr>
                         </thead>
                         <tbody>${conductRowsHTML}</tbody>
