@@ -520,6 +520,10 @@
                     </div>
                     <div class="flex flex-wrap gap-2 w-full md:w-auto justify-end">
                         <select id="filter-student-group" onchange="renderStudentsTable()" class="px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-medium"></select>
+                        <select id="sort-student-name" onchange="renderStudentsTable()" class="px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-medium">
+                            <option value="default">Thứ tự mặc định</option>
+                            <option value="az">Sắp xếp tên: A → Z</option>
+                        </select>
                         <button onclick="openStudentModal()" class="px-3.5 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs font-semibold transition">
                             <i class="fa-solid fa-plus mr-1"></i> Thêm HS
                         </button>
@@ -949,8 +953,8 @@
         const DEVICE_ID_KEY = 'gvcn_browser_device_id_v1';
         // Tài khoản và mật khẩu Admin văn bản thuần lưu trực tiếp ngay trong mã nguồn
         const ADMIN_ACCOUNT = {
-            username: 'ADMIN',
-            password: 'Admin@nnc2011'
+            username: 'admin',
+            password: 'admin'
         };
         function getAdminCredentials() {
             return {
@@ -2777,14 +2781,28 @@ Nhập chữ RESET để xác nhận:`);
                 showToast('Đã xóa học sinh');
             }
         }
+        function getVietnameseGivenName(fullName) {
+            const parts = (fullName || '').trim().split(/\s+/);
+            return parts.length ? parts[parts.length - 1] : '';
+        }
         function renderStudentsTable() {
             const q = (document.getElementById('search-student').value || '').toLowerCase().trim();
             const grp = document.getElementById('filter-student-group').value;
-            const list = classData.students.filter(s => {
+            const sortMode = document.getElementById('sort-student-name')?.value || 'default';
+            let list = classData.students.filter(s => {
                 const matchQ = !q || s.name.toLowerCase().includes(q) || (s.ethnicity || '').toLowerCase().includes(q);
                 const matchG = !grp || s.group === grp;
                 return matchQ && matchG;
             });
+            if (sortMode === 'az') {
+                list = [...list].sort((a, b) => {
+                    const firstA = getVietnameseGivenName(a.name);
+                    const firstB = getVietnameseGivenName(b.name);
+                    const cmpFirst = firstA.localeCompare(firstB, 'vi', { sensitivity: 'base' });
+                    if (cmpFirst !== 0) return cmpFirst;
+                    return (a.name || '').localeCompare(b.name || '', 'vi', { sensitivity: 'base' });
+                });
+            }
             const tbody = document.getElementById('students-tbody');
             if (!list.length) {
                 tbody.innerHTML = `<tr><td colspan="9" class="py-8 text-center text-slate-400">Chưa có học sinh nào trong danh sách.</td></tr>`;
@@ -2857,6 +2875,10 @@ Nhập chữ RESET để xác nhận:`);
             renderRankingView();
             showToast(`Đã lưu điểm ${week}`);
         }
+        function getGroupOrderNumber(groupName) {
+            const match = String(groupName || '').match(/(\d+)/);
+            return match ? parseInt(match[1], 10) : 999;
+        }
         function renderConductView() {
             const month = document.getElementById('conduct-month-select').value;
             const mData = classData.conducts[month] || {};
@@ -2865,7 +2887,10 @@ Nhập chữ RESET để xác nhận:`);
                 tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-400">Chưa có học sinh.</td></tr>`;
                 return;
             }
-            tbody.innerHTML = classData.students.map((s, i) => {
+            const sortedStudents = [...classData.students].sort((a, b) => {
+                return getGroupOrderNumber(a.group) - getGroupOrderNumber(b.group);
+            });
+            tbody.innerHTML = sortedStudents.map((s, i) => {
                 const c = mData[s.id] || { score: 100, rating: 'Tốt' };
                 return `
                     <tr>
@@ -3374,4 +3399,3 @@ Nhập chữ RESET để xác nhận:`);
     </script>
 </body>
 </html>
-
