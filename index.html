@@ -58,7 +58,7 @@
             <!-- TRANG 1: ĐĂNG NHẬP -->
             <div id="page-login" class="space-y-4">
                 <div class="p-3 rounded-xl bg-sky-50 dark:bg-sky-950/30 border border-sky-200 dark:border-sky-800 text-xs text-sky-800 dark:text-sky-300 font-medium">
-                    <strong>*Lưu Ý:</strong> Nhập đúng Tên GVCN hoặc SĐT đã đăng ký cùng mật khẩu </strong> (thiết bị mới cần mã xác nhận từ Admin).
+                    <strong>*Lưu Ý:</strong> Nhập đúng Tên GVCN hoặc SĐT đã đăng ký cùng mật khẩu (thiết bị mới cần mã xác nhận từ Admin).
                 </div>
                 <form onsubmit="handleLoginSubmit(event)" class="space-y-4">
                     <div>
@@ -85,10 +85,13 @@
                         Đăng Nhập Hệ Thống
                     </button>
                 </form>
-                <div class="text-center pt-2 border-t border-slate-100 dark:border-slate-700">
-                    <button type="button" onclick="switchAuthPage('register')" class="text-xs font-semibold text-sky-600 hover:underline">
-                        Chưa có tài khoản GVCN? Chuyển sang Trang Tạo Tài Khoản →
-                    </button>
+                <div class="text-center pt-2 border-t border-slate-100 dark:border-slate-700 space-y-2">
+                    <div>
+                        <button type="button" onclick="switchAuthPage('register')" class="text-xs font-semibold text-sky-600 hover:underline">
+                            Chưa có tài khoản GVCN? Chuyển sang Trang Tạo Tài Khoản →
+                        </button>
+                    </div>
+
                 </div>
             </div>
             <!-- TRANG 2: TẠO TÀI KHOẢN GVCN -->
@@ -221,6 +224,7 @@
                     <button onclick="adminExportAllClassesExcel()" class="px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition">
                         <i class="fa-solid fa-file-excel mr-1"></i> Xuất Excel Toàn Bộ
                     </button>
+
                     <button onclick="adminResetAllAccounts()" class="px-3 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 text-xs font-bold transition">
                         <i class="fa-solid fa-rotate-left mr-1"></i> Reset Toàn Bộ
                     </button>
@@ -236,7 +240,7 @@
         </header>
         <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
             <div class="p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800 text-xs text-indigo-900 dark:text-indigo-200 leading-relaxed">
-                <strong>Quyền can thiệp của Admin:</strong> Toàn quyền kiểm tra, chỉnh sửa <strong>thông tin hành chính</strong>, quản lý tài khoản, <strong> thao tác trực tiếp trên từng lớp và xuất dữ liệu hệ thống.
+                <strong>Quyền can thiệp của Admin:</strong> Toàn quyền kiểm tra, chỉnh sửa <strong>thông tin hành chính</strong>, quản lý tài khoản, <strong>thao tác trực tiếp trên từng lớp</strong> và xuất dữ liệu hệ thống.
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
                 <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
@@ -323,6 +327,9 @@
                             </h2>
                             <p id="header-meta-sub" class="text-[11px] text-slate-500 dark:text-slate-400 whitespace-nowrap">
                                 GVCN: ---
+                            </p>
+                            <p id="header-device-sub" class="text-[10px] font-semibold text-sky-600 dark:text-sky-400 whitespace-nowrap mt-0.5">
+                                Thiết bị đăng nhập: <code id="header-device-id" class="px-1.5 py-0.5 rounded bg-sky-50 dark:bg-sky-950/60 border border-sky-200 dark:border-sky-800 font-mono font-bold text-indigo-600 dark:text-indigo-300">---</code>
                             </p>
                         </div>
                     </div>
@@ -476,13 +483,13 @@
                                 <i class="fa-solid fa-file-import text-emerald-600"></i>
                                 <span>Nhập Danh Sách Học Sinh Hàng Loạt (File / Văn bản)</span>
                             </h4>
-                            <p class="text-xs text-slate-500">Hỗ trợ file .csv, .txt hoặc dán trực tiếp từng dòng: <code>Họ tên, Giới tính, Ngày sinh, Dân tộc, Tổ, ĐTB, Học lực</code></p>
+                            <p class="text-xs text-slate-500">Hỗ trợ file <strong>.xlsx, .xls, .csv, .txt</strong> hoặc dán trực tiếp từng dòng: <code>Họ tên, Giới tính, Ngày sinh, Dân tộc, Tổ, ĐTB, Học lực</code></p>
                         </div>
                         <button type="button" onclick="openStudentModal()" class="px-3.5 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs font-semibold transition">
                             <i class="fa-solid fa-user-plus mr-1"></i> Nhập tay 1 học sinh
                         </button>
                     </div>
-                    <input type="file" id="bulk-file-input" accept=".csv,.txt" onchange="readBulkFile(event)"
+                    <input type="file" id="bulk-file-input" accept=".xlsx,.xls,.csv,.txt" onchange="readBulkFile(event)"
                         class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 dark:file:bg-slate-700 dark:file:text-slate-200">
                     <textarea id="bulk-text-input" rows="5" placeholder="Ví dụ:&#10;Nguyễn Văn An, Nam, 15/08/2011, Kinh, Tổ 1, 8.6, Giỏi&#10;Trần Thị Bình, Nữ, 22/03/2011, Khmer, Tổ 2, 7.8, Khá"
                         class="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-mono focus:outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
@@ -589,7 +596,7 @@
                         <h3 class="text-lg font-bold">Điểm Danh Theo Ngày</h3>
                         <p class="text-xs text-slate-500">Ghi nhận chuyên cần học sinh theo từng ngày</p>
                     </div>
-                    <input type="date" id="attendance-date-input" onchange="renderAttendanceView()" class="px-3.5 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-bold">
+                    <input type="date" id="attendance-date-input" onchange="hasUnsavedAttendance=false;renderAttendanceView()" class="px-3.5 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-bold">
                 </div>
                 <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
                     <div class="overflow-x-auto">
@@ -936,15 +943,42 @@
             if (!isCloudConfigured()) return;
             await fetch(`${getCloudBaseUrl()}/${path}.json`, { method: 'DELETE' });
         }
-
         const MAX_ACCOUNTS = 999;
         const MAX_DEVICES_PER_ACCOUNT = 50;
         const REGISTRY_KEY = 'gvcn_system_accounts_registry_v1';
         const DEVICE_ID_KEY = 'gvcn_browser_device_id_v1';
+        // Tài khoản và mật khẩu Admin văn bản thuần lưu trực tiếp ngay trong mã nguồn
         const ADMIN_ACCOUNT = {
-            username: 'admin',
+            username: 'ADMIN',
             password: 'Admin@nnc2011'
         };
+        function getAdminCredentials() {
+            return {
+                username: String(ADMIN_ACCOUNT.username || 'admin').trim(),
+                password: String(ADMIN_ACCOUNT.password || '')
+            };
+        }
+        async function hashPasswordSHA256(plain) {
+            const text = String(plain || '');
+            if (window.crypto && window.crypto.subtle) {
+                const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+                return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+            }
+            let h = 2166136261;
+            for (let i = 0; i < text.length; i++) {
+                h ^= text.charCodeAt(i);
+                h = Math.imul(h, 16777619);
+            }
+            return 'fnv_' + (h >>> 0).toString(16);
+        }
+        async function verifyPassword(inputPlain, storedAcc) {
+            if (!storedAcc) return false;
+            const inputHash = await hashPasswordSHA256(inputPlain);
+            if (storedAcc.passwordHash) {
+                return storedAcc.passwordHash === inputHash;
+            }
+            return storedAcc.password === inputPlain;
+        }
         const MONTHS = ['Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12', 'Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5'];
         let currentAccount = null;
         let pendingVerifyAccountId = null;
@@ -952,6 +986,7 @@
         let isAdminMode = false;
         let isAdminImpersonating = false;
         let classData = {
+            _updatedAt: 0,
             meta: {
                 ward: '',
                 province: '',
@@ -960,7 +995,8 @@
                 teacherName: '',
                 phone: '',
                 targetStudentCount: 0,
-                groupCount: 5
+                groupCount: 5,
+                _updatedAt: 0
             },
             inspection: {
                 status: 'Chưa kiểm tra',
@@ -973,14 +1009,206 @@
             attendance: {},
             honors: {}
         };
+
+        // =========================================================================
+        // HỢP NHẤT DỮ LIỆU ĐA THIẾT BỊ (CHỐNG GHI ĐÈ MẤT THÔNG TIN KHI NHẬP CÙNG LÚC)
+        // =========================================================================
+        function mergeAccountRecords(localList, remoteList) {
+            const map = new Map();
+            const putAcc = (raw) => {
+                if (!raw || !raw.id) return;
+                const acc = ensureDeviceFields({ ...raw });
+                acc._updatedAt = Number(acc._updatedAt || 0);
+                const prev = map.get(acc.id);
+                if (!prev) {
+                    map.set(acc.id, acc);
+                    return;
+                }
+                const newer = acc._updatedAt >= prev._updatedAt ? acc : prev;
+                const older = acc._updatedAt >= prev._updatedAt ? prev : acc;
+                const appMap = new Map();
+                (older.approvedDevices || []).forEach(d => { if (d && d.deviceId) appMap.set(d.deviceId, d); });
+                (newer.approvedDevices || []).forEach(d => { if (d && d.deviceId) appMap.set(d.deviceId, d); });
+                const penMap = new Map();
+                (older.pendingDevices || []).forEach(p => { if (p && p.deviceId && !appMap.has(p.deviceId)) penMap.set(p.deviceId, p); });
+                (newer.pendingDevices || []).forEach(p => { if (p && p.deviceId && !appMap.has(p.deviceId)) penMap.set(p.deviceId, p); });
+                map.set(acc.id, {
+                    ...older,
+                    ...newer,
+                    approvedDevices: Array.from(appMap.values()).slice(0, MAX_DEVICES_PER_ACCOUNT),
+                    pendingDevices: Array.from(penMap.values()),
+                    _updatedAt: Math.max(older._updatedAt || 0, newer._updatedAt || 0)
+                });
+            };
+            (Array.isArray(remoteList) ? remoteList : []).forEach(putAcc);
+            (Array.isArray(localList) ? localList : []).forEach(putAcc);
+            return Array.from(map.values());
+        }
+
+        function mergeVaultData(baseVault, incomingVault) {
+            const a = baseVault && typeof baseVault === 'object' ? baseVault : {};
+            const b = incomingVault && typeof incomingVault === 'object' ? incomingVault : {};
+
+            // Hợp nhất danh sách học sinh + tombstone xóa mềm để không bị hồi sinh khi đồng bộ
+            const deletedStudents = { ...(a._deletedStudents || {}), ...(b._deletedStudents || {}) };
+            Object.keys(deletedStudents).forEach(sid => {
+                const tsA = Number(a._deletedStudents?.[sid] || 0);
+                const tsB = Number(b._deletedStudents?.[sid] || 0);
+                deletedStudents[sid] = Math.max(tsA, tsB);
+            });
+
+            const stMap = new Map();
+            const addStudents = (arr) => {
+                (Array.isArray(arr) ? arr : []).forEach(st => {
+                    if (!st || !st.id) return;
+                    const curTs = Number(st._updatedAt || 0);
+                    const delTs = Number(deletedStudents[st.id] || 0);
+                    if (delTs && delTs >= curTs) return;
+                    const exist = stMap.get(st.id);
+                    if (!exist || curTs >= Number(exist._updatedAt || 0)) {
+                        stMap.set(st.id, { ...st, _updatedAt: curTs || Date.now() });
+                    }
+                });
+            };
+            addStudents(a.students);
+            addStudents(b.students);
+
+            // Hợp nhất meta theo thời gian cập nhật
+            const metaA = a.meta || {};
+            const metaB = b.meta || {};
+            const metaTsA = Number(metaA._updatedAt || a._updatedAt || 0);
+            const metaTsB = Number(metaB._updatedAt || b._updatedAt || 0);
+            const mergedMeta = {
+                ...(metaTsA <= metaTsB ? metaA : metaB),
+                ...(metaTsA > metaTsB ? metaA : metaB),
+                _updatedAt: Math.max(metaTsA, metaTsB)
+            };
+
+            // Hợp nhất điểm thi đua theo từng tuần dựa trên _updatedAt của tuần đó
+            const mergedWeekly = { ...(a.weeklyPoints || {}) };
+            Object.entries(b.weeklyPoints || {}).forEach(([wk, wB]) => {
+                if (!wB || typeof wB !== 'object') return;
+                const wA = mergedWeekly[wk];
+                if (!wA || typeof wA !== 'object') {
+                    mergedWeekly[wk] = { ...wB };
+                } else {
+                    const tsA = Number(wA._updatedAt || 0);
+                    const tsB = Number(wB._updatedAt || 0);
+                    mergedWeekly[wk] = tsB >= tsA ? { ...wA, ...wB } : { ...wB, ...wA };
+                }
+            });
+
+            // Hợp nhất hạnh kiểm theo từng ô (tháng -> học sinh) dựa trên _updatedAt
+            const mergedConducts = {};
+            const allConductMonths = new Set([...Object.keys(a.conducts || {}), ...Object.keys(b.conducts || {})]);
+            allConductMonths.forEach(mo => {
+                const mA = (a.conducts && a.conducts[mo]) || {};
+                const mB = (b.conducts && b.conducts[mo]) || {};
+                const outMo = { ...mA };
+                Object.entries(mB).forEach(([sid, recB]) => {
+                    if (!recB || typeof recB !== 'object') return;
+                    const recA = outMo[sid];
+                    if (!recA || typeof recA !== 'object') {
+                        outMo[sid] = { ...recB };
+                    } else {
+                        const tsA = Number(recA._updatedAt || 0);
+                        const tsB = Number(recB._updatedAt || 0);
+                        outMo[sid] = tsB >= tsA ? { ...recB } : { ...recA };
+                    }
+                });
+                mergedConducts[mo] = outMo;
+            });
+
+            // Hợp nhất điểm danh theo từng ô (ngày -> học sinh) hỗ trợ cả format cũ (string) và format mới ({status, _updatedAt})
+            const normalizeAttCell = (val) => {
+                if (val && typeof val === 'object') return { status: val.status || 'Có mặt', _updatedAt: Number(val._updatedAt || 0) };
+                return { status: String(val || 'Có mặt'), _updatedAt: 0 };
+            };
+            const mergedAttendance = {};
+            const allAttDates = new Set([...Object.keys(a.attendance || {}), ...Object.keys(b.attendance || {})]);
+            allAttDates.forEach(dt => {
+                const dA = (a.attendance && a.attendance[dt]) || {};
+                const dB = (b.attendance && b.attendance[dt]) || {};
+                const outDt = {};
+                const allSids = new Set([...Object.keys(dA), ...Object.keys(dB)]);
+                allSids.forEach(sid => {
+                    if (dA[sid] !== undefined && dB[sid] === undefined) {
+                        outDt[sid] = normalizeAttCell(dA[sid]);
+                    } else if (dB[sid] !== undefined && dA[sid] === undefined) {
+                        outDt[sid] = normalizeAttCell(dB[sid]);
+                    } else {
+                        const cA = normalizeAttCell(dA[sid]);
+                        const cB = normalizeAttCell(dB[sid]);
+                        outDt[sid] = cB._updatedAt >= cA._updatedAt ? cB : cA;
+                    }
+                });
+                mergedAttendance[dt] = outDt;
+            });
+
+            // Hợp nhất vinh danh theo tháng + tombstone xóa mềm
+            const deletedHonors = { ...(a._deletedHonors || {}), ...(b._deletedHonors || {}) };
+            Object.keys(deletedHonors).forEach(mo => {
+                deletedHonors[mo] = Math.max(Number(a._deletedHonors?.[mo] || 0), Number(b._deletedHonors?.[mo] || 0));
+            });
+            const mergedHonors = {};
+            const allHonorMonths = new Set([...Object.keys(a.honors || {}), ...Object.keys(b.honors || {})]);
+            allHonorMonths.forEach(mo => {
+                const hA = a.honors?.[mo];
+                const hB = b.honors?.[mo];
+                const tsA = Number(hA?._updatedAt || 0);
+                const tsB = Number(hB?._updatedAt || 0);
+                const best = !hA ? hB : !hB ? hA : (tsB >= tsA ? hB : hA);
+                if (!best) return;
+                const delTs = Number(deletedHonors[mo] || 0);
+                if (delTs && delTs >= Number(best._updatedAt || 0)) return;
+                mergedHonors[mo] = { ...best };
+            });
+
+            return {
+                ...a,
+                ...b,
+                meta: mergedMeta,
+                inspection: { ...(a.inspection || {}), ...(b.inspection || {}) },
+                students: Array.from(stMap.values()),
+                _deletedStudents: deletedStudents,
+                weeklyPoints: mergedWeekly,
+                conducts: mergedConducts,
+                attendance: mergedAttendance,
+                honors: mergedHonors,
+                _deletedHonors: deletedHonors,
+                _updatedAt: Math.max(Number(a._updatedAt || 0), Number(b._updatedAt || 0), mergedMeta._updatedAt || 0)
+            };
+        }
+
         window.onload = async function () {
             loadTheme();
             initSelectors();
             getCurrentDeviceId();
             if (isCloudConfigured()) {
                 await syncFromCloud(false);
+                setInterval(() => {
+                    if (!document.hidden && (currentAccount || isAdminMode) && _cloudQueues.size === 0) {
+                        syncFromCloud(false);
+                    }
+                }, 15000);
             }
         };
+
+        const _cloudQueues = new Map();
+        function enqueueCloudTask(queueKey, taskFn) {
+            const prev = _cloudQueues.get(queueKey) || Promise.resolve();
+            const next = prev
+                .catch(() => {})
+                .then(() => taskFn())
+                .finally(() => {
+                    if (_cloudQueues.get(queueKey) === next) {
+                        _cloudQueues.delete(queueKey);
+                    }
+                });
+            _cloudQueues.set(queueKey, next);
+            return next;
+        }
+
         async function syncFromCloud(showNotice = false) {
             if (!isCloudConfigured()) {
                 if (isAdminMode) renderAdminDashboard();
@@ -990,39 +1218,61 @@
                 const cloudState = await cloudRead('gvcn_system');
                 if (cloudState && typeof cloudState === 'object') {
                     if (Array.isArray(cloudState.registry)) {
-                        localStorage.setItem(REGISTRY_KEY, JSON.stringify(cloudState.registry.map(ensureDeviceFields)));
+                        const localReg = getAccountsRegistry();
+                        const mergedReg = mergeAccountRecords(localReg, cloudState.registry);
+                        localStorage.setItem(REGISTRY_KEY, JSON.stringify(mergedReg));
                     }
                     if (cloudState.vaults && typeof cloudState.vaults === 'object') {
                         Object.entries(cloudState.vaults).forEach(([accId, vaultObj]) => {
-                            if (vaultObj) localStorage.setItem(accId, JSON.stringify(vaultObj));
+                            if (!vaultObj) return;
+                            const localVault = parseVault(accId);
+                            const mergedVault = localVault ? mergeVaultData(localVault, vaultObj) : mergeVaultData({}, vaultObj);
+                            localStorage.setItem(accId, JSON.stringify(mergedVault));
                         });
                     }
                 }
                 if (currentAccount) {
                     const updatedAcc = getAccountsRegistry().find(a => a.id === currentAccount.id);
                     if (updatedAcc) currentAccount = updatedAcc;
-                    loadAccountVault();
-                    renderAllViews();
+                    const localCurVault = parseVault(currentAccount.id);
+                    const cloudCurVault = cloudState?.vaults?.[currentAccount.id] || null;
+                    classData = mergeVaultData(
+                        mergeVaultData({}, localCurVault),
+                        mergeVaultData(classData, cloudCurVault)
+                    );
+                    localStorage.setItem(currentAccount.id, JSON.stringify(classData));
+                    renderAllViews(true);
                 } else if (isAdminMode) {
                     renderAdminDashboard();
                 }
                 if (showNotice) showToast('Đã đồng bộ dữ liệu mới nhất từ đám mây!');
             } catch (e) {
                 console.warn('Đồng bộ đám mây gặp sự cố, dùng dữ liệu cục bộ:', e);
+                if (showNotice) showToast('Không thể kết nối đám mây (kiểm tra mạng hoặc Firebase Rules).');
             }
         }
+
         async function pushAccountAndVaultToCloud(accountObj, vaultObj) {
             if (!isCloudConfigured()) return;
-            try {
-                if (accountObj) {
-                    await cloudWrite(`gvcn_system/vaults/${accountObj.id}`, vaultObj || parseVault(accountObj.id) || {});
-                }
-                const reg = getAccountsRegistry();
-                await cloudWrite('gvcn_system/registry', reg);
-            } catch (e) {
-                console.warn('Không thể đẩy dữ liệu lên đám mây:', e);
+            if (accountObj) {
+                await enqueueCloudTask(`vault:${accountObj.id}`, async () => {
+                    const latestRemoteVault = await cloudRead(`gvcn_system/vaults/${accountObj.id}`).catch(() => null);
+                    const finalVault = latestRemoteVault ? mergeVaultData(latestRemoteVault, vaultObj || {}) : mergeVaultData({}, vaultObj || {});
+                    localStorage.setItem(accountObj.id, JSON.stringify(finalVault));
+                    if (currentAccount && currentAccount.id === accountObj.id) {
+                        classData = finalVault;
+                    }
+                    await cloudWrite(`gvcn_system/vaults/${accountObj.id}`, finalVault);
+                });
             }
+            await enqueueCloudTask('registry', async () => {
+                const latestRemoteReg = await cloudRead('gvcn_system/registry').catch(() => null);
+                const mergedReg = mergeAccountRecords(getAccountsRegistry(), latestRemoteReg);
+                localStorage.setItem(REGISTRY_KEY, JSON.stringify(mergedReg));
+                await cloudWrite('gvcn_system/registry', mergedReg);
+            });
         }
+
         // =========================================================================
         // QUẢN LÝ ĐỊNH DANH THIẾT BỊ & XÁC THỰC TỐI ĐA 50 THIẾT BỊ / TÀI KHOẢN
         // =========================================================================
@@ -1066,9 +1316,19 @@
             }
         }
         function saveAccountsRegistry(list) {
-            localStorage.setItem(REGISTRY_KEY, JSON.stringify(list));
+            const stamped = (Array.isArray(list) ? list : []).map(item => ({
+                ...ensureDeviceFields(item),
+                _updatedAt: Number(item._updatedAt || 0) || Date.now()
+            }));
+            localStorage.setItem(REGISTRY_KEY, JSON.stringify(stamped));
             if (isCloudConfigured()) {
-                cloudWrite('gvcn_system/registry', list).catch(() => {});
+                enqueueCloudTask('registry', async () => {
+                    const remote = await cloudRead('gvcn_system/registry');
+                    const latestLocal = getAccountsRegistry();
+                    const merged = mergeAccountRecords(latestLocal, remote);
+                    localStorage.setItem(REGISTRY_KEY, JSON.stringify(merged));
+                    await cloudWrite('gvcn_system/registry', merged);
+                });
             }
         }
         function switchAuthPage(page) {
@@ -1130,6 +1390,8 @@
             }
             const deviceId = getCurrentDeviceId();
             const storageKey = `gvcn_isolated_vault_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+            const nowTs = Date.now();
+            const passwordHash = await hashPasswordSHA256(password);
             const newAccount = {
                 id: storageKey,
                 ward,
@@ -1138,7 +1400,8 @@
                 teacherName,
                 className,
                 phone,
-                password,
+                passwordHash,
+                _updatedAt: nowTs,
                 approvedDevices: [{
                     deviceId,
                     deviceName: getCurrentDeviceLabel() + ' (Thiết bị khởi tạo)',
@@ -1149,6 +1412,7 @@
             registry.push(newAccount);
             saveAccountsRegistry(registry);
             classData = {
+                _updatedAt: nowTs,
                 meta: {
                     ward,
                     province,
@@ -1157,7 +1421,8 @@
                     teacherName,
                     phone,
                     targetStudentCount: 0,
-                    groupCount: 5
+                    groupCount: 5,
+                    _updatedAt: nowTs
                 },
                 inspection: { status: 'Chưa kiểm tra', note: '', checkedAt: '' },
                 students: [],
@@ -1182,7 +1447,6 @@
             const identifier = document.getElementById('login-identifier').value.trim().toLowerCase();
             const normIdPhone = normalizePhone(identifier);
             const password = document.getElementById('login-password').value;
-
             if (isCloudConfigured()) {
                 submitBtn.disabled = true;
                 submitBtn.textContent = 'Đang đồng bộ dữ liệu...';
@@ -1190,18 +1454,34 @@
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Đăng Nhập Hệ Thống';
             }
-
-            if (identifier === ADMIN_ACCOUNT.username.toLowerCase() && password === ADMIN_ACCOUNT.password) {
+            const adminCreds = getAdminCredentials();
+            if (identifier === (adminCreds.username || 'admin').toLowerCase().trim() && password === adminCreds.password) {
                 openAdminPanel();
                 showToast('Đăng nhập quyền Admin thành công!');
                 return;
             }
+            const inputPassHash = await hashPasswordSHA256(password);
             const registry = getAccountsRegistry();
-            const accIdx = registry.findIndex(acc => {
+            let accIdx = -1;
+            for (let i = 0; i < registry.length; i++) {
+                const acc = registry[i];
                 const nameMatch = (acc.teacherName || '').toLowerCase().trim() === identifier;
                 const phoneMatch = normalizePhone(acc.phone) === normIdPhone;
-                return (nameMatch || phoneMatch) && acc.password === password;
-            });
+                if (nameMatch || phoneMatch) {
+                    const ok = await verifyPassword(password, acc);
+                    if (ok) {
+                        if (!acc.passwordHash) {
+                            acc.passwordHash = inputPassHash;
+                            delete acc.password;
+                            acc._updatedAt = Date.now();
+                            registry[i] = acc;
+                            saveAccountsRegistry(registry);
+                        }
+                        accIdx = i;
+                        break;
+                    }
+                }
+            }
             if (accIdx === -1) {
                 errBox.textContent = 'Tên GVCN/SĐT hoặc Mật khẩu không đúng. Vui lòng kiểm tra lại!';
                 errBox.classList.remove('hidden');
@@ -1233,6 +1513,7 @@
                     requestedAt: new Date().toLocaleString('vi-VN')
                 };
                 matched.pendingDevices.push(pendingItem);
+                matched._updatedAt = Date.now();
                 registry[accIdx] = matched;
                 saveAccountsRegistry(registry);
             }
@@ -1290,6 +1571,7 @@
                 deviceName: pendingItem.deviceName,
                 approvedAt: new Date().toLocaleString('vi-VN')
             });
+            acc._updatedAt = Date.now();
             registry[accIdx] = acc;
             saveAccountsRegistry(registry);
             closeDeviceVerifyModal();
@@ -1321,8 +1603,10 @@
         function loadAccountVault() {
             if (!currentAccount) return;
             const parsed = parseVault(currentAccount.id);
+            const nowTs = Date.now();
             if (parsed) {
                 classData = {
+                    _updatedAt: Number(parsed._updatedAt || nowTs),
                     meta: {
                         ward: currentAccount.ward,
                         province: currentAccount.province,
@@ -1332,6 +1616,7 @@
                         phone: currentAccount.phone,
                         targetStudentCount: 0,
                         groupCount: 5,
+                        _updatedAt: Number(parsed.meta?._updatedAt || parsed._updatedAt || nowTs),
                         ...(parsed.meta || {})
                     },
                     inspection: {
@@ -1341,13 +1626,16 @@
                         ...(parsed.inspection || {})
                     },
                     students: Array.isArray(parsed.students) ? parsed.students : [],
+                    _deletedStudents: parsed._deletedStudents || {},
                     weeklyPoints: parsed.weeklyPoints || {},
                     conducts: parsed.conducts || {},
                     attendance: parsed.attendance || {},
-                    honors: parsed.honors || {}
+                    honors: parsed.honors || {},
+                    _deletedHonors: parsed._deletedHonors || {}
                 };
             } else {
                 classData = {
+                    _updatedAt: nowTs,
                     meta: {
                         ward: currentAccount.ward,
                         province: currentAccount.province,
@@ -1356,7 +1644,8 @@
                         teacherName: currentAccount.teacherName,
                         phone: currentAccount.phone,
                         targetStudentCount: 0,
-                        groupCount: 5
+                        groupCount: 5,
+                        _updatedAt: nowTs
                     },
                     inspection: { status: 'Chưa kiểm tra', note: '', checkedAt: '' },
                     students: [],
@@ -1369,9 +1658,26 @@
         }
         function saveAccountVault() {
             if (!currentAccount) return;
-            localStorage.setItem(currentAccount.id, JSON.stringify(classData));
+            const targetAccId = currentAccount.id;
+            const nowTs = Date.now();
+            classData._updatedAt = nowTs;
+            const localExisting = parseVault(targetAccId);
+            const mergedLocal = localExisting ? mergeVaultData(localExisting, classData) : mergeVaultData({}, classData);
+            mergedLocal._updatedAt = nowTs;
+            classData = mergedLocal;
+            localStorage.setItem(targetAccId, JSON.stringify(mergedLocal));
             if (isCloudConfigured()) {
-                cloudWrite(`gvcn_system/vaults/${currentAccount.id}`, classData).catch(() => {});
+                enqueueCloudTask(`vault:${targetAccId}`, async () => {
+                    const remoteVault = await cloudRead(`gvcn_system/vaults/${targetAccId}`);
+                    const latestLocal = parseVault(targetAccId) || mergedLocal;
+                    const finalVault = remoteVault ? mergeVaultData(remoteVault, latestLocal) : latestLocal;
+                    finalVault._updatedAt = Math.max(Number(remoteVault?._updatedAt || 0), Number(latestLocal._updatedAt || nowTs));
+                    localStorage.setItem(targetAccId, JSON.stringify(finalVault));
+                    if (currentAccount && currentAccount.id === targetAccId) {
+                        classData = finalVault;
+                    }
+                    await cloudWrite(`gvcn_system/vaults/${targetAccId}`, finalVault);
+                });
             }
         }
         function enterMainApp() {
@@ -1567,6 +1873,7 @@
                 code: generateSixDigitCode(),
                 requestedAt: new Date().toLocaleString('vi-VN')
             });
+            acc._updatedAt = Date.now();
             saveAccountsRegistry(registry);
             renderAdminDashboard();
             openAdminDevicesModal(accountId);
@@ -1589,6 +1896,7 @@
                 deviceName: item.deviceName,
                 approvedAt: new Date().toLocaleString('vi-VN')
             });
+            acc._updatedAt = Date.now();
             saveAccountsRegistry(registry);
             renderAdminDashboard();
             openAdminDevicesModal(accountId);
@@ -1602,6 +1910,7 @@
             if (!item) return;
             item.code = generateSixDigitCode();
             item.requestedAt = new Date().toLocaleString('vi-VN');
+            acc._updatedAt = Date.now();
             saveAccountsRegistry(registry);
             openAdminDevicesModal(accountId);
             showToast(`Đã tạo mã xác nhận mới: ${item.code}`);
@@ -1611,6 +1920,7 @@
             const acc = registry.find(a => a.id === accountId);
             if (!acc) return;
             acc.pendingDevices = (acc.pendingDevices || []).filter(p => p.deviceId !== deviceId);
+            acc._updatedAt = Date.now();
             saveAccountsRegistry(registry);
             renderAdminDashboard();
             openAdminDevicesModal(accountId);
@@ -1622,6 +1932,7 @@
             const acc = registry.find(a => a.id === accountId);
             if (!acc) return;
             acc.approvedDevices = (acc.approvedDevices || []).filter(d => d.deviceId !== deviceId);
+            acc._updatedAt = Date.now();
             saveAccountsRegistry(registry);
             renderAdminDashboard();
             openAdminDevicesModal(accountId);
@@ -1717,6 +2028,7 @@
             const status = document.getElementById('adm-insp-status').value;
             const note = document.getElementById('adm-insp-note').value.trim();
             const checkedAt = new Date().toLocaleString('vi-VN');
+            const nowTs = Date.now();
             const existing = parseVault(accountId) || {
                 meta: {},
                 students: [],
@@ -1726,8 +2038,20 @@
                 honors: {}
             };
             existing.inspection = { status, note, checkedAt };
+            existing._updatedAt = nowTs;
             localStorage.setItem(accountId, JSON.stringify(existing));
-            if (isCloudConfigured()) cloudWrite(`gvcn_system/vaults/${accountId}`, existing).catch(() => {});
+            if (isCloudConfigured()) {
+                (async () => {
+                    try {
+                        const remote = await cloudRead(`gvcn_system/vaults/${accountId}`);
+                        const merged = remote ? mergeVaultData(remote, existing) : existing;
+                        merged.inspection = { status, note, checkedAt };
+                        merged._updatedAt = Math.max(Number(remote?._updatedAt || 0), nowTs);
+                        localStorage.setItem(accountId, JSON.stringify(merged));
+                        await cloudWrite(`gvcn_system/vaults/${accountId}`, merged);
+                    } catch (_) {}
+                })();
+            }
             renderAdminDashboard();
             openAdminInspectModal(accountId);
             showToast('Đã lưu trạng thái nộp kiểm tra!');
@@ -1764,13 +2088,24 @@
                 alert('Số điện thoại này đã thuộc về một tài khoản GVCN khác!');
                 return;
             }
-            registry[idx] = { ...registry[idx], ward, province, unit, teacherName, className, phone };
+            const nowTs = Date.now();
+            registry[idx] = { ...registry[idx], ward, province, unit, teacherName, className, phone, _updatedAt: nowTs };
             saveAccountsRegistry(registry);
             const vault = parseVault(id);
             if (vault) {
-                vault.meta = { ...(vault.meta || {}), ward, province, unit, className, teacherName, phone };
+                vault.meta = { ...(vault.meta || {}), ward, province, unit, className, teacherName, phone, _updatedAt: nowTs };
+                vault._updatedAt = nowTs;
                 localStorage.setItem(id, JSON.stringify(vault));
-                if (isCloudConfigured()) cloudWrite(`gvcn_system/vaults/${id}`, vault).catch(() => {});
+                if (isCloudConfigured()) {
+                    (async () => {
+                        try {
+                            const remote = await cloudRead(`gvcn_system/vaults/${id}`);
+                            const merged = remote ? mergeVaultData(remote, vault) : vault;
+                            localStorage.setItem(id, JSON.stringify(merged));
+                            await cloudWrite(`gvcn_system/vaults/${id}`, merged);
+                        } catch (_) {}
+                    })();
+                }
             }
             closeAdminEditModal();
             renderAdminDashboard();
@@ -1787,7 +2122,7 @@
             enterMainApp();
             showToast(`Đang thao tác trực tiếp trên lớp ${acc.className} (GVCN: ${acc.teacherName})`);
         }
-        function adminResetPassword(accountId) {
+        async function adminResetPassword(accountId) {
             const registry = getAccountsRegistry();
             const acc = registry.find(a => a.id === accountId);
             if (!acc) return;
@@ -1797,7 +2132,9 @@
                 alert('Mật khẩu cần tối thiểu 4 ký tự!');
                 return;
             }
-            acc.password = nextPass.trim();
+            acc.passwordHash = await hashPasswordSHA256(nextPass.trim());
+            delete acc.password;
+            acc._updatedAt = Date.now();
             saveAccountsRegistry(registry);
             showToast(`Đã cập nhật mật khẩu cho ${acc.teacherName}`);
         }
@@ -1805,11 +2142,23 @@
             const registry = getAccountsRegistry();
             const acc = registry.find(a => a.id === accountId);
             if (!acc) return;
-            const msg = `Reset & xóa tài khoản của GVCN "${acc.teacherName}"?\n\nCác thông tin sau sẽ được giải phóng để đăng ký lại:\n- SĐT: ${acc.phone}\n- Tên GVCN: ${acc.teacherName}\n- Lớp: ${acc.className}\n- Đơn vị: ${acc.unit}\n\nToàn bộ dữ liệu lớp và thiết bị thuộc tài khoản này cũng sẽ bị xóa vĩnh viễn.`;
+            const msg = `Reset & xóa tài khoản của GVCN "${acc.teacherName}"?
+
+Các thông tin sau sẽ được giải phóng để đăng ký lại:
+- SĐT: ${acc.phone}
+- Tên GVCN: ${acc.teacherName}
+- Lớp: ${acc.className}
+- Đơn vị: ${acc.unit}
+
+Toàn bộ dữ liệu lớp và thiết bị thuộc tài khoản này cũng sẽ bị xóa vĩnh viễn.`;
             if (!confirm(msg)) return;
-            saveAccountsRegistry(registry.filter(a => a.id !== accountId));
+            const nextReg = registry.filter(a => a.id !== accountId);
+            localStorage.setItem(REGISTRY_KEY, JSON.stringify(nextReg));
             localStorage.removeItem(accountId);
-            if (isCloudConfigured()) cloudDelete(`gvcn_system/vaults/${accountId}`).catch(() => {});
+            if (isCloudConfigured()) {
+                cloudWrite('gvcn_system/registry', nextReg).catch(() => {});
+                cloudDelete(`gvcn_system/vaults/${accountId}`).catch(() => {});
+            }
             renderAdminDashboard();
             showToast(`Đã reset thông tin của ${acc.teacherName}. Có thể đăng ký lại!`);
         }
@@ -1819,14 +2168,19 @@
                 alert('Hiện chưa có tài khoản GVCN nào để reset.');
                 return;
             }
-            const confirmText = prompt(`CẢNH BÁO: Thao tác này sẽ xóa toàn bộ ${registry.length} tài khoản GVCN và mọi dữ liệu lớp đã nhập để đăng ký lại từ đầu.\n\nNhập chữ RESET để xác nhận:`);
+            const confirmText = prompt(`CẢNH BÁO: Thao tác này sẽ xóa toàn bộ ${registry.length} tài khoản GVCN và mọi dữ liệu lớp đã nhập để đăng ký lại từ đầu.
+
+Nhập chữ RESET để xác nhận:`);
             if (confirmText !== 'RESET') {
                 if (confirmText !== null) alert('Bạn chưa nhập đúng chữ RESET. Đã hủy thao tác.');
                 return;
             }
             registry.forEach(acc => localStorage.removeItem(acc.id));
-            saveAccountsRegistry([]);
-            if (isCloudConfigured()) cloudDelete('gvcn_system/vaults').catch(() => {});
+            localStorage.setItem(REGISTRY_KEY, JSON.stringify([]));
+            if (isCloudConfigured()) {
+                cloudWrite('gvcn_system/registry', []).catch(() => {});
+                cloudDelete('gvcn_system/vaults').catch(() => {});
+            }
             renderAdminDashboard();
             showToast('Đã reset toàn bộ hệ thống tài khoản!');
         }
@@ -1867,7 +2221,7 @@
                     const oldReg = getAccountsRegistry();
                     oldReg.forEach(acc => localStorage.removeItem(acc.id));
                     const trimmedReg = data.registry.slice(0, MAX_ACCOUNTS).map(ensureDeviceFields);
-                    saveAccountsRegistry(trimmedReg);
+                    localStorage.setItem(REGISTRY_KEY, JSON.stringify(trimmedReg));
                     const nextVaults = {};
                     if (data.vaults && typeof data.vaults === 'object') {
                         trimmedReg.forEach(acc => {
@@ -1921,8 +2275,6 @@
             ]);
             wsStudents['!cols'] = [{ wch: 6 }, { wch: 28 }, { wch: 12 }, { wch: 15 }, { wch: 14 }, { wch: 12 }, { wch: 10 }, { wch: 18 }];
             XLSX.utils.book_append_sheet(wb, wsStudents, 'Danh_Sach_HS');
-
-            // Sheet Thi đua các tổ (tất cả các tuần)
             const groupCount = Math.max(1, Math.min(15, parseInt(meta.groupCount) || 5));
             const groups = Array.from({ length: groupCount }, (_, i) => `Tổ ${i + 1}`);
             const allWeeks = Array.from({ length: 35 }, (_, i) => `Tuần ${i + 1}`);
@@ -1940,8 +2292,6 @@
             const wsRanking = XLSX.utils.aoa_to_sheet([rankingHeader, ...rankingRows]);
             wsRanking['!cols'] = [{ wch: 12 }, ...groups.map(() => ({ wch: 12 })), { wch: 22 }];
             XLSX.utils.book_append_sheet(wb, wsRanking, 'Thi_Dua_To');
-
-            // Sheet Hạnh kiểm cả năm (tất cả các tháng từ Tháng 9 đến Tháng 5)
             const conducts = vault?.conducts || {};
             const conductHeader = ['STT', 'Họ và tên', 'Tổ'];
             MONTHS.forEach(mo => {
@@ -1960,16 +2310,46 @@
             const wsConduct = XLSX.utils.aoa_to_sheet([conductHeader, ...conductRows]);
             wsConduct['!cols'] = [{ wch: 6 }, { wch: 26 }, { wch: 10 }, ...MONTHS.flatMap(() => [{ wch: 14 }, { wch: 16 }])];
             XLSX.utils.book_append_sheet(wb, wsConduct, 'Hanh_Kiem_Nam');
-
             const honors = MONTHS.filter(mo => vault?.honors?.[mo]).map(mo => {
                 const h = vault.honors[mo];
                 const st = students.find(s => s.id === h.studentId);
                 return [mo, st ? st.name : '', st ? st.group : '', h.title || '', h.desc || '', h.updatedAt || ''];
             });
-            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([
+            const wsHonors = XLSX.utils.aoa_to_sheet([
                 ['Tháng', 'Học sinh', 'Tổ', 'Danh hiệu', 'Thành tích / Ghi chú', 'Ngày cập nhật'],
                 ...(honors.length ? honors : [['', 'Chưa có vinh danh', '', '', '', '']])
-            ]), 'Vinh_Danh');
+            ]);
+            wsHonors['!cols'] = [{ wch: 12 }, { wch: 26 }, { wch: 10 }, { wch: 28 }, { wch: 36 }, { wch: 16 }];
+            XLSX.utils.book_append_sheet(wb, wsHonors, 'Vinh_Danh');
+
+            const attendanceMap = vault?.attendance || {};
+            const attDates = Object.keys(attendanceMap).sort();
+            if (attDates.length > 0 && students.length > 0) {
+                const attHeader = ['STT', 'Họ và tên', 'Tổ', ...attDates, 'Tổng Có mặt', 'Có phép', 'Không phép', 'Đi trễ'];
+                const attRows = students.map((s, i) => {
+                    let cPresent = 0, cExcused = 0, cUnexcused = 0, cLate = 0;
+                    const dayStatuses = attDates.map(dt => {
+                        const cell = attendanceMap[dt]?.[s.id];
+                        const stt = (cell && typeof cell === 'object') ? (cell.status || 'Có mặt') : (cell || 'Có mặt');
+                        if (stt === 'Có mặt') cPresent++;
+                        else if (stt === 'Có phép') cExcused++;
+                        else if (stt === 'Không phép') cUnexcused++;
+                        else if (stt === 'Đi trễ') cLate++;
+                        return stt;
+                    });
+                    return [i + 1, s.name || '', s.group || '', ...dayStatuses, cPresent, cExcused, cUnexcused, cLate];
+                });
+                const wsAtt = XLSX.utils.aoa_to_sheet([attHeader, ...attRows]);
+                wsAtt['!cols'] = [{ wch: 6 }, { wch: 26 }, { wch: 10 }, ...attDates.map(() => ({ wch: 13 })), { wch: 14 }, { wch: 10 }, { wch: 12 }, { wch: 10 }];
+                XLSX.utils.book_append_sheet(wb, wsAtt, 'Diem_Danh');
+            } else {
+                const wsAttEmpty = XLSX.utils.aoa_to_sheet([
+                    ['STT', 'Họ và tên', 'Tổ', 'Trạng thái điểm danh'],
+                    ...(students.length ? students.map((s, i) => [i + 1, s.name || '', s.group || '', 'Chưa có dữ liệu điểm danh theo ngày']) : [['', 'Chưa có học sinh', '', '']])
+                ]);
+                wsAttEmpty['!cols'] = [{ wch: 6 }, { wch: 26 }, { wch: 10 }, { wch: 32 }];
+                XLSX.utils.book_append_sheet(wb, wsAttEmpty, 'Diem_Danh');
+            }
             return wb;
         }
         function adminExportSingleClassExcel(accountId) {
@@ -2079,20 +2459,39 @@
         }
         function saveClassMetadata(e) {
             e.preventDefault();
+            const nowTs = Date.now();
             classData.meta.className = document.getElementById('meta-class').value.trim();
             classData.meta.unit = document.getElementById('meta-school').value.trim();
             classData.meta.targetStudentCount = Math.max(0, parseInt(document.getElementById('meta-student-count').value) || 0);
             classData.meta.groupCount = Math.max(1, Math.min(15, parseInt(document.getElementById('meta-group-count').value) || 5));
+            classData.meta._updatedAt = nowTs;
+            classData._updatedAt = nowTs;
+
+            const validGroups = getGroupNames();
+            let reassignedCount = 0;
+            classData.students = classData.students.map((st, idx) => {
+                if (!validGroups.includes(st.group)) {
+                    reassignedCount++;
+                    return { ...st, group: validGroups[idx % validGroups.length], _updatedAt: nowTs };
+                }
+                return st;
+            });
+
             const reg = getAccountsRegistry();
             const idx = reg.findIndex(a => a.id === currentAccount.id);
             if (idx !== -1) {
                 reg[idx].className = classData.meta.className;
                 reg[idx].unit = classData.meta.unit;
+                reg[idx]._updatedAt = nowTs;
                 saveAccountsRegistry(reg);
             }
             saveAccountVault();
             renderAllViews();
-            showToast('Đã lưu thông tin dữ liệu lớp!');
+            if (reassignedCount > 0) {
+                showToast(`Đã lưu thông tin lớp và tự động phân bổ lại ${reassignedCount} học sinh vào ${validGroups.length} tổ!`);
+            } else {
+                showToast('Đã lưu thông tin dữ liệu lớp!');
+            }
         }
         function switchTab(tab) {
             const tabs = ['dashboard', 'class-input', 'students', 'ranking', 'conduct', 'attendance', 'honor', 'export'];
@@ -2113,21 +2512,32 @@
             });
             renderAllViews();
         }
-        function renderAllViews() {
+        let hasUnsavedAttendance = false;
+        function markAttendanceDirty() {
+            hasUnsavedAttendance = true;
+        }
+        function renderAllViews(isBackgroundSync = false) {
             if (!currentAccount) return;
             syncGroupSelects();
             updateHeaderAndDashboard();
             renderStudentsTable();
             renderRankingView();
             renderConductView();
-            renderAttendanceView();
+            const attView = document.getElementById('view-attendance');
+            const isViewingAttendance = attView && !attView.classList.contains('hidden');
+            if (!(isBackgroundSync && isViewingAttendance && hasUnsavedAttendance)) {
+                renderAttendanceView();
+            }
             renderHonorView();
         }
         function updateHeaderAndDashboard() {
             const m = classData.meta;
+            const currentDevId = getCurrentDeviceId();
             document.getElementById('header-class-badge').textContent = m.className || 'LỚP';
             document.getElementById('header-school-title').textContent = `${m.unit || 'ĐƠN VỊ'} • LỚP ${m.className || ''}`;
             document.getElementById('header-meta-sub').textContent = `GVCN: ${m.teacherName}`;
+            const headerDevEl = document.getElementById('header-device-id');
+            if (headerDevEl) headerDevEl.textContent = currentDevId;
             document.getElementById('nav-student-count').textContent = `Danh sách (${classData.students.length})`;
             document.getElementById('dash-title').textContent = `Tổng Quan Lớp ${m.className || ''} — ${m.unit || ''}`;
             document.getElementById('dash-subtitle').textContent = `GVCN: ${m.teacherName} (${m.ward}, ${m.province})`;
@@ -2160,9 +2570,68 @@
                 </div>`;
             }).join('');
         }
+        function parseDelimitedLine(line) {
+            const sep = line.includes('\t') ? '\t' : (line.includes(';') && !line.includes(',') ? ';' : ',');
+            const out = [];
+            let cur = '', inQuotes = false;
+            for (let i = 0; i < line.length; i++) {
+                const ch = line[i];
+                if (ch === '"') {
+                    if (inQuotes && line[i + 1] === '"') { cur += '"'; i++; }
+                    else { inQuotes = !inQuotes; }
+                } else if (ch === sep && !inQuotes) {
+                    out.push(cur.trim());
+                    cur = '';
+                } else {
+                    cur += ch;
+                }
+            }
+            out.push(cur.trim());
+            return out;
+        }
+        function normalizeGenderVN(val) {
+            const v = String(val || '').trim().toLowerCase();
+            return (v === 'nữ' || v === 'nu' || v === 'female' || v === 'f') ? 'Nữ' : 'Nam';
+        }
+        function normalizeGroupVN(val, groups, fallbackIdx) {
+            const raw = String(val || '').trim();
+            if (groups.includes(raw)) return raw;
+            const numMatch = raw.match(/\d+/);
+            if (numMatch) {
+                const candidate = `Tổ ${numMatch[0]}`;
+                if (groups.includes(candidate)) return candidate;
+            }
+            return groups[fallbackIdx % groups.length];
+        }
         function readBulkFile(e) {
             const file = e.target.files[0];
             if (!file) return;
+            const ext = (file.name.split('.').pop() || '').toLowerCase();
+            if ((ext === 'xlsx' || ext === 'xls') && typeof XLSX !== 'undefined') {
+                const reader = new FileReader();
+                reader.onload = ev => {
+                    try {
+                        const wb = XLSX.read(new Uint8Array(ev.target.result), { type: 'array' });
+                        const ws = wb.Sheets[wb.SheetNames[0]];
+                        const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+                        const lines = rows
+                            .filter(r => Array.isArray(r) && r.some(cell => String(cell).trim() !== ''))
+                            .map(r => {
+                                const cells = (r.length >= 7 && /^\d+$/.test(String(r[0]).trim())) ? r.slice(1) : r;
+                                return cells.map(c => {
+                                    const s = String(c ?? '').trim();
+                                    return s.includes(',') ? `"${s.replace(/"/g, '""')}"` : s;
+                                }).join(', ');
+                            });
+                        document.getElementById('bulk-text-input').value = lines.join('\n');
+                        showToast(`Đã đọc ${lines.length} dòng từ file Excel!`);
+                    } catch (err) {
+                        alert('Không thể đọc file Excel: ' + err.message);
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+                return;
+            }
             const reader = new FileReader();
             reader.onload = ev => {
                 document.getElementById('bulk-text-input').value = ev.target.result;
@@ -2177,36 +2646,39 @@
             }
             const mode = document.querySelector('input[name="bulk-mode"]:checked').value;
             const groups = getGroupNames();
+            const nowTs = Date.now();
             let imported = [];
             try {
                 if (raw.startsWith('[')) {
                     const arr = JSON.parse(raw);
                     imported = arr.map((item, i) => ({
-                        id: `${Date.now()}_${i}`,
+                        id: `${nowTs}_${i}_${Math.random().toString(36).slice(2, 5)}`,
                         name: item.name || item['Họ và tên'] || `Học sinh ${i + 1}`,
-                        gender: item.gender || item['Giới tính'] || 'Nam',
+                        gender: normalizeGenderVN(item.gender || item['Giới tính']),
                         dob: item.dob || item['Ngày sinh'] || '',
                         ethnicity: item.ethnicity || item['Dân tộc'] || 'Kinh',
-                        group: groups.includes(item.group || item['Tổ']) ? (item.group || item['Tổ']) : groups[i % groups.length],
-                        gpa: parseFloat(item.gpa || item['ĐTB']) || 0,
-                        academic: item.academic || item['Học lực'] || 'Chưa xếp loại'
+                        group: normalizeGroupVN(item.group || item['Tổ'], groups, i),
+                        gpa: parseFloat(String(item.gpa || item['ĐTB'] || 0).replace(',', '.')) || 0,
+                        academic: item.academic || item['Học lực'] || 'Chưa xếp loại',
+                        _updatedAt: nowTs
                     }));
                 } else {
-                    const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+                    const lines = raw.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
                     lines.forEach((line, idx) => {
-                        if (idx === 0 && line.toLowerCase().includes('họ')) return;
-                        const cols = line.split(/[,;\t]/).map(c => c.trim().replace(/^"|"$/g, ''));
+                        const cols = parseDelimitedLine(line);
+                        if (idx === 0 && (cols[0] || '').toLowerCase().includes('họ')) return;
                         if (!cols[0]) return;
-                        const grp = groups.includes(cols[4]) ? cols[4] : groups[idx % groups.length];
+                        const grp = normalizeGroupVN(cols[4], groups, idx);
                         imported.push({
-                            id: `${Date.now()}_${idx}`,
+                            id: `${nowTs}_${idx}_${Math.random().toString(36).slice(2, 5)}`,
                             name: cols[0],
-                            gender: cols[1] === 'Nữ' ? 'Nữ' : 'Nam',
+                            gender: normalizeGenderVN(cols[1]),
                             dob: cols[2] || '',
                             ethnicity: cols[3] || 'Kinh',
                             group: grp,
-                            gpa: parseFloat(cols[5]) || 0,
-                            academic: cols[6] || 'Chưa xếp loại'
+                            gpa: parseFloat(String(cols[5] || 0).replace(',', '.')) || 0,
+                            academic: cols[6] || 'Chưa xếp loại',
+                            _updatedAt: nowTs
                         });
                     });
                 }
@@ -2214,7 +2686,16 @@
                     alert('Không có dòng dữ liệu học sinh hợp lệ.');
                     return;
                 }
-                classData.students = mode === 'replace' ? imported : [...classData.students, ...imported];
+                if (mode === 'replace') {
+                    if (!classData._deletedStudents) classData._deletedStudents = {};
+                    classData.students.forEach(oldSt => {
+                        if (oldSt && oldSt.id) classData._deletedStudents[oldSt.id] = nowTs;
+                    });
+                    classData.students = imported;
+                } else {
+                    classData.students = [...classData.students, ...imported];
+                }
+                classData._updatedAt = nowTs;
                 saveAccountVault();
                 renderAllViews();
                 document.getElementById('bulk-text-input').value = '';
@@ -2257,16 +2738,18 @@
         }
         function saveStudentForm(e) {
             e.preventDefault();
+            const nowTs = Date.now();
             const id = document.getElementById('edit-student-id').value;
             const item = {
-                id: id || `${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+                id: id || `${nowTs}_${Math.random().toString(36).slice(2, 6)}`,
                 name: document.getElementById('st-name').value.trim(),
                 gender: document.getElementById('st-gender').value,
                 dob: document.getElementById('st-dob').value.trim(),
                 ethnicity: document.getElementById('st-ethnicity').value.trim() || 'Kinh',
                 group: document.getElementById('st-group').value,
                 gpa: parseFloat(document.getElementById('st-gpa').value) || 0,
-                academic: document.getElementById('st-academic').value
+                academic: document.getElementById('st-academic').value,
+                _updatedAt: nowTs
             };
             if (id) {
                 const idx = classData.students.findIndex(s => s.id === id);
@@ -2274,6 +2757,7 @@
             } else {
                 classData.students.push(item);
             }
+            classData._updatedAt = nowTs;
             saveAccountVault();
             closeStudentModal();
             renderAllViews();
@@ -2283,7 +2767,11 @@
             const st = classData.students.find(s => s.id === id);
             if (!st) return;
             if (confirm(`Xóa học sinh "${st.name}"?`)) {
+                const nowTs = Date.now();
+                if (!classData._deletedStudents) classData._deletedStudents = {};
+                classData._deletedStudents[id] = nowTs;
                 classData.students = classData.students.filter(s => s.id !== id);
+                classData._updatedAt = nowTs;
                 saveAccountVault();
                 renderAllViews();
                 showToast('Đã xóa học sinh');
@@ -2358,7 +2846,8 @@
         function saveWeekPoints() {
             const week = document.getElementById('ranking-week-select').value;
             const groups = getGroupNames();
-            const obj = {};
+            const nowTs = Date.now();
+            const obj = { _updatedAt: nowTs };
             groups.forEach((g, idx) => {
                 obj[g] = parseInt(document.getElementById(`wp-inp-${idx}`).value) || 0;
             });
@@ -2404,7 +2893,8 @@
             if (!classData.conducts[month]) classData.conducts[month] = {};
             classData.conducts[month][studentId] = {
                 score: Math.max(0, Math.min(150, parseInt(newScore, 10) || 0)),
-                rating: newRating.trim() || 'Tốt'
+                rating: newRating.trim() || 'Tốt',
+                _updatedAt: Date.now()
             };
             saveAccountVault();
             renderConductView();
@@ -2419,7 +2909,8 @@
             }
             const dayRec = classData.attendance[dateStr] || {};
             tbody.innerHTML = classData.students.map((s, i) => {
-                const stt = dayRec[s.id] || 'Có mặt';
+                const rawCell = dayRec[s.id];
+                const stt = (rawCell && typeof rawCell === 'object') ? (rawCell.status || 'Có mặt') : (rawCell || 'Có mặt');
                 return `
                     <tr>
                         <td class="py-2.5 px-4 text-center text-slate-400">${i + 1}</td>
@@ -2428,7 +2919,7 @@
                         <td class="py-2.5 px-4 text-center space-x-3">
                             ${['Có mặt', 'Có phép', 'Không phép', 'Đi trễ'].map(opt => `
                                 <label class="inline-flex items-center cursor-pointer space-x-1">
-                                    <input type="radio" name="att_${s.id}" value="${opt}" ${stt === opt ? 'checked' : ''}>
+                                    <input type="radio" name="att_${s.id}" value="${opt}" onchange="markAttendanceDirty()" ${stt === opt ? 'checked' : ''}>
                                     <span>${opt}</span>
                                 </label>
                             `).join('')}
@@ -2440,12 +2931,22 @@
         function saveAttendanceData() {
             const dateStr = document.getElementById('attendance-date-input').value;
             if (!dateStr) return;
-            const rec = {};
+            const nowTs = Date.now();
+            const prevDay = classData.attendance[dateStr] || {};
+            const rec = { ...prevDay };
             classData.students.forEach(s => {
                 const picked = document.querySelector(`input[name="att_${s.id}"]:checked`);
-                rec[s.id] = picked ? picked.value : 'Có mặt';
+                const nextStatus = picked ? picked.value : 'Có mặt';
+                const prevCell = prevDay[s.id];
+                const prevStatus = (prevCell && typeof prevCell === 'object') ? prevCell.status : prevCell;
+                const prevTs = (prevCell && typeof prevCell === 'object') ? Number(prevCell._updatedAt || 0) : 0;
+                rec[s.id] = {
+                    status: nextStatus,
+                    _updatedAt: nextStatus !== prevStatus || !prevTs ? nowTs : prevTs
+                };
             });
             classData.attendance[dateStr] = rec;
+            hasUnsavedAttendance = false;
             saveAccountVault();
             showToast(`Đã lưu điểm danh ngày ${dateStr}`);
         }
@@ -2474,6 +2975,7 @@
         }
         function saveHonorEntry(e) {
             e.preventDefault();
+            const nowTs = Date.now();
             const month = document.getElementById('hm-month').value;
             const studentId = document.getElementById('hm-student').value;
             const title = document.getElementById('hm-title').value.trim();
@@ -2483,7 +2985,8 @@
                 studentId,
                 title,
                 desc,
-                updatedAt: new Date().toLocaleDateString('vi-VN')
+                updatedAt: new Date().toLocaleDateString('vi-VN'),
+                _updatedAt: nowTs
             };
             saveAccountVault();
             document.getElementById('honor-month-select').value = month;
@@ -2493,7 +2996,11 @@
         }
         function deleteHonorEntry(month) {
             if (confirm(`Xóa bản ghi vinh danh của ${month}?`)) {
+                const nowTs = Date.now();
+                if (!classData._deletedHonors) classData._deletedHonors = {};
+                classData._deletedHonors[month] = nowTs;
                 delete classData.honors[month];
+                classData._updatedAt = nowTs;
                 saveAccountVault();
                 renderAllViews();
                 showToast(`Đã xóa vinh danh ${month}`);
@@ -2784,7 +3291,7 @@
                 <body>${bodyHTML}</body>
                 </html>
             `;
-            const blob = new Blob(['\ufeff', wordDocument], { type: 'application/msword;charset=utf-8' });
+            const blob = new Blob(['\uFEFF', wordDocument], { type: 'application/msword;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
