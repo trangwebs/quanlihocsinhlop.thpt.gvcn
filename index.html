@@ -867,6 +867,7 @@
                 <button onclick="closeHonorModal()" class="text-white"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <form onsubmit="saveHonorEntry(event)" class="p-6 space-y-3 text-xs">
+                <input type="hidden" id="hm-edit-id" value="">
                 <div>
                     <label class="block font-semibold mb-1">Tháng</label>
                     <select id="hm-month" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl font-bold"></select>
@@ -1017,6 +1018,34 @@
         // =========================================================================
         // HỢP NHẤT DỮ LIỆU ĐA THIẾT BỊ (CHỐNG GHI ĐÈ MẤT THÔNG TIN KHI NHẬP CÙNG LÚC)
         // =========================================================================
+        function normalizeMonthHonorsList(rawVal, monthFallback = '') {
+            if (!rawVal) return [];
+            const arr = Array.isArray(rawVal)
+                ? rawVal
+                : (rawVal.studentId ? [rawVal] : Object.values(rawVal));
+            return arr
+                .filter(item => item && typeof item === 'object' && item.studentId)
+                .map((item, idx) => ({
+                    id: item.id || `${item.month || monthFallback || 'M'}_${item.studentId}_${item._updatedAt || idx}`,
+                    month: item.month || monthFallback,
+                    studentId: item.studentId,
+                    title: item.title || '',
+                    desc: item.desc || '',
+                    updatedAt: item.updatedAt || '',
+                    _updatedAt: Number(item._updatedAt || 0)
+                }));
+        }
+        function getAllHonorEntries(honorsObj) {
+            const out = [];
+            MONTHS.forEach(mo => {
+                const list = normalizeMonthHonorsList(honorsObj?.[mo], mo);
+                list.forEach(item => out.push({ ...item, month: mo }));
+            });
+            return out;
+        }
+        function getHonorsForMonth(honorsObj, month) {
+            return normalizeMonthHonorsList(honorsObj?.[month], month).map(item => ({ ...item, month }));
+        }
         function mergeAccountRecords(localList, remoteList) {
             const map = new Map();
             const putAcc = (raw) => {
@@ -1149,23 +1178,35 @@
                 mergedAttendance[dt] = outDt;
             });
 
-            // Hợp nhất vinh danh theo tháng + tombstone xóa mềm
+            // Hợp nhất vinh danh theo từng bản ghi trong tháng + tombstone xóa mềm
             const deletedHonors = { ...(a._deletedHonors || {}), ...(b._deletedHonors || {}) };
-            Object.keys(deletedHonors).forEach(mo => {
-                deletedHonors[mo] = Math.max(Number(a._deletedHonors?.[mo] || 0), Number(b._deletedHonors?.[mo] || 0));
+            Object.keys(deletedHonors).forEach(k => {
+                deletedHonors[k] = Math.max(Number(a._deletedHonors?.[k] || 0), Number(b._deletedHonors?.[k] || 0));
             });
             const mergedHonors = {};
             const allHonorMonths = new Set([...Object.keys(a.honors || {}), ...Object.keys(b.honors || {})]);
             allHonorMonths.forEach(mo => {
-                const hA = a.honors?.[mo];
-                const hB = b.honors?.[mo];
-                const tsA = Number(hA?._updatedAt || 0);
-                const tsB = Number(hB?._updatedAt || 0);
-                const best = !hA ? hB : !hB ? hA : (tsB >= tsA ? hB : hA);
-                if (!best) return;
-                const delTs = Number(deletedHonors[mo] || 0);
-                if (delTs && delTs >= Number(best._updatedAt || 0)) return;
-                mergedHonors[mo] = { ...best };
+                const listA = normalizeMonthHonorsList(a.honors?.[mo], mo);
+                const listB = normalizeMonthHonorsList(b.honors?.[mo], mo);
+                const entryMap = new Map();
+                const putHonor = (item) => {
+                    if (!item || !item.id) return;
+                    const curTs = Number(item._updatedAt || 0);
+                    const delMonthTs = Number(deletedHonors[mo] || 0);
+                    const delItemTs = Number(deletedHonors[item.id] || 0);
+                    const maxDelTs = Math.max(delMonthTs, delItemTs);
+                    if (maxDelTs && maxDelTs >= curTs) return;
+                    const exist = entryMap.get(item.id);
+                    if (!exist || curTs >= Number(exist._updatedAt || 0)) {
+                        entryMap.set(item.id, { ...item, month: mo, _updatedAt: curTs || Date.now() });
+                    }
+                };
+                listA.forEach(putHonor);
+                listB.forEach(putHonor);
+                const combined = Array.from(entryMap.values());
+                if (combined.length > 0) {
+                    mergedHonors[mo] = combined;
+                }
             });
 
             return {
@@ -1949,7 +1990,7 @@
             const students = Array.isArray(vault.students) ? vault.students : [];
             const gpas = students.map(s => parseFloat(s.gpa)).filter(n => !isNaN(n) && n > 0);
             const avgGpa = gpas.length ? (gpas.reduce((a, b) => a + b, 0) / gpas.length).toFixed(2) : '0.00';
-            const honorCount = Object.keys(vault.honors || {}).length;
+            const honorCount = getAllHonorEntries(vault.honors).length;
             const weekCount = Object.keys(vault.weeklyPoints || {}).length;
             const insp = vault.inspection || { status: 'Chưa kiểm tra', note: '', checkedAt: '' };
             document.getElementById('admin-inspect-title').innerHTML =
@@ -2314,10 +2355,9 @@ Nhập chữ RESET để xác nhận:`);
             const wsConduct = XLSX.utils.aoa_to_sheet([conductHeader, ...conductRows]);
             wsConduct['!cols'] = [{ wch: 6 }, { wch: 26 }, { wch: 10 }, ...MONTHS.flatMap(() => [{ wch: 14 }, { wch: 16 }])];
             XLSX.utils.book_append_sheet(wb, wsConduct, 'Hanh_Kiem_Nam');
-            const honors = MONTHS.filter(mo => vault?.honors?.[mo]).map(mo => {
-                const h = vault.honors[mo];
+            const honors = getAllHonorEntries(vault?.honors).map(h => {
                 const st = students.find(s => s.id === h.studentId);
-                return [mo, st ? st.name : '', st ? st.group : '', h.title || '', h.desc || '', h.updatedAt || ''];
+                return [h.month, st ? st.name : '', st ? st.group : '', h.title || '', h.desc || '', h.updatedAt || ''];
             });
             const wsHonors = XLSX.utils.aoa_to_sheet([
                 ['Tháng', 'Học sinh', 'Tổ', 'Danh hiệu', 'Thành tích / Ghi chú', 'Ngày cập nhật'],
@@ -2551,7 +2591,8 @@ Nhập chữ RESET để xác nhận:`);
             const female = classData.students.filter(s => s.gender === 'Nữ').length;
             const gpas = classData.students.map(s => parseFloat(s.gpa)).filter(n => !isNaN(n) && n > 0);
             const avgGpa = gpas.length ? (gpas.reduce((a, b) => a + b, 0) / gpas.length).toFixed(2) : '0.00';
-            const honorCount = Object.keys(classData.honors || {}).length;
+            const allHonorsList = getAllHonorEntries(classData.honors);
+            const honoredMonthsCount = MONTHS.filter(mo => getHonorsForMonth(classData.honors, mo).length > 0).length;
             const freshAcc = getAccountsRegistry().find(a => a.id === currentAccount.id) || currentAccount;
             const devCount = freshAcc.approvedDevices?.length || 1;
             document.getElementById('dash-stat-total').textContent = `${total} / ${target}`;
@@ -2563,7 +2604,7 @@ Nhập chữ RESET để xác nhận:`);
                 : 'Chưa có học sinh';
             document.getElementById('dash-stat-gpa').textContent = avgGpa;
             document.getElementById('dash-stat-devices').textContent = `${devCount} / ${MAX_DEVICES_PER_ACCOUNT}`;
-            document.getElementById('dash-stat-honor-count').textContent = `Vinh danh: ${honorCount} tháng`;
+            document.getElementById('dash-stat-honor-count').textContent = `Vinh danh: ${allHonorsList.length} lượt (${honoredMonthsCount} tháng)`;
             const groups = getGroupNames();
             document.getElementById('dash-groups-grid').innerHTML = groups.map(g => {
                 const cnt = classData.students.filter(s => s.group === g).length;
@@ -2975,21 +3016,24 @@ Nhập chữ RESET để xác nhận:`);
             saveAccountVault();
             showToast(`Đã lưu điểm danh ngày ${dateStr}`);
         }
-        function openHonorModal() {
+        function openHonorModal(editId = null, targetMonth = null) {
             if (!classData.students.length) {
                 alert('Hãy thêm học sinh trước khi vinh danh!');
                 return;
             }
-            const curMonth = document.getElementById('honor-month-select').value;
+            const curMonth = targetMonth || document.getElementById('honor-month-select').value;
             document.getElementById('hm-month').value = curMonth;
             document.getElementById('hm-student').innerHTML = classData.students
                 .map(s => `<option value="${s.id}">${esc(s.name)} (${esc(s.group)})</option>`).join('');
-            const existing = classData.honors[curMonth];
+            const monthList = getHonorsForMonth(classData.honors, curMonth);
+            const existing = editId ? monthList.find(item => item.id === editId) : null;
             if (existing) {
+                document.getElementById('hm-edit-id').value = existing.id;
                 document.getElementById('hm-student').value = existing.studentId;
                 document.getElementById('hm-title').value = existing.title;
                 document.getElementById('hm-desc').value = existing.desc;
             } else {
+                document.getElementById('hm-edit-id').value = '';
                 document.getElementById('hm-title').value = 'Học sinh tiêu biểu xuất sắc';
                 document.getElementById('hm-desc').value = '';
             }
@@ -2997,15 +3041,35 @@ Nhập chữ RESET để xác nhận:`);
         }
         function closeHonorModal() {
             document.getElementById('honor-modal').classList.add('hidden');
+            document.getElementById('hm-edit-id').value = '';
         }
         function saveHonorEntry(e) {
             e.preventDefault();
             const nowTs = Date.now();
+            const editId = document.getElementById('hm-edit-id').value.trim();
             const month = document.getElementById('hm-month').value;
             const studentId = document.getElementById('hm-student').value;
             const title = document.getElementById('hm-title').value.trim();
             const desc = document.getElementById('hm-desc').value.trim();
-            classData.honors[month] = {
+            if (!classData.honors || typeof classData.honors !== 'object') {
+                classData.honors = {};
+            }
+            // Nếu đang sửa và đổi sang tháng khác thì xóa ở tháng cũ trước
+            if (editId) {
+                MONTHS.forEach(mo => {
+                    if (mo !== month && classData.honors[mo]) {
+                        const filtered = getHonorsForMonth(classData.honors, mo).filter(item => item.id !== editId);
+                        if (filtered.length > 0) {
+                            classData.honors[mo] = filtered;
+                        } else {
+                            delete classData.honors[mo];
+                        }
+                    }
+                });
+            }
+            const currentList = getHonorsForMonth(classData.honors, month);
+            const entryObj = {
+                id: editId || `hon_${nowTs}_${Math.random().toString(36).slice(2, 6)}`,
                 month,
                 studentId,
                 title,
@@ -3013,58 +3077,107 @@ Nhập chữ RESET để xác nhận:`);
                 updatedAt: new Date().toLocaleDateString('vi-VN'),
                 _updatedAt: nowTs
             };
+            const existIdx = editId ? currentList.findIndex(item => item.id === editId) : -1;
+            if (existIdx !== -1) {
+                currentList[existIdx] = entryObj;
+            } else {
+                currentList.push(entryObj);
+            }
+            classData.honors[month] = currentList;
+            classData._updatedAt = nowTs;
             saveAccountVault();
             document.getElementById('honor-month-select').value = month;
             closeHonorModal();
             renderAllViews();
-            showToast(`Đã lưu vinh danh ${month} để tổng kết cuối năm!`);
+            showToast(editId ? `Đã cập nhật vinh danh ${month}!` : `Đã thêm học sinh vinh danh ${month}!`);
         }
-        function deleteHonorEntry(month) {
-            if (confirm(`Xóa bản ghi vinh danh của ${month}?`)) {
+        function deleteHonorEntry(month, entryId = null) {
+            const monthList = getHonorsForMonth(classData.honors, month);
+            const target = entryId ? monthList.find(item => item.id === entryId) : monthList[0];
+            const st = target ? classData.students.find(s => s.id === target.studentId) : null;
+            const label = st ? `"${st.name}" trong ${month}` : month;
+            if (confirm(`Xóa bản ghi vinh danh của ${label}?`)) {
                 const nowTs = Date.now();
                 if (!classData._deletedHonors) classData._deletedHonors = {};
-                classData._deletedHonors[month] = nowTs;
-                delete classData.honors[month];
+                if (target && target.id) {
+                    classData._deletedHonors[target.id] = nowTs;
+                    const remaining = monthList.filter(item => item.id !== target.id);
+                    if (remaining.length > 0) {
+                        classData.honors[month] = remaining;
+                    } else {
+                        delete classData.honors[month];
+                    }
+                } else {
+                    classData._deletedHonors[month] = nowTs;
+                    delete classData.honors[month];
+                }
                 classData._updatedAt = nowTs;
                 saveAccountVault();
                 renderAllViews();
-                showToast(`Đã xóa vinh danh ${month}`);
+                showToast(`Đã xóa vinh danh ${label}`);
             }
         }
         function renderHonorView() {
             const month = document.getElementById('honor-month-select').value;
-            const entry = classData.honors[month];
+            const entries = getHonorsForMonth(classData.honors, month);
             const card = document.getElementById('honor-selected-card');
-            if (!entry) {
+            if (!entries.length) {
                 card.innerHTML = `<div class="text-center py-6 text-slate-400">Chưa có học sinh được vinh danh cho <strong>${month}</strong>.</div>`;
             } else {
-                const st = classData.students.find(s => s.id === entry.studentId);
                 card.innerHTML = `
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                        <div>
-                            <span class="text-xs font-extrabold uppercase px-2.5 py-1 rounded-full bg-amber-100 text-amber-800">${month}</span>
-                            <h4 class="text-xl font-extrabold mt-2">${st ? esc(st.name) : 'Học sinh'} <span class="text-sm font-medium text-slate-500">(${st ? esc(st.group) : ''})</span></h4>
-                            <p class="text-xs font-bold text-amber-600 mt-1"><i class="fa-solid fa-star mr-1"></i>${esc(entry.title)}</p>
-                            <p class="text-xs text-slate-600 dark:text-slate-300 mt-2 italic">"${esc(entry.desc)}"</p>
+                    <div class="space-y-4">
+                        <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100 dark:border-slate-700">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-extrabold uppercase px-2.5 py-1 rounded-full bg-amber-100 text-amber-800">${month}</span>
+                                <span class="text-xs font-semibold text-slate-500">Có <strong>${entries.length}</strong> học sinh tiêu biểu được vinh danh</span>
+                            </div>
+                            <button onclick="openHonorModal(null, '${month}')" class="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold shadow-sm transition">
+                                <i class="fa-solid fa-plus mr-1"></i> Thêm HS vinh danh tháng này
+                            </button>
                         </div>
-                        <button onclick="openHonorModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-700 text-xs font-semibold">Sửa tháng này</button>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            ${entries.map((entry, idx) => {
+                                const st = classData.students.find(s => s.id === entry.studentId);
+                                return `
+                                    <div class="p-4 rounded-2xl bg-amber-50/60 dark:bg-slate-900/70 border border-amber-200 dark:border-amber-800/60 flex flex-col justify-between gap-3">
+                                        <div>
+                                            <div class="flex items-center justify-between gap-2">
+                                                <span class="text-[11px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-amber-500 text-white">Tiêu biểu #${idx + 1}</span>
+                                                <span class="text-[11px] text-slate-400">${esc(entry.updatedAt || '')}</span>
+                                            </div>
+                                            <h4 class="text-lg font-extrabold mt-2">${st ? esc(st.name) : 'Học sinh'} <span class="text-xs font-medium text-slate-500">(${st ? esc(st.group) : ''})</span></h4>
+                                            <p class="text-xs font-bold text-amber-600 mt-1"><i class="fa-solid fa-star mr-1"></i>${esc(entry.title)}</p>
+                                            <p class="text-xs text-slate-600 dark:text-slate-300 mt-1.5 italic">"${esc(entry.desc)}"</p>
+                                        </div>
+                                        <div class="flex justify-end gap-2 pt-2 border-t border-amber-200/60 dark:border-slate-700">
+                                            <button onclick="openHonorModal('${entry.id}', '${month}')" class="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold hover:text-sky-600 transition">
+                                                <i class="fa-solid fa-pen mr-1"></i> Sửa
+                                            </button>
+                                            <button onclick="deleteHonorEntry('${month}', '${entry.id}')" class="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition">
+                                                <i class="fa-solid fa-trash mr-1"></i> Xóa
+                                            </button>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
                     </div>
                 `;
             }
             const archiveTbody = document.getElementById('honor-archive-tbody');
-            const rows = MONTHS.filter(m => classData.honors[m]).map(m => {
-                const h = classData.honors[m];
+            const allEntries = getAllHonorEntries(classData.honors);
+            const rows = allEntries.map(h => {
                 const st = classData.students.find(s => s.id === h.studentId);
                 return `
                     <tr>
-                        <td class="py-2.5 px-4 font-bold text-amber-600">${m}</td>
+                        <td class="py-2.5 px-4 font-bold text-amber-600">${h.month}</td>
                         <td class="py-2.5 px-4 font-semibold">${st ? esc(st.name) : '---'}</td>
                         <td class="py-2.5 px-4">${st ? esc(st.group) : '---'}</td>
                         <td class="py-2.5 px-4 font-semibold">${esc(h.title)}</td>
                         <td class="py-2.5 px-4 text-slate-500">${esc(h.desc)}</td>
                         <td class="py-2.5 px-4 text-center space-x-2">
-                            <button onclick="document.getElementById('honor-month-select').value='${m}';openHonorModal();" class="text-slate-400 hover:text-sky-600"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick="deleteHonorEntry('${m}')" class="text-slate-400 hover:text-rose-600"><i class="fa-solid fa-trash"></i></button>
+                            <button onclick="document.getElementById('honor-month-select').value='${h.month}';openHonorModal('${h.id}', '${h.month}');" class="text-slate-400 hover:text-sky-600" title="Sửa"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="deleteHonorEntry('${h.month}', '${h.id}')" class="text-slate-400 hover:text-rose-600" title="Xóa"><i class="fa-solid fa-trash"></i></button>
                         </td>
                     </tr>
                 `;
@@ -3072,27 +3185,33 @@ Nhập chữ RESET để xác nhận:`);
             archiveTbody.innerHTML = rows.length ? rows.join('') : `<tr><td colspan="6" class="py-6 text-center text-slate-400">Chưa có vinh danh nào được lưu trong năm học.</td></tr>`;
         }
         function openYearEndSummaryModal() {
-            const honoredMonths = MONTHS.filter(m => classData.honors[m]);
+            const allEntries = getAllHonorEntries(classData.honors);
+            const honoredMonthsCount = MONTHS.filter(m => getHonorsForMonth(classData.honors, m).length > 0).length;
             const countByStudent = {};
-            honoredMonths.forEach(m => {
-                const sid = classData.honors[m].studentId;
-                countByStudent[sid] = (countByStudent[sid] || 0) + 1;
+            allEntries.forEach(entry => {
+                const sid = entry.studentId;
+                if (!countByStudent[sid]) countByStudent[sid] = { count: 0, months: [] };
+                countByStudent[sid].count += 1;
+                countByStudent[sid].months.push(entry.month);
             });
             const summaryList = Object.entries(countByStudent)
-                .map(([sid, cnt]) => ({ st: classData.students.find(s => s.id === sid), cnt }))
+                .map(([sid, info]) => ({ st: classData.students.find(s => s.id === sid), cnt: info.count, months: info.months }))
                 .filter(x => x.st)
                 .sort((a, b) => b.cnt - a.cnt);
             document.getElementById('yearend-body').innerHTML = `
                 <div class="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800">
                     <strong>Lớp ${esc(classData.meta.className)} — ${esc(classData.meta.unit)}</strong> (GVCN: ${esc(classData.meta.teacherName)})<br>
-                    Tổng số tháng đã vinh danh được lưu giữ: <strong>${honoredMonths.length} / ${MONTHS.length} tháng</strong>.
+                    Tổng cộng: <strong>${allEntries.length} lượt vinh danh</strong> qua <strong>${honoredMonthsCount} / ${MONTHS.length} tháng</strong>.
                 </div>
                 <div>
                     <h5 class="font-bold mb-2">Số lần được vinh danh trong năm học:</h5>
                     ${summaryList.length ? summaryList.map(item => `
-                        <div class="flex justify-between py-2 border-b border-slate-100 dark:border-slate-700">
-                            <span><strong>${esc(item.st.name)}</strong> (${esc(item.st.group)})</span>
-                            <span class="font-extrabold text-amber-600">${item.cnt} lần</span>
+                        <div class="flex justify-between items-center py-2 border-b border-slate-100 dark:border-slate-700 gap-2">
+                            <div>
+                                <strong>${esc(item.st.name)}</strong> (${esc(item.st.group)})
+                                <div class="text-[11px] text-slate-400">${item.months.join(', ')}</div>
+                            </div>
+                            <span class="font-extrabold text-amber-600 shrink-0">${item.cnt} lần</span>
                         </div>
                     `).join('') : '<p class="text-slate-400">Chưa có dữ liệu vinh danh để tổng kết.</p>'}
                 </div>
@@ -3146,15 +3265,14 @@ Nhập chữ RESET để xác nhận:`);
                     </tr>
                 `).join('')
                 : `<tr><td colspan="8" style="text-align:center;font-style:italic;color:#666;">Chưa có danh sách học sinh.</td></tr>`;
-            const honoredMonths = MONTHS.filter(mo => classData.honors[mo]);
-            const honorRowsHTML = honoredMonths.length
-                ? honoredMonths.map((mo, i) => {
-                    const h = classData.honors[mo];
+            const allHonorsReport = getAllHonorEntries(classData.honors);
+            const honorRowsHTML = allHonorsReport.length
+                ? allHonorsReport.map((h, i) => {
                     const st = classData.students.find(s => s.id === h.studentId);
                     return `
                         <tr>
                             <td style="text-align:center;">${i + 1}</td>
-                            <td style="text-align:center;"><strong>${esc(mo)}</strong></td>
+                            <td style="text-align:center;"><strong>${esc(h.month)}</strong></td>
                             <td><strong>${st ? esc(st.name) : '---'}</strong></td>
                             <td style="text-align:center;">${st ? esc(st.group) : '---'}</td>
                             <td>${esc(h.title)}</td>
